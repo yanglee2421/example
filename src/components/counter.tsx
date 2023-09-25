@@ -2,7 +2,7 @@
 import { useState } from "react";
 
 // RN Imports
-import { Button, Text, View } from "react-native";
+import { Button, StyleSheet, Text, View } from "react-native";
 
 export function Counter() {
   const [count, setCount] = useState(0);
@@ -12,11 +12,24 @@ export function Counter() {
   };
 
   return (
-    <>
-      <Text>{count}</Text>
-      <View>
+    <View style={styles.container}>
+      <View style={styles.textBox}>
+        <Text style={styles.text}>{count}</Text>
+      </View>
+      <View style={styles.btnBox}>
         <Button onPress={handleAdd} title="+1" />
       </View>
-    </>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {},
+  textBox: {
+    padding: 16,
+  },
+  text: {
+    fontSize: 32,
+  },
+  btnBox: {},
+});
