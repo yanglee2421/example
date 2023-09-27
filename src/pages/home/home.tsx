@@ -9,6 +9,7 @@ import {
   StyleProp,
   ViewStyle,
   FlatList,
+  ScrollView,
 } from "react-native";
 
 export function Home() {
@@ -36,24 +37,23 @@ export function Home() {
     "18",
   ]);
 
-  const handleAddGoals = () => {
-    setGoals((prev) => Array.from(new Set<string>([text, ...prev])));
-  };
-
   const goalsEl = useMemo(() => {
-    return Array.from(new Set(goals)).map((item, idx, list) => {
+    return goals.map((item, index) => {
       const itemStyle: StyleProp<ViewStyle> = {
         ...styles.goalsItem,
-        marginBottom: idx === list.length - 1 ? 0 : 8,
+        marginBottom: index === goals.length - 1 ? 0 : 8,
       };
-
       return (
-        <View key={item} style={itemStyle}>
+        <View key={index} style={itemStyle}>
           <Text style={styles.goalsText}>{item}</Text>
         </View>
       );
     });
   }, [goals]);
+
+  const handleAddGoals = () => {
+    setGoals((prev) => Array.from(new Set<string>([text, ...prev])));
+  };
 
   return (
     <View style={styles.page}>
@@ -67,11 +67,12 @@ export function Home() {
         />
         <Button onPress={handleAddGoals} title="Add Goal" />
       </View>
-      <View style={styles.goalsBox}>
+      {/* <View style={styles.goalsBox}>
         <FlatList
           alwaysBounceVertical={true}
           showsVerticalScrollIndicator={false}
           data={goals}
+          style={styles.flatlist}
           renderItem={(item) => {
             const itemStyle: StyleProp<ViewStyle> = {
               ...styles.goalsItem,
@@ -84,7 +85,10 @@ export function Home() {
             );
           }}
         />
-      </View>
+      </View> */}
+      <ScrollView style={{ flex: 1 }}>
+        <View style={styles.goalsBox}>{goalsEl}</View>
+      </ScrollView>
     </View>
   );
 }
@@ -113,11 +117,21 @@ const styles = StyleSheet.create({
   },
   goalsBox: {
     flex: 1,
-    // borderWidth: 1,
-    // borderColor: "red",
+    flexDirection: "row",
+    flexWrap: "wrap",
+    borderWidth: 1,
+    borderColor: "red",
+    borderStyle: "dashed",
+  },
+  flatlist: {
+    // flexDirection: "row",
+    flexWrap: "wrap",
+    borderWidth: 1,
   },
   goalsItem: {
-    padding: 8,
+    flexBasis: "50%",
+    // width: "50%",
+    padding: 16,
     // margin: 8,
     marginBottom: 8,
     borderRadius: 6,
