@@ -8,12 +8,33 @@ import {
   Text,
   StyleProp,
   ViewStyle,
-  ScrollView,
+  FlatList,
 } from "react-native";
 
 export function Home() {
   const [text, setText] = useState("");
-  const [goals, setGoals] = useState<string[]>([]);
+
+  const [goals, setGoals] = useState<string[]>([
+    "0",
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "10",
+    "11",
+    "12",
+    "13",
+    "14",
+    "15",
+    "16",
+    "17",
+    "18",
+  ]);
 
   const handleAddGoals = () => {
     setGoals((prev) => Array.from(new Set<string>([text, ...prev])));
@@ -47,7 +68,22 @@ export function Home() {
         <Button onPress={handleAddGoals} title="Add Goal" />
       </View>
       <View style={styles.goalsBox}>
-        <ScrollView alwaysBounceVertical={true}>{goalsEl}</ScrollView>
+        <FlatList
+          alwaysBounceVertical={true}
+          showsVerticalScrollIndicator={false}
+          data={goals}
+          renderItem={(item) => {
+            const itemStyle: StyleProp<ViewStyle> = {
+              ...styles.goalsItem,
+              marginBottom: item.index === goals.length - 1 ? 0 : 8,
+            };
+            return (
+              <View key={item.index} style={itemStyle}>
+                <Text style={styles.goalsText}>{item.item}</Text>
+              </View>
+            );
+          }}
+        />
       </View>
     </View>
   );
