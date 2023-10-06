@@ -16,7 +16,6 @@ export function Home() {
   const [text, setText] = useState("");
 
   const [goals, setGoals] = useState<string[]>([
-    "0",
     "1",
     "2",
     "3",
@@ -39,12 +38,8 @@ export function Home() {
 
   const goalsEl = useMemo(() => {
     return goals.map((item, index) => {
-      const itemStyle: StyleProp<ViewStyle> = {
-        ...styles.goalsItem,
-        marginBottom: index === goals.length - 1 ? 0 : 8,
-      };
       return (
-        <View key={index} style={itemStyle}>
+        <View key={index} style={styles.goalsItem}>
           <Text style={styles.goalsText}>{item}</Text>
         </View>
       );
@@ -119,6 +114,8 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     flexWrap: "wrap",
+    gap: 12,
+    // rowGap: 16,
     borderWidth: 1,
     borderColor: "red",
     borderStyle: "dashed",
@@ -129,11 +126,14 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   goalsItem: {
-    flexBasis: "50%",
+    flex: 1,
+    flexBasis: "45%",
+    // flexGrow: 1,
+    // flexShrink: 1,
     // width: "50%",
     padding: 16,
     // margin: 8,
-    marginBottom: 8,
+    // marginBottom: 8,
     borderRadius: 6,
     backgroundColor: "#5e0acc",
   },
