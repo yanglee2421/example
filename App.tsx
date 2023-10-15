@@ -1,11 +1,11 @@
 // Expo Imports
 import { StatusBar } from "expo-status-bar";
-import SplashScreen from "expo-splash-screen";
-import Font from "expo-font";
+import * as SplashScreen from "expo-splash-screen";
+import * as Font from "expo-font";
 import Entypo from "@expo/vector-icons/Entypo";
 
 // RN Imports
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, Button } from "react-native";
 
 // Page Imports
 import { Home } from "@/pages/home";
@@ -21,6 +21,7 @@ export default function App() {
     void (async () => {
       try {
         await Font.loadAsync(Entypo.font);
+        await new Promise((res) => setTimeout(res, 1000 * 2));
       } catch (error) {
         console.error(error);
       } finally {
@@ -33,6 +34,8 @@ export default function App() {
     if (!isReady) return;
     await SplashScreen.hideAsync();
   };
+
+  if (!isReady) return <></>;
 
   return (
     <View onLayout={handleLayout} style={styles.container}>
