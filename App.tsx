@@ -5,7 +5,7 @@ import * as Font from "expo-font";
 import Entypo from "@expo/vector-icons/Entypo";
 
 // RN Imports
-import { StyleSheet, View, Button } from "react-native";
+import { StyleSheet, View } from "react-native";
 
 // Page Imports
 import { Home } from "@/pages/home";
