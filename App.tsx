@@ -13,29 +13,17 @@ import { Home } from "@/pages/home";
 // React Imports
 import React from "react";
 
+// Utils Imports
+import { timeout } from "@/utils";
+
 SplashScreen.preventAutoHideAsync();
 
 export default function App() {
-  const [isReady, setIsReady] = React.useState(false);
-  React.useEffect(() => {
-    void (async () => {
-      try {
-        await Font.loadAsync(Entypo.font);
-        await new Promise((res) => setTimeout(res, 1000 * 2));
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setIsReady(true);
-      }
-    })();
-  }, [setIsReady]);
-
   const handleLayout = async () => {
-    if (!isReady) return;
+    await Font.loadAsync(Entypo.font);
+    await timeout(1000 * 2);
     await SplashScreen.hideAsync();
   };
-
-  if (!isReady) return <></>;
 
   return (
     <View onLayout={handleLayout} style={styles.container}>
