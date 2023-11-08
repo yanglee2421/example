@@ -6,7 +6,7 @@ export function Card(props: ViewProps) {
   const { children, style, ...restProps } = props;
 
   return (
-    <View style={Object.assign(styles.card, style)} {...restProps}>
+    <View style={Object.assign({}, styles.card, style)} {...restProps}>
       {children}
     </View>
   );

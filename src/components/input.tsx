@@ -7,7 +7,10 @@ export function Input(props: TextInputProps) {
 
   return (
     <>
-      <TextInput style={Object.assign(styles.input, style)} {...restProps} />
+      <TextInput
+        style={Object.assign({}, styles.input, style)}
+        {...restProps}
+      />
     </>
   );
 }
