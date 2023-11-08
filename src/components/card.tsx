@@ -3,9 +3,13 @@ import { View, StyleSheet, ViewProps } from "react-native";
 
 export function Card(props: ViewProps) {
   // ** Props
-  const { children, style } = props;
+  const { children, style, ...restProps } = props;
 
-  return <View style={Object.assign(styles.card, style)}>{children}</View>;
+  return (
+    <View style={Object.assign(styles.card, style)} {...restProps}>
+      {children}
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
