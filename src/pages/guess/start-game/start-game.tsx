@@ -7,6 +7,9 @@ import React from "react";
 // Components Imports
 import { Card } from "@/components";
 
+// Constants Imports
+import { Colors } from "@/constants";
+
 export function StartGame() {
   return (
     <View style={styles.screen}>
@@ -15,8 +18,16 @@ export function StartGame() {
         <Text>Select a Number</Text>
         <TextInput />
         <View style={styles.btnContainer}>
-          <Button title="Reset" onPress={() => {}} />
-          <Button title="Confirm" onPress={(evt) => {}} />
+          <View style={styles.button}>
+            <Button title="Reset" onPress={() => {}} color={Colors.accent} />
+          </View>
+          <View style={styles.button}>
+            <Button
+              title="Confirm"
+              onPress={(evt) => {}}
+              color={Colors.primary}
+            />
+          </View>
         </View>
       </Card>
     </View>
@@ -50,5 +61,10 @@ const styles = StyleSheet.create({
     width: "100%",
     justifyContent: "space-between",
     paddingHorizontal: 15,
+  },
+
+  // Button
+  button: {
+    width: 100,
   },
 });
