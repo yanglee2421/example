@@ -8,7 +8,8 @@ import Entypo from "@expo/vector-icons/Entypo";
 import { StyleSheet, View } from "react-native";
 
 // Page Imports
-import { Home } from "@/pages/home";
+// import { Home } from "@/pages/home";
+import { Guess } from "@/pages/guess";
 
 // React Imports
 import React from "react";
@@ -28,7 +29,8 @@ export default function App() {
   return (
     <View onLayout={handleLayout} style={styles.container}>
       <StatusBar style="auto" />
-      <Home />
+      {/* <Home /> */}
+      <Guess />
     </View>
   );
 }
