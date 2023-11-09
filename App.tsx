@@ -10,12 +10,16 @@ import { StyleSheet, View } from "react-native";
 // Page Imports
 // import { Home } from "@/pages/home";
 import { Guess } from "@/pages/guess";
+import { Payment } from "@/pages/payment";
 
 // React Imports
 import React from "react";
 
 // Utils Imports
 import { timeout } from "@/utils";
+
+// API Imports
+import { QueryProvider } from "@/api/provider";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -27,11 +31,14 @@ export default function App() {
   };
 
   return (
-    <View onLayout={handleLayout} style={styles.container}>
-      <StatusBar style="auto" />
-      {/* <Home /> */}
-      <Guess />
-    </View>
+    <QueryProvider>
+      <View onLayout={handleLayout} style={styles.container}>
+        <StatusBar style="auto" />
+        {/* <Home /> */}
+        {/* <Guess /> */}
+        <Payment />
+      </View>
+    </QueryProvider>
   );
 }
 

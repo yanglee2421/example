@@ -8,5 +8,14 @@ export default (configCtx: ConfigContext): ExpoConfig => {
     ...config,
     slug: "my-app",
     name: "My App",
+    plugins: [
+      [
+        "@stripe/stripe-react-native",
+        {
+          merchantIdentifier: "",
+          enableGooglePay: true,
+        },
+      ],
+    ],
   };
 };
