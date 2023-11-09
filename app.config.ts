@@ -17,5 +17,17 @@ export default (configCtx: ConfigContext): ExpoConfig => {
         },
       ],
     ],
+    extra: {
+      eas: {
+        projectId: "bd2fa275-d2d7-4d8b-99b0-c5837c92ca9c",
+      },
+    },
+    android: {
+      adaptiveIcon: {
+        foregroundImage: "./assets/adaptive-icon.png",
+        backgroundColor: "#ffffff",
+      },
+      package: "com.gmail.yanglee2421.cn.myapp",
+    },
   };
 };
