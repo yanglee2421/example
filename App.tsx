@@ -5,7 +5,7 @@ import * as Font from "expo-font";
 import Entypo from "@expo/vector-icons/Entypo";
 
 // RN Imports
-import { StyleSheet, View, Image } from "react-native";
+import { StyleSheet, View } from "react-native";
 
 // Page Imports
 // import { Home } from "@/pages/home";
@@ -24,16 +24,35 @@ import { QueryProvider } from "@/api/provider";
 SplashScreen.preventAutoHideAsync();
 
 export default function App() {
+  const [isReady, setIsReady] = React.useState(false);
+
   const handleLayout = async () => {
-    try {
-      await Font.loadAsync(Entypo.font);
-      await timeout(1000 * 2);
-    } catch (error) {
-      console.error(error);
-    } finally {
+    if (isReady) {
       await SplashScreen.hideAsync();
     }
   };
+
+  React.useEffect(() => {
+    if (isReady) return;
+
+    (async () => {
+      try {
+        await Font.loadAsync({
+          "Yang-Lee": require("@/assets/fonts/Inter.ttf"),
+          ...Entypo.font,
+        });
+        await timeout(1000 * 2);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsReady(true);
+      }
+    })();
+  }, [isReady, setIsReady]);
+
+  if (!isReady) {
+    return <></>;
+  }
 
   return (
     <QueryProvider>
