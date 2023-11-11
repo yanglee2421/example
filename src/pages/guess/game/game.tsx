@@ -17,7 +17,6 @@ export function Game(props: GameProps) {
 
   const currentLowRef = React.useRef(0);
   const currentHighRef = React.useRef(100);
-
   const [rounds, setRounds] = React.useState(0);
 
   const handleNextGuess = (direction: string) => {
@@ -44,11 +43,14 @@ export function Game(props: GameProps) {
       currentHighRef.current,
       currentGuess
     );
+
+    if (nextNumber === userChoice) {
+      onGameOver(rounds + 1);
+      return;
+    }
+
     setCurrentGuess(nextNumber);
     setRounds((p) => p + 1);
-
-    if (nextNumber !== userChoice) return;
-    onGameOver(rounds + 1);
   };
 
   return (
@@ -62,6 +64,7 @@ export function Game(props: GameProps) {
           onPress={handleNextGuess.bind(null, "greater")}
         />
       </Card>
+      <Text>Rounds: {rounds}</Text>
     </View>
   );
 }

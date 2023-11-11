@@ -14,18 +14,35 @@ export function Guess() {
   const [usrNumber, setUsrNumber] = React.useState(0);
   const [guessRounds, setGuessRounds] = React.useState(0);
 
-  const handleStart = (selectedNumber: number) => {
-    setUsrNumber(selectedNumber);
-    setGuessRounds(0);
-  };
+  const handleStart = React.useCallback(
+    (selectedNumber: number) => {
+      setUsrNumber(selectedNumber);
+      setGuessRounds(0);
+    },
+    [setUsrNumber, setGuessRounds]
+  );
 
-  const handleGameOver = (rounds: number) => {
-    setGuessRounds(rounds);
-  };
+  const handleGameOver = React.useCallback(
+    (rounds: number) => {
+      setGuessRounds(rounds);
+    },
+    [setGuessRounds]
+  );
+
+  const handleNewGame = React.useCallback(() => {
+    setUsrNumber(0);
+    setGuessRounds(0);
+  }, [setUsrNumber, setGuessRounds]);
 
   const contentNode = React.useMemo(() => {
     if (guessRounds > 0) {
-      return <GameOver rounds={guessRounds} />;
+      return (
+        <GameOver
+          rounds={guessRounds}
+          usrNumber={usrNumber}
+          onNewGame={handleNewGame}
+        />
+      );
     }
 
     if (usrNumber) {
@@ -33,7 +50,7 @@ export function Guess() {
     }
 
     return <StartGame onStartGame={handleStart} />;
-  }, [guessRounds, usrNumber]);
+  }, [guessRounds, usrNumber, handleNewGame, handleGameOver, handleStart]);
 
   return (
     <View style={styles.screen}>
