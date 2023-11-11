@@ -9,7 +9,7 @@ import { NumberContainer, Card } from "@/components";
 
 export function Game(props: GameProps) {
   // ** Props
-  const { userChoice } = props;
+  const { userChoice, onGameOver, ...restProps } = props;
 
   const [currentGuess, setCurrentGuess] = React.useState(() => {
     return generateRandomBetween(1, 100, userChoice);
@@ -17,6 +17,8 @@ export function Game(props: GameProps) {
 
   const currentLowRef = React.useRef(0);
   const currentHighRef = React.useRef(100);
+
+  const [rounds, setRounds] = React.useState(0);
 
   const handleNextGuess = (direction: string) => {
     switch (direction) {
@@ -43,14 +45,14 @@ export function Game(props: GameProps) {
       currentGuess
     );
     setCurrentGuess(nextNumber);
+    setRounds((p) => p + 1);
+
+    if (nextNumber !== userChoice) return;
+    onGameOver(rounds + 1);
   };
 
-  React.useEffect(() => {
-    if (currentGuess !== userChoice) return;
-  }, []);
-
   return (
-    <View style={styles.screen}>
+    <View style={styles.screen} {...restProps}>
       <Text>Opponent`s Guess</Text>
       <NumberContainer>{currentGuess}</NumberContainer>
       <Card style={styles.btnContainer}>
@@ -95,4 +97,5 @@ function generateRandomBetween(min: number, max: number, exclude: number) {
 
 export interface GameProps {
   userChoice: number;
+  onGameOver(rounds: number): void;
 }
