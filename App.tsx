@@ -5,7 +5,7 @@ import * as Font from "expo-font";
 import Entypo from "@expo/vector-icons/Entypo";
 
 // RN Imports
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, Image } from "react-native";
 
 // Page Imports
 // import { Home } from "@/pages/home";
@@ -25,9 +25,14 @@ SplashScreen.preventAutoHideAsync();
 
 export default function App() {
   const handleLayout = async () => {
-    await Font.loadAsync(Entypo.font);
-    await timeout(1000 * 2);
-    await SplashScreen.hideAsync();
+    try {
+      await Font.loadAsync(Entypo.font);
+      await timeout(1000 * 2);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      await SplashScreen.hideAsync();
+    }
   };
 
   return (

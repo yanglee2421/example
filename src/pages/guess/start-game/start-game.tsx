@@ -18,6 +18,9 @@ import { Card, Input, NumberContainer } from "@/components";
 // Constants Imports
 import { Colors } from "@/constants";
 
+// Expo Imports
+import { useFonts } from "expo-font";
+
 export function StartGame(props: StartGameProps) {
   // ** Props
   const { onStartGame } = props;
@@ -97,9 +100,22 @@ export function StartGame(props: StartGameProps) {
     return null;
   }, [confirmed, selectedNumber, onStartGame]);
 
+  const [isFontLoaded] = useFonts({
+    "Yang-Lee": require("@/assets/fonts/Inter.ttf"),
+  });
+
   return (
     <TouchableWithoutFeedback onPress={handlePress}>
       <View style={styles.screen}>
+        <Text style={{ fontFamily: "Yang-Lee", fontSize: 30 }}>
+          Hello World
+        </Text>
+        <Text style={{ fontSize: 30 }}>Hello World</Text>
+        {isFontLoaded && (
+          <Text style={{ fontFamily: "Yang-Lee", fontSize: 30 }}>
+            Hello World
+          </Text>
+        )}
         <Text style={styles.title}>Start a New Game!</Text>
         <Card style={styles.inputContainer}>
           <Text>Select a Number</Text>
