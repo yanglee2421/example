@@ -1,5 +1,9 @@
 // Query Imports
 import { QueryClient, DefaultOptions } from "@tanstack/react-query";
+import { createAsyncStoragePersister } from "@tanstack/query-async-storage-persister";
+
+// RN Storage Imports
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // ** QueryClient
 export const queryClient = new QueryClient({
@@ -7,6 +11,11 @@ export const queryClient = new QueryClient({
     queries: queries(),
     mutations: mutations(),
   },
+});
+
+export const persister = createAsyncStoragePersister({
+  storage: AsyncStorage,
+  key: "rn-query-persister",
 });
 
 // ** Defaults
