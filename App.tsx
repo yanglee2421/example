@@ -35,7 +35,7 @@ export default function App() {
   React.useEffect(() => {
     if (isReady) return;
 
-    (async () => {
+    void (async () => {
       try {
         await Font.loadAsync({
           "Yang-Lee": require("@/assets/fonts/Inter.ttf"),

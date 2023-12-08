@@ -50,7 +50,7 @@ const queryClient = new QueryClient({
   },
 });
 
-// Persist client
+// Persist Query Client
 const persister = createAsyncStoragePersister({
   storage: AsyncStorage,
   key: "rn-query-persister",
@@ -63,7 +63,7 @@ onlineManager.setEventListener((setOnline) => {
   });
 });
 
-// Client configuration
+// Client Configuration
 function queries(): DefaultOptions["queries"] {
   return {
     staleTime: 1000 * 60,
