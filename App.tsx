@@ -1,66 +1,65 @@
-// Expo Imports
-import { StatusBar } from "expo-status-bar";
-import * as SplashScreen from "expo-splash-screen";
-import * as Font from "expo-font";
-import Entypo from "@expo/vector-icons/Entypo";
-
-// RN Imports
-import { StyleSheet, View } from "react-native";
-
-// Page Imports
-// import { Home } from "@/pages/home";
-import { Guess } from "@/pages/guess";
-// import { Payment } from "@/pages/payment";
+// Router Imports
+import { RootRoute } from "@/router";
 
 // React Imports
 import React from "react";
 
-// Utils Imports
-import { timeout } from "@/utils";
-
 // API Imports
 import { QueryProvider } from "@/api/provider";
+
+// Expo Imports
+import { StatusBar } from "expo-status-bar";
+import Entypo from "@expo/vector-icons/Entypo";
+import * as Font from "expo-font";
+import * as SplashScreen from "expo-splash-screen";
+
+// RN Imports
+import { StyleSheet, View, Text, Button } from "react-native";
+
+// Utils Imports
+import { timeout } from "@/utils";
 
 SplashScreen.preventAutoHideAsync();
 
 export default function App() {
-  const [isReady, setIsReady] = React.useState(false);
+  const [fontReady, setFontReady] = React.useState(false);
+  const pendingRef = React.useRef(false);
 
   const handleLayout = async () => {
-    if (isReady) {
+    if (fontReady) {
       await SplashScreen.hideAsync();
     }
   };
 
   React.useEffect(() => {
-    if (isReady) return;
+    if (pendingRef.current) {
+      return;
+    }
 
     void (async () => {
-      try {
-        await Font.loadAsync({
-          "Yang-Lee": require("@/assets/fonts/Inter.ttf"),
-          ...Entypo.font,
-        });
-        await timeout(1000 * 2);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setIsReady(true);
-      }
-    })();
-  }, [isReady, setIsReady]);
+      pendingRef.current = true;
+      setFontReady(false);
 
-  if (!isReady) {
+      await Font.loadAsync({
+        ...Entypo.font,
+        "Yang-Lee": require("@/assets/fonts/Inter.ttf"),
+      });
+      await timeout(1000 * 3);
+
+      pendingRef.current = false;
+      setFontReady(true);
+    })();
+  }, [pendingRef, setFontReady]);
+
+  if (!fontReady) {
     return <></>;
   }
 
   return (
     <QueryProvider>
+      <StatusBar style="auto" />
       <View onLayout={handleLayout} style={styles.container}>
-        <StatusBar style="auto" />
-        {/* <Home /> */}
-        <Guess />
-        {/* <Payment /> */}
+        <RootRoute />
       </View>
     </QueryProvider>
   );
