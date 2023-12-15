@@ -14,7 +14,7 @@ import * as Font from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 
 // RN Imports
-import { StyleSheet, View, Text, Button } from "react-native";
+import { StyleSheet, View } from "react-native";
 
 // Utils Imports
 import { timeout } from "@/utils";
@@ -36,10 +36,10 @@ export default function App() {
       return;
     }
 
-    void (async () => {
-      pendingRef.current = true;
-      setFontReady(false);
+    pendingRef.current = true;
+    setFontReady(false);
 
+    void (async () => {
       await Font.loadAsync({
         ...Entypo.font,
         "Yang-Lee": require("@/assets/fonts/Inter.ttf"),

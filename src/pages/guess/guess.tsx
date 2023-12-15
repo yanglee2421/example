@@ -5,12 +5,14 @@ import { Game } from "./game";
 import { GameOver } from "./game-over";
 
 // RN Imports
-import { View, StyleSheet } from "react-native";
+import { StyleSheet, ScrollView, RefreshControl } from "react-native";
 
 // React Imports
 import React from "react";
+import { timeout } from "@/utils";
 
 export function Guess() {
+  const [refreshing, setRefreshing] = React.useState(false);
   const [usrNumber, setUsrNumber] = React.useState(0);
   const [guessRounds, setGuessRounds] = React.useState(0);
 
@@ -53,10 +55,22 @@ export function Guess() {
   }, [guessRounds, usrNumber, handleNewGame, handleGameOver, handleStart]);
 
   return (
-    <View style={styles.screen}>
+    <ScrollView
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={async () => {
+            setRefreshing(true);
+            await timeout(1000 * 2);
+            setRefreshing(false);
+          }}
+        />
+      }
+      style={styles.screen}
+    >
       <Header title="Guess a Number" />
       {contentNode}
-    </View>
+    </ScrollView>
   );
 }
 
