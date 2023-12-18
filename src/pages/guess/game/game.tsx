@@ -5,7 +5,7 @@ import { StyleSheet, View, Text, Button, Alert } from "react-native";
 import React from "react";
 
 // Components Imports
-import { NumberContainer, Card } from "@/components";
+import { NumberContainer, Card } from "@/pages/guess/components";
 
 export function Game(props: GameProps) {
   // ** Props

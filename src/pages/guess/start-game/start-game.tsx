@@ -13,10 +13,10 @@ import {
 import React, { useState } from "react";
 
 // Components Imports
-import { Card, Input, NumberContainer } from "@/components";
+import { Card, Input, NumberContainer } from "@/pages/guess/components";
 
 // Constants Imports
-import { Colors } from "@/constants";
+import { Colors } from "@/pages/guess/constants";
 
 export function StartGame(props: StartGameProps) {
   // ** Props

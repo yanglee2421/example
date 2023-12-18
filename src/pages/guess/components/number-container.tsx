@@ -2,7 +2,7 @@
 import { StyleSheet, View, Text } from "react-native";
 
 // Constants Imports
-import { Colors } from "@/constants";
+import { Colors } from "@/pages/guess/constants";
 
 export function NumberContainer(props: React.PropsWithChildren) {
   // ** Props

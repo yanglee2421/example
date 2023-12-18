@@ -5,7 +5,7 @@ import { StyleSheet, View, Text } from "react-native";
 import React from "react";
 
 // Constants Imports
-import { Colors } from "@/constants";
+import { Colors } from "@/pages/guess/constants";
 
 export function Header(props: HeaderProps) {
   // ** Props
