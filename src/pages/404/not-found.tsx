@@ -12,6 +12,7 @@ import {
   ScrollView,
   Keyboard,
   Text,
+  StyleSheet,
 } from "react-native";
 
 export function NotFound() {
@@ -46,6 +47,7 @@ export function NotFound() {
           }}
         />
       }
+      style={styles.container}
     >
       <Text style={{ fontFamily: fontReady ? "CustomFont" : void 0 }}>
         Hello fonts
@@ -54,3 +56,9 @@ export function NotFound() {
     </ScrollView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    position: "relative",
+  },
+});
