@@ -4,7 +4,7 @@ import { RootRoute } from "@/router";
 // React Imports
 import React from "react";
 
-// API Imports
+// Plugin Imports
 import { QueryProvider } from "@/plugins";
 
 // Expo Imports
@@ -17,52 +17,35 @@ import * as SplashScreen from "expo-splash-screen";
 import { StyleSheet, View } from "react-native";
 
 // Utils Imports
-import { timeout, Query } from "@/utils";
+import { timeout } from "@/utils";
 
 SplashScreen.preventAutoHideAsync();
 
 export default function App() {
   const [fontReady, setFontReady] = React.useState(false);
-  const fontQueryRef = React.useRef(
-    new Query(
-      async () => {
-        await Font.loadAsync({
-          ...Entypo.font,
-          "Yang-Lee": require("@/assets/fonts/Inter.ttf"),
-        });
-        await timeout(1000 * 3);
-      },
-      (error) => {
-        console.error(error);
-      },
-      () => {
-        setFontReady(true);
-      }
-    )
-  );
 
   React.useEffect(() => {
-    fontQueryRef.current.load();
-  }, []);
+    if (fontReady) {
+      return;
+    }
 
-  if (!fontReady) {
-    return null;
-  }
+    void (async () => {
+      await Font.loadAsync(Entypo.font);
+      await timeout(1000 * 3);
+
+      setFontReady(true);
+    })();
+  }, [fontReady]);
 
   return (
-    <QueryProvider>
-      <StatusBar style="auto"></StatusBar>
-      <View
-        onLayout={async () => {
-          if (fontReady) {
-            await SplashScreen.hideAsync();
-          }
-        }}
-        style={styles.container}
-      >
-        <RootRoute></RootRoute>
-      </View>
-    </QueryProvider>
+    fontReady && (
+      <QueryProvider>
+        <StatusBar style="auto"></StatusBar>
+        <View onLayout={SplashScreen.hideAsync} style={styles.container}>
+          <RootRoute></RootRoute>
+        </View>
+      </QueryProvider>
+    )
   );
 }
 

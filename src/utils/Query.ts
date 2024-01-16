@@ -1,32 +1,22 @@
 export class Query<TData> {
-  constructor(
-    private readonly queryFn: () => Promise<TData>,
-    private readonly onError: (error: Error) => void,
-    private readonly onSuccess: () => void
-  ) {}
+  constructor(private readonly queryFn: () => Promise<TData>) {}
 
-  #status = "pending";
-  public data: TData | null = null;
-  public error: Error | null = null;
   async load() {
-    if (this.#status !== "pending") {
+    if (this.query.status !== "pending") {
       return this.query;
     }
 
     try {
       const data = await this.queryFn();
+      this.query = this.handleResolve(data);
 
-      this.#status = "resolve";
-
-      this.data = data;
-      this.onSuccess();
+      return this.query;
     } catch (error) {
-      this.#status = "reject";
-
       if (error instanceof Error) {
-        this.error = error;
-        this.onError(error);
+        this.query = this.handleReject(error);
       }
+
+      return this.query;
     }
   }
 
@@ -37,26 +27,18 @@ export class Query<TData> {
   };
 
   handleReject(error: Error): QueryInstanteError {
-    this.query.status = "failed";
-    this.error = error;
-    this.data = null;
-
     return {
-      status: this.query.status,
-      error: this.error,
-      data: this.data,
+      status: "failed",
+      error,
+      data: null,
     };
   }
 
   handleResolve(data: TData): QueryInstanceSuccess<TData> {
-    this.query.status = "success";
-    this.error = null;
-    this.data = data;
-
     return {
-      status: this.query.status,
-      error: this.error,
-      data: this.data,
+      status: "success",
+      error: null,
+      data,
     };
   }
 }
