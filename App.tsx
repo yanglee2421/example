@@ -5,7 +5,7 @@ import { RootRoute } from "@/router";
 import React from "react";
 
 // API Imports
-import { QueryProvider } from "@/api/provider";
+import { QueryProvider } from "@/plugins";
 
 // Expo Imports
 import { StatusBar } from "expo-status-bar";
@@ -17,49 +17,50 @@ import * as SplashScreen from "expo-splash-screen";
 import { StyleSheet, View } from "react-native";
 
 // Utils Imports
-import { timeout } from "@/utils";
+import { timeout, Query } from "@/utils";
 
 SplashScreen.preventAutoHideAsync();
 
 export default function App() {
   const [fontReady, setFontReady] = React.useState(false);
-  const pendingRef = React.useRef(false);
-
-  const handleLayout = async () => {
-    if (fontReady) {
-      await SplashScreen.hideAsync();
-    }
-  };
+  const fontQueryRef = React.useRef(
+    new Query(
+      async () => {
+        await Font.loadAsync({
+          ...Entypo.font,
+          "Yang-Lee": require("@/assets/fonts/Inter.ttf"),
+        });
+        await timeout(1000 * 3);
+      },
+      (error) => {
+        console.error(error);
+      },
+      () => {
+        setFontReady(true);
+      }
+    )
+  );
 
   React.useEffect(() => {
-    if (pendingRef.current) {
-      return;
-    }
-
-    pendingRef.current = true;
-    setFontReady(false);
-
-    void (async () => {
-      await Font.loadAsync({
-        ...Entypo.font,
-        "Yang-Lee": require("@/assets/fonts/Inter.ttf"),
-      });
-      await timeout(1000 * 3);
-
-      pendingRef.current = false;
-      setFontReady(true);
-    })();
-  }, [pendingRef, setFontReady]);
+    fontQueryRef.current.load();
+  }, []);
 
   if (!fontReady) {
-    return <></>;
+    return null;
   }
 
   return (
     <QueryProvider>
-      <StatusBar style="auto" />
-      <View onLayout={handleLayout} style={styles.container}>
-        <RootRoute />
+      <StatusBar style="auto"></StatusBar>
+      <View
+        onLayout={async () => {
+          if (fontReady) {
+            await SplashScreen.hideAsync();
+          }
+        }}
+        style={styles.container}
+      >
+        <RootRoute></RootRoute>
       </View>
     </QueryProvider>
   );
