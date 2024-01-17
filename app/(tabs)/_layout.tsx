@@ -15,6 +15,7 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
+        tabBarInactiveTintColor: "#8E8E8F",
       }}
     >
       <Tabs.Screen
@@ -56,7 +57,9 @@ export default function TabLayout() {
         options={{
           title: "Roll",
           tabBarIcon({ color }) {
-            return <TabBarIcon name="code" color={color}></TabBarIcon>;
+            console.log(color);
+
+            return <TabBarIcon name="gamepad" color={color}></TabBarIcon>;
           },
         }}
       ></Tabs.Screen>

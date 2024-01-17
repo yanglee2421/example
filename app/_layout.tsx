@@ -14,6 +14,9 @@ import {
   ThemeProvider,
 } from "@react-navigation/native";
 
+// Providers Imports
+import { QueryProvider } from "@/plugins";
+
 // Catch any errors thrown by the Layout component.
 export { ErrorBoundary } from "expo-router";
 
@@ -46,17 +49,25 @@ export default function RootLayout() {
   return (
     loaded && (
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-        <Stack>
-          <Stack.Screen
-            name="(tabs)"
-            options={{ headerShown: false }}
-          ></Stack.Screen>
-          <Stack.Screen
-            name="modal"
-            options={{ presentation: "modal" }}
-          ></Stack.Screen>
-        </Stack>
+        <QueryProvider>
+          <RootRoute></RootRoute>
+        </QueryProvider>
       </ThemeProvider>
     )
+  );
+}
+
+function RootRoute() {
+  return (
+    <Stack>
+      <Stack.Screen
+        name="(tabs)"
+        options={{ headerShown: false }}
+      ></Stack.Screen>
+      <Stack.Screen
+        name="modal"
+        options={{ presentation: "modal" }}
+      ></Stack.Screen>
+    </Stack>
   );
 }

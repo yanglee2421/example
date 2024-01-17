@@ -57,8 +57,6 @@ const styles = StyleSheet.create({
     fontSize: 64,
   },
   buttonBox: {
-    alignItems: "stretch",
-
-    width: 128,
+    width: 96,
   },
 });
