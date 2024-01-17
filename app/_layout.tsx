@@ -1,20 +1,14 @@
-// Expo Imports
-import { useFonts } from "expo-font";
-import { SplashScreen, Stack } from "expo-router";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-
-// React Imports
-import React from "react";
-
-// RN Imports
-import { useColorScheme } from "react-native";
 import {
   DarkTheme,
   DefaultTheme,
   ThemeProvider,
 } from "@react-navigation/native";
+import { useFonts } from "expo-font";
+import { SplashScreen, Stack } from "expo-router";
+import React from "react";
+import { useColorScheme } from "react-native";
 
-// Providers Imports
 import { QueryProvider } from "@/plugins";
 
 // Catch any errors thrown by the Layout component.
@@ -50,7 +44,7 @@ export default function RootLayout() {
     loaded && (
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
         <QueryProvider>
-          <RootRoute></RootRoute>
+          <RootRoute />
         </QueryProvider>
       </ThemeProvider>
     )
@@ -60,14 +54,8 @@ export default function RootLayout() {
 function RootRoute() {
   return (
     <Stack>
-      <Stack.Screen
-        name="(tabs)"
-        options={{ headerShown: false }}
-      ></Stack.Screen>
-      <Stack.Screen
-        name="modal"
-        options={{ presentation: "modal" }}
-      ></Stack.Screen>
+      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      <Stack.Screen name="modal" options={{ presentation: "modal" }} />
     </Stack>
   );
 }

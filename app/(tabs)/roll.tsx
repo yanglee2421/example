@@ -1,14 +1,18 @@
 // RN Imports
-import { View, StyleSheet, Button, Text } from "react-native";
+import React from "react";
+import { View, StyleSheet, Button, Text, useColorScheme } from "react-native";
 
 // React Imports
-import React from "react";
 
 // Utils Imports
 import { AnimateController, timeout } from "@/utils";
 
 export default function RollScreen() {
   const [number, setNumber] = React.useState(0);
+  const [rolling, setRolling] = React.useState(false);
+
+  const colorScheme = useColorScheme();
+
   const controllerRef = React.useRef(
     new AnimateController(() => {
       React.startTransition(() => {
@@ -18,18 +22,27 @@ export default function RollScreen() {
   );
 
   const handleRoll = async () => {
+    setRolling(true);
     controllerRef.current.play();
     await timeout(1000);
+    setRolling(false);
     controllerRef.current.pause();
   };
 
   return (
     <View style={styles.container}>
       <View style={styles.NumberBox}>
-        <Text style={styles.number}>{number}</Text>
+        <Text
+          style={[
+            styles.number,
+            { color: colorScheme === "light" ? "black" : "white" },
+          ]}
+        >
+          {number}
+        </Text>
       </View>
       <View style={styles.buttonBox}>
-        <Button onPress={handleRoll} title="Roll"></Button>
+        <Button onPress={handleRoll} disabled={rolling} title="Roll" />
       </View>
     </View>
   );
@@ -43,6 +56,9 @@ const styles = StyleSheet.create({
     gap: 32,
   },
   NumberBox: {
+    position: "fixed",
+    left: 0,
+
     aspectRatio: 1,
     justifyContent: "center",
     alignItems: "center",

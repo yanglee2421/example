@@ -1,12 +1,9 @@
-// Expo Imports
-import { Link, Tabs } from "expo-router";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-
-// Theme Imports
-import Colors from "@/constants/Colors";
-
-// RN Imports
+import { Link, Tabs } from "expo-router";
 import { Pressable, useColorScheme } from "react-native";
+
+import { TabBarIcon } from "@/components";
+import Colors from "@/constants/Colors";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -16,6 +13,11 @@ export default function TabLayout() {
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
         tabBarInactiveTintColor: "#8E8E8F",
+        // tabBarBackground() {
+        //   return <View style={styles.tabBarBg}></View>;
+        // },
+        tabBarInactiveBackgroundColor: "rgba(255,255,255,0.5)",
+        tabBarActiveBackgroundColor: "rgba(255,255,255,0.5)",
       }}
     >
       <Tabs.Screen
@@ -23,7 +25,7 @@ export default function TabLayout() {
         options={{
           title: "Tab One",
           tabBarIcon({ color }) {
-            return <TabBarIcon name="code" color={color}></TabBarIcon>;
+            return <TabBarIcon name="code" color={color} />;
           },
           headerRight() {
             return (
@@ -35,44 +37,44 @@ export default function TabLayout() {
                       size={25}
                       color={Colors[colorScheme ?? "light"].text}
                       style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
-                    ></FontAwesome>
+                    />
                   )}
                 </Pressable>
               </Link>
             );
           },
+          // tabBarBackground() {
+          //   return <View style={styles.tabBarBg}></View>;
+          // },
         }}
-      ></Tabs.Screen>
+      />
       <Tabs.Screen
         name="two"
         options={{
           title: "Tab Two",
           tabBarIcon({ color }) {
-            return <TabBarIcon name="code" color={color}></TabBarIcon>;
+            return <TabBarIcon name="code" color={color} />;
           },
         }}
-      ></Tabs.Screen>
+      />
       <Tabs.Screen
         name="roll"
         options={{
           title: "Roll",
           tabBarIcon({ color }) {
-            console.log(color);
-
-            return <TabBarIcon name="gamepad" color={color}></TabBarIcon>;
+            return <TabBarIcon name="gamepad" color={color} />;
           },
         }}
-      ></Tabs.Screen>
+      />
     </Tabs>
   );
 }
 
-/**
- * You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
- */
-function TabBarIcon(props: {
-  name: React.ComponentProps<typeof FontAwesome>["name"];
-  color: string;
-}) {
-  return <FontAwesome size={28} style={{ marginBottom: -3 }} {...props} />;
-}
+// const styles = StyleSheet.create({
+//   tabBarBg: {
+//     position: "absolute",
+//     height: 180,
+//     // backgroundColor: "rgba(0,0,0,.5)",
+//     // backgroundColor: "red",
+//   },
+// });

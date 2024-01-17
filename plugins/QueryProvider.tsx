@@ -1,20 +1,15 @@
-// Query Imports
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import NetInfo from "@react-native-community/netinfo";
+import { createAsyncStoragePersister } from "@tanstack/query-async-storage-persister";
 import {
   QueryClient,
   DefaultOptions,
   onlineManager,
   focusManager,
 } from "@tanstack/react-query";
-import { createAsyncStoragePersister } from "@tanstack/query-async-storage-persister";
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
-
-// RN Imports
-import { AppState, Platform } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import NetInfo from "@react-native-community/netinfo";
-
-// React Imports
 import React from "react";
+import { AppState, Platform } from "react-native";
 
 // Refetch on reconnect
 onlineManager.setEventListener((setOnline) => {
