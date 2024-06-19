@@ -1,44 +1,38 @@
 {
   "expo": {
-    "name": "my-app",
-    "slug": "my-app",
+    "name": "blank-rn",
+    "slug": "blank-rn",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
-    "scheme": "myapp",
-    "userInterfaceStyle": "automatic",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/images/splash.png",
+      "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.yanglee2421.blankrn"
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.yanglee2421.myapp"
+      "package": "com.yanglee2421.blankrn"
     },
     "web": {
-      "bundler": "metro",
-      "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/favicon.png"
     },
-    "plugins": [
-      "expo-router"
-    ],
-    "experiments": {
-      "typedRoutes": true
-    },
+    "plugins": ["expo-router"],
+    "scheme": "expo-lab",
     "extra": {
       "router": {
         "origin": false
       },
       "eas": {
-        "projectId": "bd2fa275-d2d7-4d8b-99b0-c5837c92ca9c"
+        "projectId": "15d0ab82-88a8-46b0-a9be-1c1df8bf84e7"
       }
     }
   }

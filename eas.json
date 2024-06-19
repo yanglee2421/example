@@ -12,9 +12,7 @@
     },
     "production": {
       "android": {
-        "buildType": "apk",
-        "workflow": "managed",
-        "credentialsSource": "remote"
+        "buildType": "apk"
       }
     }
   },
