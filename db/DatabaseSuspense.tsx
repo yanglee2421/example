@@ -6,13 +6,14 @@ import { Text } from "react-native";
 import * as schema from "@/db/schema";
 import migrations from "@/drizzle/migrations.js";
 
-const expoDb = openDatabaseSync("db.db");
+const expoDb = openDatabaseSync("db.sqlite");
 export const db = drizzle(expoDb, { schema });
 
 export function DatabaseSuspense(props: React.PropsWithChildren) {
   const { success, error } = useMigrations(db, migrations);
 
   if (error) {
+    console.log(error);
     return <Text>{error.message}</Text>;
   }
 

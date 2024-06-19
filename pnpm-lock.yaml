@@ -8,9 +8,6 @@ importers:
 
   .:
     dependencies:
-      '@expo-google-fonts/inter':
-        specifier: ^0.2.3
-        version: 0.2.3
       '@expo/vector-icons':
         specifier: ^14.0.0
         version: 14.0.2
@@ -1182,9 +1179,6 @@ packages:
   '@eslint/js@8.57.0':
     resolution: {integrity: sha512-Ys+3g2TaW7gADOJzPt83SJtCDhMjndcDMFVQ/Tj9iA1BfJzFKD9mAUXT3OenpuPHbI6P/myECxRJrofUsDx/5g==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
-
-  '@expo-google-fonts/inter@0.2.3':
-    resolution: {integrity: sha512-iHK9FI+dnE45X5c2Z5hSFwNH4zUWethizpbv3XUn0FIGw5jwvzriENz0a6wCdkI4/d+1QkurnHo5XHti7TbNJA==}
 
   '@expo/apple-utils@1.7.0':
     resolution: {integrity: sha512-RVzZTiOeuNT04fE5V4f536XmIyxbRFOJ3m/rE6kImbIZ65upOS7xdIQpihEdYOiHB5uZAcD3JClUEsMfFhTv4w==}
@@ -6754,8 +6748,6 @@ snapshots:
       - supports-color
 
   '@eslint/js@8.57.0': {}
-
-  '@expo-google-fonts/inter@0.2.3': {}
 
   '@expo/apple-utils@1.7.0': {}
 

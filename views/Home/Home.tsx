@@ -1,4 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { eq } from "drizzle-orm";
 import React from "react";
 import {
   Button,
@@ -10,7 +11,6 @@ import {
 } from "react-native";
 import { DatabaseSuspense, db } from "@/db/DatabaseSuspense";
 import { userTable } from "@/db/schema";
-import { eq } from "drizzle-orm";
 
 export function Home() {
   const query = useQuery({
@@ -25,15 +25,30 @@ export function Home() {
     },
   });
 
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn() {
+      return db.insert(userTable).values({
+        name: Date.now().toString(),
+        email: Date.now() + "@gmail.com",
+        password: "test1234",
+      });
+    },
+    onSuccess() {
+      queryClient.invalidateQueries({
+        queryKey: ["userTable"],
+      });
+    },
+  });
+
   return (
     <DatabaseSuspense>
       <Button
-        onPress={async () => {
-          await db.insert(userTable).values({
-            name: Date.now().toString(),
-          });
-          query.refetch();
+        onPress={() => {
+          mutation.mutate();
         }}
+        disabled={mutation.isPending}
         title={"create"}
       />
       {(() => {
