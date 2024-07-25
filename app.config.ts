@@ -26,7 +26,19 @@ export default {
   web: {
     favicon: "./assets/favicon.png",
   },
-  plugins: ["expo-router", "expo-localization"],
+  plugins: [
+    "expo-font",
+    "expo-router",
+    "expo-localization",
+    [
+      "expo-camera",
+      {
+        cameraPermission: "Allow $(PRODUCT_NAME) to access your camera",
+        microphonePermission: "Allow $(PRODUCT_NAME) to access your microphone",
+        recordAudioAndroid: true,
+      },
+    ],
+  ],
   extra: {
     router: {
       origin: false,

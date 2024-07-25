@@ -1,13 +1,8 @@
-import { drizzle } from "drizzle-orm/expo-sqlite";
 import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
-import { openDatabaseSync } from "expo-sqlite/next";
 import React from "react";
 import { Text } from "react-native";
-import * as schema from "@/db/schema";
 import migrations from "@/drizzle/migrations.js";
-
-const expoDb = openDatabaseSync("db.sqlite");
-export const db = drizzle(expoDb, { schema });
+import { db } from "./db";
 
 export function DatabaseSuspense(props: React.PropsWithChildren) {
   const { success, error } = useMigrations(db, migrations);

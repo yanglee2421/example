@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { eq } from "drizzle-orm";
 import React from "react";
 import {
@@ -8,22 +8,20 @@ import {
   Text,
   View,
   Pressable,
+  TextInput,
 } from "react-native";
-import { DatabaseSuspense, db } from "@/db/DatabaseSuspense";
+import { useImmer } from "use-immer";
+import { DatabaseSuspense } from "@/db/DatabaseSuspense";
+import { db } from "@/db/db";
 import { userTable } from "@/db/schema";
+import { useUserTable } from "@/hooks/api/useUserTable";
 
 export function Home() {
-  const query = useQuery({
-    queryKey: ["userTable"],
-    queryFn() {
-      return db.query.userTable.findMany({
-        columns: {
-          id: true,
-          name: true,
-        },
-      });
-    },
+  const [params, updateParams] = useImmer({
+    name: "",
+    email: "",
   });
+  const query = useUserTable(params);
 
   const queryClient = useQueryClient();
 
@@ -44,6 +42,24 @@ export function Home() {
 
   return (
     <DatabaseSuspense>
+      <Text>name</Text>
+      <TextInput
+        value={params.name}
+        onChangeText={(evt) => {
+          updateParams((draft) => {
+            draft.name = evt;
+          });
+        }}
+      />
+      <Text>email</Text>
+      <TextInput
+        value={params.email}
+        onChangeText={(evt) => {
+          updateParams((draft) => {
+            draft.email = evt;
+          });
+        }}
+      />
       <Button
         onPress={() => {
           mutation.mutate();
@@ -57,7 +73,7 @@ export function Home() {
         }
 
         if (query.isError) {
-          return <Text>{query.error.message}</Text>;
+          return <Text style={{ color: "#f00" }}>{query.error.message}</Text>;
         }
 
         return (
@@ -73,9 +89,12 @@ export function Home() {
                     query.refetch();
                   }}
                 >
-                  <View style={styles.listItem}>
+                  <View
+                    style={{ ...styles.listItem, marginTop: item.index && 12 }}
+                  >
                     <Text style={styles.listItemText}>{item.item.id}</Text>
                     <Text style={styles.listItemText}>{item.item.name}</Text>
+                    <Text style={styles.listItemText}>{item.item.email}</Text>
                   </View>
                 </Pressable>
               );
@@ -93,8 +112,8 @@ export function Home() {
 
 const styles = StyleSheet.create({
   listItem: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+    borderColor: "#1e1e1e",
+    borderWidth: 1,
     padding: 12,
   },
   listItemText: {
