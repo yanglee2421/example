@@ -1,26 +1,41 @@
-import { FontAwesome } from "@expo/vector-icons";
+import { Icon, useTheme } from "@rneui/themed";
 import { Tabs } from "expo-router";
 
-
 export default function TabsLayout() {
+  const theme = useTheme();
+
   return (
-    <Tabs>
+    <Tabs
+      screenOptions={{
+        headerShown: false,
+        tabBarActiveTintColor: theme.theme.colors.primary,
+      }}
+    >
       <Tabs.Screen
-        name="home"
+        name="index"
         options={{
           title: "Home",
-          tabBarIcon: ({ color }) => (
-            <FontAwesome size={28} name="home" color={color} />
-          )
+          tabBarIcon({ color }) {
+            return <Icon name="home" size={28} color={color} />;
+          },
+        }}
+      />
+      <Tabs.Screen
+        name="qrcode"
+        options={{
+          title: "qrcode",
+          tabBarIcon({ color }) {
+            return <Icon name="qr-code-scanner" size={28} color={color} />;
+          },
         }}
       />
       <Tabs.Screen
         name="account"
         options={{
           title: "Settings",
-          tabBarIcon: ({ color }) => (
-            <FontAwesome size={28} name="cog" color={color} />
-          )
+          tabBarIcon({ color }) {
+            return <Icon name="settings" size={28} color={color} />;
+          },
         }}
       />
     </Tabs>

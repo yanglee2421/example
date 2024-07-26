@@ -1,7 +1,9 @@
+import { ThemeProvider, createTheme } from "@rneui/themed";
 import { useFonts } from "expo-font";
 import { SplashScreen, Stack } from "expo-router";
+import { StatusBar } from "expo-status-bar";
 import React from "react";
-import { Text } from "react-native";
+import { Text, useColorScheme } from "react-native";
 import { LocaleProvider } from "@/components/LocaleProvider";
 import { QueryProvider } from "@/components/QueryProvider";
 
@@ -11,6 +13,10 @@ export default function RootLayout() {
   const [fontLoaded, error] = useFonts({
     SpaceMono: require("@/assets/fonts/SpaceMono-Regular.ttf"),
   });
+
+  const colorScheme = useColorScheme();
+
+  console.log(colorScheme);
 
   React.useEffect(() => {
     if (fontLoaded || error) {
@@ -24,19 +30,33 @@ export default function RootLayout() {
 
   if (fontLoaded) {
     return (
-      <React.StrictMode>
+      <ThemeProvider
+        theme={createTheme({
+          mode: colorScheme || "light",
+          lightColors: {
+            primary: "#3b82f6",
+            error: "#ef4444",
+          },
+          darkColors: {
+            primary: "#3b82f6",
+            error: "#ef4444",
+          },
+        })}
+      >
         <LocaleProvider>
           <QueryProvider>
+            <StatusBar style="auto" />
             <Stack>
-              <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-              <Stack.Screen name="(guest)" options={{ headerShown: false }} />
-              <Stack.Screen name="+not-found" />
+              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+              <Stack.Screen
+                name="+not-found"
+                options={{ headerShown: false }}
+              />
               <Stack.Screen name="about" />
-              <Stack.Screen name="index" />
             </Stack>
           </QueryProvider>
         </LocaleProvider>
-      </React.StrictMode>
+      </ThemeProvider>
     );
   }
 
