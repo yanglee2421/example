@@ -23,9 +23,9 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="qrcode"
         options={{
-          title: "qrcode",
+          title: "qrcode-scan",
           tabBarIcon({ color }) {
-            return <Icon name="qrcode" size={28} color={color} />;
+            return <Icon name="qrcode-scan" size={28} color={color} />;
           },
         }}
       />

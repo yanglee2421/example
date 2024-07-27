@@ -38,6 +38,17 @@ export default {
         recordAudioAndroid: true,
       },
     ],
+    [
+      "expo-build-properties",
+      {
+        ios: {
+          newArchEnabled: true,
+        },
+        android: {
+          newArchEnabled: true,
+        },
+      },
+    ],
   ],
   extra: {
     router: {

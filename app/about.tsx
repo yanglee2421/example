@@ -6,7 +6,7 @@ export default function About() {
     <View style={styles.container}>
       <ScrollView>
         <View>
-          <SocialIcon type="github" iconType="font-awesome" />
+          <SocialIcon type="github" />
         </View>
       </ScrollView>
     </View>

@@ -16,8 +16,6 @@ export default function RootLayout() {
 
   const colorScheme = useColorScheme();
 
-  console.log(colorScheme);
-
   React.useEffect(() => {
     if (fontLoaded || error) {
       SplashScreen.hideAsync();
@@ -45,6 +43,7 @@ export default function RootLayout() {
             Icon: {
               type: "material-community",
             },
+            Text: { style: { fontFamily: "SpaceMono" } },
           },
         })}
       >
