@@ -3,7 +3,7 @@ export default {
   name: "blank-rn",
   slug: "blank-rn",
   scheme: "blank-rn",
-  version: "1.0.0",
+  version: "0.0.1",
   orientation: "portrait",
   icon: "./assets/icon.png",
   userInterfaceStyle: "light",

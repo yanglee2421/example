@@ -1,20 +1,24 @@
 import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
-import React from "react";
-import { Text } from "react-native";
 import migrations from "@/drizzle/migrations.js";
 import { db } from "./db";
+import type React from "react";
 
-export function DatabaseSuspense(props: React.PropsWithChildren) {
+export function DatabaseSuspense(props: Props) {
   const { success, error } = useMigrations(db, migrations);
 
   if (error) {
     console.log(error);
-    return <Text>{error.message}</Text>;
+    return props.fallback;
   }
 
   if (success) {
     return props.children;
   }
 
-  return <Text>database loading...</Text>;
+  return props.fallback;
 }
+
+type Props = {
+  fallback?: React.ReactNode;
+  children?: React.ReactNode;
+};

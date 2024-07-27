@@ -7,6 +7,7 @@ import {
   Icon,
   Button,
   useTheme,
+  Skeleton,
 } from "@rneui/themed";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { eq } from "drizzle-orm";
@@ -81,7 +82,7 @@ export default function Home() {
         <Card containerStyle={{ padding: 0 }}>
           {(() => {
             if (query.isPending) {
-              return <Text>fetch...</Text>;
+              return <Skeleton />;
             }
 
             if (query.isError) {
