@@ -25,7 +25,7 @@ export default function TabsLayout() {
         options={{
           title: "qrcode",
           tabBarIcon({ color }) {
-            return <Icon name="qr-code-scanner" size={28} color={color} />;
+            return <Icon name="qrcode" size={28} color={color} />;
           },
         }}
       />
@@ -34,7 +34,7 @@ export default function TabsLayout() {
         options={{
           title: "Settings",
           tabBarIcon({ color }) {
-            return <Icon name="settings" size={28} color={color} />;
+            return <Icon name="account" size={28} color={color} />;
           },
         }}
       />

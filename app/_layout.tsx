@@ -41,6 +41,11 @@ export default function RootLayout() {
             primary: "#3b82f6",
             error: "#ef4444",
           },
+          components: {
+            Icon: {
+              type: "material-community",
+            },
+          },
         })}
       >
         <LocaleProvider>

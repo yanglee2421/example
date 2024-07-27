@@ -74,8 +74,8 @@ export default function Home() {
               mutation.mutate();
             }}
             disabled={mutation.isPending}
+            icon={<Icon name="plus" color="white" />}
           >
-            <Icon name="add" color="white" />
             create
           </Button>
         </Card>
@@ -106,7 +106,11 @@ export default function Home() {
                             alignItems: "center",
                           }}
                           type="clear"
-                          icon={{ name: "delete-outline", color: "white" }}
+                          icon={{
+                            name: "delete-outline",
+                            type: "material-community",
+                            color: "white",
+                          }}
                           onPress={async () => {
                             await db
                               .delete(userTable)
