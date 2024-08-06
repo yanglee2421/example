@@ -1,12 +1,10 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import NetInfo from "@react-native-community/netinfo";
-import { createAsyncStoragePersister } from "@tanstack/query-async-storage-persister";
 import {
   QueryClient,
   onlineManager,
   focusManager,
+  QueryClientProvider,
 } from "@tanstack/react-query";
-import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 import React from "react";
 import { Platform, AppState } from "react-native";
 
@@ -18,9 +16,7 @@ export function QueryProvider(props: React.PropsWithChildren) {
 
     return NetInfo.addEventListener((state) => {
       onlineManager.setOnline(
-        state.isConnected != null &&
-          state.isConnected &&
-          Boolean(state.isInternetReachable),
+        Boolean(state.isConnected && state.isInternetReachable),
       );
     });
   }, []);
@@ -40,19 +36,11 @@ export function QueryProvider(props: React.PropsWithChildren) {
   }, []);
 
   return (
-    <PersistQueryClientProvider
-      client={queryClient}
-      persistOptions={{ persister }}
-    >
+    <QueryClientProvider client={queryClient}>
       {props.children}
-    </PersistQueryClientProvider>
+    </QueryClientProvider>
   );
 }
-
-const persister = createAsyncStoragePersister({
-  storage: AsyncStorage,
-  key: "YotuLeeQueryCache",
-});
 
 const queryClient = new QueryClient({
   defaultOptions: {
