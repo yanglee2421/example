@@ -1,8 +1,8 @@
 import type { ExpoConfig } from "expo/config";
 export default {
-  name: "blank-rn",
-  slug: "blank-rn",
-  scheme: "blank-rn",
+  name: "example",
+  slug: "example",
+  scheme: "example",
   version: "0.0.1",
   orientation: "portrait",
   icon: "./assets/icon.png",
@@ -44,7 +44,7 @@ export default {
       origin: false,
     },
     eas: {
-      projectId: "15d0ab82-88a8-46b0-a9be-1c1df8bf84e7",
+      projectId: "8b802171-0869-40bc-a384-ca9d63811f2b",
     },
   },
 } satisfies ExpoConfig;

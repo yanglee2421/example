@@ -1,4 +1,4 @@
-import { ThemeProvider, createTheme } from "@rneui/themed";
+import { createTheme, ThemeProvider } from "@rneui/themed";
 import { useFonts } from "expo-font";
 import { SplashScreen, Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -22,47 +22,50 @@ export default function RootLayout() {
     }
   }, [fontLoaded, error]);
 
+  if (!fontLoaded && !error) {
+    return null;
+  }
+
   if (error) {
     return <Text>{error.message}</Text>;
   }
 
   if (fontLoaded) {
-    return (
-      <ThemeProvider
-        theme={createTheme({
-          mode: colorScheme || "light",
-          lightColors: {
-            primary: "#3b82f6",
-            error: "#ef4444",
-          },
-          darkColors: {
-            primary: "#3b82f6",
-            error: "#ef4444",
-          },
-          components: {
-            Icon: {
-              type: "material-community",
-            },
-            Text: { style: { fontFamily: "SpaceMono" } },
-          },
-        })}
-      >
-        <LocaleProvider>
-          <QueryProvider>
-            <StatusBar style="auto" />
-            <Stack>
-              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-              <Stack.Screen
-                name="+not-found"
-                options={{ headerShown: false }}
-              />
-              <Stack.Screen name="about" />
-            </Stack>
-          </QueryProvider>
-        </LocaleProvider>
-      </ThemeProvider>
-    );
   }
 
-  return null;
+  return (
+    <ThemeProvider
+      theme={createTheme({
+        mode: colorScheme || "light",
+        lightColors: {
+          primary: "#3b82f6",
+          error: "#ef4444",
+        },
+        darkColors: {
+          primary: "#3b82f6",
+          error: "#ef4444",
+        },
+        components: {
+          Icon: {
+            type: "material-community",
+          },
+          Text: { style: { fontFamily: "SpaceMono" } },
+        },
+      })}
+    >
+      <LocaleProvider>
+        <QueryProvider>
+          <StatusBar style="auto" />
+          <Stack>
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen
+              name="+not-found"
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen name="about" />
+          </Stack>
+        </QueryProvider>
+      </LocaleProvider>
+    </ThemeProvider>
+  );
 }
