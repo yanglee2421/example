@@ -1,71 +1,72 @@
-import { createTheme, ThemeProvider } from "@rneui/themed";
 import { useFonts } from "expo-font";
 import { SplashScreen, Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import React from "react";
-import { Text, useColorScheme } from "react-native";
-import { LocaleProvider } from "@/components/LocaleProvider";
 import { QueryProvider } from "@/components/QueryProvider";
+import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
+import migrations from "@/drizzle/migrations.js";
+import { db } from "@/db/db";
+import { useSyncLocale } from "@/hooks/useSyncLocale";
+import { ErrorScreen } from "@/components/ErrorScreen";
+import { ThemeProvider } from "@/components/ThemeProvider";
+import { useTheme } from "@rneui/themed";
 
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
+  useSyncLocale();
+  const dbState = useMigrations(db, migrations);
   const [fontLoaded, error] = useFonts({
     SpaceMono: require("@/assets/fonts/SpaceMono-Regular.ttf"),
   });
 
-  const colorScheme = useColorScheme();
-
   React.useEffect(() => {
-    if (fontLoaded || error) {
+    if (fontLoaded || error || dbState.error || dbState.success) {
       SplashScreen.hideAsync();
     }
-  }, [fontLoaded, error]);
+  }, [fontLoaded, error, dbState.error, dbState.success]);
 
-  if (!fontLoaded && !error) {
-    return null;
+  if (error || dbState.error) {
+    return <ErrorScreen />;
   }
 
-  if (error) {
-    return <Text>{error.message}</Text>;
-  }
+  return fontLoaded && dbState.success && (
+    <QueryProvider>
+      <ThemeProvider>
+        <StatusBar style="auto" />
+        <RootRoute />
+      </ThemeProvider>
+    </QueryProvider>
+  );
+}
 
-  if (fontLoaded) {
-  }
+function RootRoute() {
+  const { theme } = useTheme();
 
   return (
-    <ThemeProvider
-      theme={createTheme({
-        mode: colorScheme || "light",
-        lightColors: {
-          primary: "#3b82f6",
-          error: "#ef4444",
+    <Stack
+      screenOptions={{
+        headerTintColor: theme.colors.black,
+        headerStyle: {
+          backgroundColor: theme.colors.background,
         },
-        darkColors: {
-          primary: "#3b82f6",
-          error: "#ef4444",
+        contentStyle: {
+          backgroundColor: theme.colors.background,
         },
-        components: {
-          Icon: {
-            type: "material-community",
-          },
-          Text: { style: { fontFamily: "SpaceMono" } },
-        },
-      })}
+      }}
     >
-      <LocaleProvider>
-        <QueryProvider>
-          <StatusBar style="auto" />
-          <Stack>
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen
-              name="+not-found"
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen name="about" />
-          </Stack>
-        </QueryProvider>
-      </LocaleProvider>
-    </ThemeProvider>
+      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      <Stack.Screen
+        name="+not-found"
+        options={{ title: "Not Found" }}
+      />
+      <Stack.Screen name="about" />
+      <Stack.Screen
+        name="todolist"
+        options={{
+          title: "To Do List",
+        }}
+      />
+    </Stack>
   );
 }

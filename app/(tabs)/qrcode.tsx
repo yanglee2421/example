@@ -1,4 +1,4 @@
-import { CameraView, type CameraType, useCameraPermissions } from "expo-camera";
+import { type CameraType, CameraView, useCameraPermissions } from "expo-camera";
 import React from "react";
 import { Button, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
@@ -38,9 +38,9 @@ export default function Qrcode() {
     );
   }
 
-  function toggleCameraFacing() {
+  const toggleCameraFacing = () => {
     setFacing((current) => (current === "back" ? "front" : "back"));
-  }
+  };
 
   return (
     <View style={styles.container}>
@@ -48,10 +48,7 @@ export default function Qrcode() {
         style={styles.camera}
         facing={facing}
         barcodeScannerSettings={{ barcodeTypes: ["qr"] }}
-        onBarcodeScanned={(res) => {
-          console.log(res.data);
-          setQrRes(res.data);
-        }}
+        onBarcodeScanned={(res) => setQrRes(res.data)}
       >
         <View style={styles.buttonContainer}>
           <TouchableOpacity style={styles.button} onPress={toggleCameraFacing}>

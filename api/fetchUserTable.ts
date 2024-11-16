@@ -1,9 +1,9 @@
-import { useQuery } from "@tanstack/react-query";
+import { queryOptions } from "@tanstack/react-query";
 import { db } from "@/db/db";
 
-export function useUserTable(params: Params) {
-  return useQuery({
-    queryKey: ["userTable", params],
+export function fetchUserTable(params: Params) {
+  return queryOptions({
+    queryKey: ["db", "userTable", params],
     queryFn() {
       return db.query.userTable.findMany({
         where(userTable, filters) {

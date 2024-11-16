@@ -3,7 +3,7 @@ export default {
   name: "example",
   slug: "example",
   scheme: "example",
-  version: "0.0.1",
+  version: "0.0.2",
   orientation: "portrait",
   icon: "./assets/icon.png",
   userInterfaceStyle: "light",
@@ -14,14 +14,14 @@ export default {
   },
   ios: {
     supportsTablet: true,
-    bundleIdentifier: "com.yanglee2421.blankrn",
+    bundleIdentifier: "app.vercel.yanglee2421",
   },
   android: {
     adaptiveIcon: {
       foregroundImage: "./assets/adaptive-icon.png",
       backgroundColor: "#ffffff",
     },
-    package: "com.yanglee2421.blankrn",
+    package: "app.vercel.yanglee2421",
   },
   web: {
     favicon: "./assets/favicon.png",
@@ -47,4 +47,5 @@ export default {
       projectId: "8b802171-0869-40bc-a384-ca9d63811f2b",
     },
   },
+  newArchEnabled: true,
 } satisfies ExpoConfig;
