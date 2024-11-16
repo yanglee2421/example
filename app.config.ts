@@ -1,14 +1,14 @@
 import type { ExpoConfig } from "expo/config";
 export default {
-  name: "example",
+  name: "Example",
   slug: "example",
   scheme: "example",
-  version: "0.0.3",
+  version: "0.0.4",
   orientation: "portrait",
-  icon: "./assets/3.jpg",
+  icon: "./assets/icon.png",
   userInterfaceStyle: "light",
   splash: {
-    image: "./assets/splash.jpg",
+    image: "./assets/splash.png",
     resizeMode: "contain",
     backgroundColor: "#ffffff",
   },
@@ -20,7 +20,7 @@ export default {
   },
   android: {
     adaptiveIcon: {
-      foregroundImage: "./assets/3.jpg",
+      foregroundImage: "./assets/icon.png",
       backgroundColor: "#ffffff",
     },
     package: "app.vercel.yanglee2421",
