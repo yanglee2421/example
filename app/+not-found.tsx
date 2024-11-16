@@ -1,13 +1,24 @@
-import { Text, Button } from "@rneui/themed";
+import { Button, Text, useTheme } from "@rneui/themed";
 import { Link } from "expo-router";
-import { StyleSheet, View } from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
 
 export default function NotFound() {
+  const { theme } = useTheme();
+
   return (
     <View style={styles.container}>
-      <Text h1>not found</Text>
+      <Text h1>Not Found</Text>
       <Link href="/" asChild>
-        <Button title={"take me home"} />
+        <Pressable>
+          <Button
+            disabled
+            disabledStyle={{ backgroundColor: theme.colors.primary }}
+          >
+            <Text style={{ color: "#fff" }}>
+              Take me home
+            </Text>
+          </Button>
+        </Pressable>
       </Link>
     </View>
   );
@@ -18,5 +29,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+
+    gap: 64,
   },
 });

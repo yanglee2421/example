@@ -6,7 +6,7 @@ import { zh } from "./zh";
 
 i18next.use(initReactI18next).init({
   interpolation: { escapeValue: false },
-  ns: ["translation", "common", "button", "label"],
+  ns: ["translation", "common"],
   defaultNS: "translation",
   fallbackNS: "common",
   // lng: "en-US",

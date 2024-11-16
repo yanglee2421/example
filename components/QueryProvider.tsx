@@ -1,3 +1,5 @@
+import { qqlykm } from "@/api/qqlykm";
+import { useStorageStore } from "@/hooks/useStorageStore";
 import NetInfo from "@react-native-community/netinfo";
 import {
   focusManager,
@@ -26,7 +28,7 @@ const queryClient = new QueryClient({
   },
 });
 
-export const QueryProvider = (props: React.PropsWithChildren) => {
+const useSyncOnline = () =>
   React.useEffect(() => {
     if (Platform.OS === "web") {
       return;
@@ -39,6 +41,7 @@ export const QueryProvider = (props: React.PropsWithChildren) => {
     });
   }, []);
 
+const useSyncFocus = () =>
   React.useEffect(() => {
     if (Platform.OS === "web") {
       return;
@@ -52,6 +55,29 @@ export const QueryProvider = (props: React.PropsWithChildren) => {
       subscription.remove();
     };
   }, []);
+
+const useSyncQqlykm = () => {
+  const qqlykmKey = useStorageStore((s) => s.qqlykmKey);
+  React.useEffect(() => {
+    if (!qqlykmKey) return;
+
+    const id = qqlykm.interceptors.request.use((config) => {
+      const params = { ...(config.params || {}), key: qqlykmKey };
+      config.params = params;
+
+      return config;
+    });
+
+    return () => {
+      qqlykm.interceptors.request.eject(id);
+    };
+  }, [qqlykmKey]);
+};
+
+export const QueryProvider = (props: React.PropsWithChildren) => {
+  useSyncOnline();
+  useSyncFocus();
+  useSyncQqlykm();
 
   return (
     <QueryClientProvider client={queryClient}>

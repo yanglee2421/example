@@ -10,15 +10,17 @@ import { useSyncLocale } from "@/hooks/useSyncLocale";
 import { ErrorScreen } from "@/components/ErrorScreen";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { useTheme } from "@rneui/themed";
+import { useStorageHasHydrated } from "@/hooks/useStorageStore";
 
 SplashScreen.preventAutoHideAsync();
 
+const fontUri = require("@/assets/fonts/SpaceMono-Regular.ttf");
+
 export default function RootLayout() {
   useSyncLocale();
+  const hasHydrated = useStorageHasHydrated();
   const dbState = useMigrations(db, migrations);
-  const [fontLoaded, error] = useFonts({
-    SpaceMono: require("@/assets/fonts/SpaceMono-Regular.ttf"),
-  });
+  const [fontLoaded, error] = useFonts({ SpaceMono: fontUri });
 
   React.useEffect(() => {
     if (fontLoaded || error || dbState.error || dbState.success) {
@@ -30,7 +32,7 @@ export default function RootLayout() {
     return <ErrorScreen />;
   }
 
-  return fontLoaded && dbState.success && (
+  return hasHydrated && fontLoaded && dbState.success && (
     <QueryProvider>
       <ThemeProvider>
         <StatusBar style="auto" />
@@ -60,12 +62,14 @@ function RootRoute() {
         name="+not-found"
         options={{ title: "Not Found" }}
       />
-      <Stack.Screen name="about" />
+      <Stack.Screen name="about" options={{ title: "About" }} />
+      <Stack.Screen name="bing" options={{ title: "Bing" }} />
+      <Stack.Screen name="network" options={{ title: "Network" }} />
+      <Stack.Screen name="news" options={{ title: "News" }} />
+      <Stack.Screen name="qrcode" options={{ title: "QR Code Scaner" }} />
       <Stack.Screen
         name="todolist"
-        options={{
-          title: "To Do List",
-        }}
+        options={{ title: "To Do List" }}
       />
     </Stack>
   );

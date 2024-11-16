@@ -40,20 +40,20 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
-        name="qrcode"
+        name="atom"
         options={{
-          title: "QRcode Ccaner",
+          title: "Atom",
           tabBarIcon({ color }) {
-            return <Icon name="qrcode-scan" size={28} color={color} />;
+            return <Icon name="atom" size={28} color={color} />;
           },
         }}
       />
       <Tabs.Screen
-        name="account"
+        name="settings"
         options={{
           title: "Settings",
           tabBarIcon({ color }) {
-            return <Icon name="cog-outline" size={28} color={color} />;
+            return <Icon name="cogs" size={28} color={color} />;
           },
         }}
       />

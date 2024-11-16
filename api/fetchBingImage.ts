@@ -1,14 +1,20 @@
 import { queryOptions } from "@tanstack/react-query";
 import axios from "axios";
 
-const baseURL = "https://www.bing.com";
+const CN_BING = "https://cn.bing.com";
+const WWW_BING = "https://www.bing.com";
+const TIMEOUT = 1000 * 30;
+const path = "/HPImageArchive.aspx";
 
-const wwwBing = axios.create({
-  timeout: 1000 * 30,
-  baseURL,
+const cnBing = axios.create({
+  timeout: TIMEOUT,
+  baseURL: CN_BING,
 });
 
-const path = "/HPImageArchive.aspx";
+const wwwBing = axios.create({
+  timeout: TIMEOUT,
+  baseURL: WWW_BING,
+});
 
 type Params = {
   idx: number;
@@ -49,11 +55,18 @@ type Res = {
   };
 };
 
+export const fetchCnBingImage = (params: Params) =>
+  queryOptions({
+    queryKey: [CN_BING, path, "GET", params],
+    queryFn({ signal }) {
+      return cnBing<Res>({ url: path, params, signal });
+    },
+  });
+
 export const fetchBingImage = (params: Params) =>
   queryOptions({
-    queryKey: [baseURL, path, "GET", params],
-    async queryFn({ signal }) {
-      const data = await wwwBing<Res>({ url: path, params, signal });
-      return data;
+    queryKey: [WWW_BING, path, "GET", params],
+    queryFn({ signal }) {
+      return wwwBing<Res>({ url: path, params, signal });
     },
   });

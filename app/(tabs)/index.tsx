@@ -1,93 +1,78 @@
-import { fetchCnBingImage } from "@/api/fetchCnBingImage";
+import { fetchHistoryGet } from "@/api/fetchHistoryGet";
 import { useLocaleDate } from "@/hooks/useLocaleDate";
 import { useLocaleTime } from "@/hooks/useLocaleTime";
-import { Card, makeStyles, Text, Tile, useTheme } from "@rneui/themed";
+import { Card, makeStyles, Text, useTheme } from "@rneui/themed";
 import { useQuery } from "@tanstack/react-query";
 import { useLocales } from "expo-localization";
-import React from "react";
 import { RefreshControl, ScrollView } from "react-native";
 import { openBrowserAsync } from "expo-web-browser";
 import { openURL } from "expo-linking";
+import { Empty } from "@/components/Empty";
 
 export default function Home() {
   const [{ languageTag }] = useLocales();
   const date = useLocaleDate(languageTag);
   const time = useLocaleTime(languageTag);
-  const styles = useStyles();
-  const bingImgs = useQuery(fetchCnBingImage({ format: "js", idx: 0, n: 8 }));
-  const [imgWidth, setImgWidth] = React.useState(0);
   const { theme } = useTheme();
+  const history = useQuery(fetchHistoryGet());
+  const styles = useStyles();
 
   return (
     <ScrollView
-      contentContainerStyle={styles.container}
-      onLayout={(e) => {
-        setImgWidth(e.nativeEvent.layout.width);
-      }}
       refreshControl={
         <RefreshControl
-          refreshing={bingImgs.isRefetching}
-          onRefresh={() => bingImgs.refetch()}
-          progressBackgroundColor={theme.colors.black}
+          refreshing={history.isRefetching}
+          onRefresh={() => history.refetch()}
           colors={[theme.colors.primary]}
         />
       }
+      contentContainerStyle={styles.container}
     >
-      <Card
-        containerStyle={{ margin: 0 }}
-      >
-        <Card.Title>Clock</Card.Title>
-        <Card.FeaturedTitle style={styles.time}>{time}</Card.FeaturedTitle>
-        <Card.FeaturedSubtitle style={styles.date}>
+      <Card>
+        <Card.Title>{time}</Card.Title>
+        <Card.FeaturedSubtitle style={{ color: theme.colors.secondary }}>
           {date}
         </Card.FeaturedSubtitle>
       </Card>
+      {history.isPending && <Empty />}
+      {history.isSuccess && history.data.data.data.map((i) => (
+        <Card key={i.url}>
+          <Card.FeaturedTitle style={styles.itemTitle}>
+            {i.year}
+          </Card.FeaturedTitle>
+          <Text
+            onPress={async () => {
+              try {
+                await openBrowserAsync(i.url, {
+                  toolbarColor: theme.colors.background,
+                  enableBarCollapsing: true,
+                  enableDefaultShareMenuItem: true,
 
-      {bingImgs.isSuccess && bingImgs.data.data.images.map((i) => (
-        <Tile
-          key={i.url}
-          imageSrc={{ uri: `https://cn.bing.com${i.url}` }}
-          title={i.title}
-          caption={
-            <Text
-              onPress={async () => {
-                try {
-                  await openBrowserAsync(i.copyrightlink, {
-                    toolbarColor: theme.colors.background,
-                    enableBarCollapsing: true,
-                    enableDefaultShareMenuItem: true,
-
-                    createTask: false,
-                  });
-                } catch {
-                  openURL(i.copyrightlink);
-                }
-              }}
-              style={{
-                textDecorationLine: "underline",
-                color: "#fff",
-              }}
-            >
-              {i.copyright}
-            </Text>
-          }
-          featured
-          width={imgWidth - 24}
-        />
+                  createTask: false,
+                });
+              } catch {
+                openURL(i.url);
+              }
+            }}
+            style={styles.itemText}
+          >
+            {i.title}
+          </Text>
+        </Card>
       ))}
     </ScrollView>
   );
 }
 
 const useStyles = makeStyles((theme) => ({
-  container: {
-    gap: 12,
-    padding: 12,
-  },
-  time: {
+  container: {},
+  itemTitle: {
     color: theme.colors.black,
   },
-  date: {
-    color: theme.colors.secondary,
+  itemText: {
+    textDecorationLine: "underline",
+  },
+  empty: {
+    padding: 12,
   },
 }));

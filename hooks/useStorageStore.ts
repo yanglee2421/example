@@ -6,7 +6,7 @@ import { type WritableDraft } from "immer";
 import React from "react";
 
 type StoreState = {
-  msg: string;
+  qqlykmKey: string;
 };
 type StoreActions = {
   set(
@@ -21,7 +21,7 @@ type Store = StoreState & StoreActions;
 export const useStorageStore = create<Store>()(
   persist(
     immer((set) => {
-      return { set, msg: "" };
+      return { set, qqlykmKey: "" };
     }),
     {
       name: "useStorageStore",

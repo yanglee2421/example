@@ -3,12 +3,12 @@ export default {
   name: "example",
   slug: "example",
   scheme: "example",
-  version: "0.0.2",
+  version: "0.0.3",
   orientation: "portrait",
-  icon: "./assets/icon.png",
+  icon: "./assets/3.jpg",
   userInterfaceStyle: "light",
   splash: {
-    image: "./assets/splash.png",
+    image: "./assets/splash.jpg",
     resizeMode: "contain",
     backgroundColor: "#ffffff",
   },
@@ -20,7 +20,7 @@ export default {
   },
   android: {
     adaptiveIcon: {
-      foregroundImage: "./assets/adaptive-icon.png",
+      foregroundImage: "./assets/3.jpg",
       backgroundColor: "#ffffff",
     },
     package: "app.vercel.yanglee2421",
