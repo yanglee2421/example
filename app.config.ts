@@ -12,6 +12,8 @@ export default {
     resizeMode: "contain",
     backgroundColor: "#ffffff",
   },
+
+  // Platform
   ios: {
     supportsTablet: true,
     bundleIdentifier: "app.vercel.yanglee2421",
@@ -23,9 +25,8 @@ export default {
     },
     package: "app.vercel.yanglee2421",
   },
-  web: {
-    favicon: "./assets/favicon.png",
-  },
+
+  // Expo SDK Config
   plugins: [
     "expo-font",
     "expo-router",
