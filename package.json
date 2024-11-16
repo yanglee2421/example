@@ -49,7 +49,7 @@
     "@babel/core": "^7.26.0",
     "@types/react": "~18.3.12",
     "drizzle-kit": "^0.28.1",
-    "eas-cli": "^10.2.1",
+    "eas-cli": "^13.2.3",
     "eslint-config-expo": "~8.0.1",
     "typescript": "^5.3.3"
   },
