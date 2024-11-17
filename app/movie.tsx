@@ -47,7 +47,10 @@ export default function Page() {
               <Card key={item.title}>
                 <Card.Title>{item.title}</Card.Title>
                 <Card.Divider />
-                <Card.Image source={{ uri: item.picUrl }} resizeMode="center" />
+                <Card.Image
+                  source={{ uri: item.picUrl }}
+                  resizeMode="contain"
+                />
                 <Card.FeaturedTitle
                   style={{ color: theme.colors.black, marginBlockStart: 8 }}
                 >
