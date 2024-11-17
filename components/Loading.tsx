@@ -1,5 +1,4 @@
 import { makeStyles, Text } from "@rneui/themed";
-import { Translation } from "react-i18next";
 import { View } from "react-native";
 
 export function Loading() {
@@ -7,9 +6,7 @@ export function Loading() {
 
   return (
     <View style={styles.container}>
-      <Translation>
-        {(t) => <Text style={styles.text}>{t("Loading...")}</Text>}
-      </Translation>
+      <Text style={styles.text}>Loading...</Text>
     </View>
   );
 }

@@ -1,16 +1,17 @@
 import type { ExpoConfig } from "expo/config";
+
 export default {
   name: "Example",
   slug: "example",
   scheme: "example",
-  version: "0.0.7",
+  version: "0.0.8",
   orientation: "portrait",
   icon: "./assets/icon.png",
   userInterfaceStyle: "automatic",
   splash: {
     image: "./assets/icon.png",
     resizeMode: "contain",
-    backgroundColor: "#ffffff",
+    backgroundColor: "#6366f1",
   },
 
   // Platform
@@ -21,7 +22,7 @@ export default {
   android: {
     adaptiveIcon: {
       foregroundImage: "./assets/icon.png",
-      backgroundColor: "#ffffff",
+      backgroundColor: "#6366f1",
     },
     package: "app.vercel.yanglee2421",
   },
@@ -30,7 +31,6 @@ export default {
   plugins: [
     "expo-font",
     "expo-router",
-    "expo-localization",
     [
       "expo-camera",
       {

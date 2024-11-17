@@ -1,10 +1,9 @@
+import React from "react";
+import { Linking, RefreshControl, ScrollView, Share } from "react-native";
+import { openBrowserAsync } from "expo-web-browser";
+import { useQuery } from "@tanstack/react-query";
 import { fetchCnBingImage } from "@/api/fetchBingImage";
 import { makeStyles, Text, Tile, useTheme } from "@rneui/themed";
-import { useQuery } from "@tanstack/react-query";
-import React from "react";
-import { RefreshControl, ScrollView, Share } from "react-native";
-import { openBrowserAsync } from "expo-web-browser";
-import { openURL } from "expo-linking";
 
 export default function Bing() {
   const styles = useStyles();
@@ -44,7 +43,7 @@ export default function Bing() {
                     createTask: false,
                   });
                 } catch {
-                  openURL(i.copyrightlink);
+                  Linking.openURL(i.copyrightlink);
                 }
               }}
               style={{

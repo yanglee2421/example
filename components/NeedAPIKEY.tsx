@@ -8,7 +8,7 @@ export function NeedAPIKEY() {
 
   return (
     <Card>
-      <Card.Title>API Key</Card.Title>
+      <Card.Title>Need API Key</Card.Title>
       <Input value={value} onChangeText={setValue} />
       <Button
         icon={{

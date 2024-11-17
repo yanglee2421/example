@@ -1,7 +1,6 @@
 import { SocialIcon, useTheme } from "@rneui/themed";
-import { openURL } from "expo-linking";
 import { openBrowserAsync } from "expo-web-browser";
-import { ScrollView } from "react-native";
+import { Linking, ScrollView } from "react-native";
 
 const githubUrl = "https://github.com/yanglee2421";
 
@@ -21,7 +20,7 @@ export default function About() {
               createTask: false,
             });
           } catch {
-            openURL(githubUrl);
+            Linking.openURL(githubUrl);
           }
         }}
         type="github"

@@ -1,26 +1,16 @@
+import { onAnimationFrame } from "@/lib/utils";
 import React from "react";
 
-export function useLocaleTime(languageTag: string) {
+export function useLocaleTime() {
   return React.useSyncExternalStore(
-    (onStoreChange) => {
-      let animate = 0;
-
-      const run = () => {
-        animate = requestAnimationFrame(run);
-        onStoreChange();
-      };
-
-      run();
-
-      return () => cancelAnimationFrame(animate);
-    },
-    () => getTimeString(languageTag),
-    () => getTimeString(languageTag),
+    onAnimationFrame,
+    () => getTimeString(),
+    () => getTimeString(),
   );
 }
 
-function getTimeString(languageTag: string) {
-  return new Date().toLocaleTimeString(languageTag, {
+function getTimeString() {
+  return new Date().toLocaleTimeString(void 0, {
     timeStyle: "short",
     hour12: false,
   });

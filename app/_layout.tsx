@@ -1,32 +1,37 @@
+import React from "react";
+import { useTheme } from "@rneui/themed";
 import { useFonts } from "expo-font";
 import { SplashScreen, Stack } from "expo-router";
-import { StatusBar } from "expo-status-bar";
-import React from "react";
-import { QueryProvider } from "@/components/QueryProvider";
 import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
-import migrations from "@/drizzle/migrations.js";
 import { db } from "@/db/db";
-import { useSyncLocale } from "@/hooks/useSyncLocale";
-import { ErrorScreen } from "@/components/ErrorScreen";
-import { ThemeProvider } from "@/components/ThemeProvider";
-import { useTheme } from "@rneui/themed";
+import migrations from "@/drizzle/migrations.js";
 import { useStorageHasHydrated } from "@/hooks/useStorageStore";
+import { ErrorScreen } from "@/components/ErrorScreen";
+import { QueryProvider } from "@/components/QueryProvider";
+import { ThemeProvider } from "@/components/ThemeProvider";
 
 SplashScreen.preventAutoHideAsync();
 
 const fontUri = require("@/assets/fonts/SpaceMono-Regular.ttf");
 
 export default function RootLayout() {
-  useSyncLocale();
   const hasHydrated = useStorageHasHydrated();
   const dbState = useMigrations(db, migrations);
   const [fontLoaded, error] = useFonts({ SpaceMono: fontUri });
 
   React.useEffect(() => {
-    if (fontLoaded || error || dbState.error || dbState.success) {
+    // Load Failed
+    if (dbState.error || dbState.success) {
       SplashScreen.hideAsync();
+      return;
     }
-  }, [fontLoaded, error, dbState.error, dbState.success]);
+
+    // Load Successfully
+    if (hasHydrated && fontLoaded && dbState.success) {
+      SplashScreen.hideAsync();
+      return;
+    }
+  }, [fontLoaded, error, dbState.error, dbState.success, hasHydrated]);
 
   if (error || dbState.error) {
     return <ErrorScreen />;
@@ -35,7 +40,6 @@ export default function RootLayout() {
   return hasHydrated && fontLoaded && dbState.success && (
     <QueryProvider>
       <ThemeProvider>
-        <StatusBar style="auto" />
         <RootRoute />
       </ThemeProvider>
     </QueryProvider>

@@ -1,8 +1,6 @@
-import { RefreshControl, ScrollView } from "react-native";
+import { Linking, RefreshControl, ScrollView } from "react-native";
 import { Card, makeStyles, Text, useTheme } from "@rneui/themed";
 import { useQuery } from "@tanstack/react-query";
-import { openURL } from "expo-linking";
-import { useLocales } from "expo-localization";
 import { openBrowserAsync } from "expo-web-browser";
 import { fetchHistoryGet } from "@/api/fetchHistoryGet";
 import { useLocaleDate } from "@/hooks/useLocaleDate";
@@ -14,9 +12,8 @@ import { useStorageStore } from "@/hooks/useStorageStore";
 const fetcher = fetchHistoryGet();
 
 export default function Page() {
-  const [{ languageTag }] = useLocales();
-  const date = useLocaleDate(languageTag);
-  const time = useLocaleTime(languageTag);
+  const date = useLocaleDate();
+  const time = useLocaleTime();
   const { theme } = useTheme();
   const apikey = useStorageStore((s) => s.qqlykmKey);
   const history = useQuery({ ...fetcher, enabled: !!apikey });
@@ -63,7 +60,7 @@ export default function Page() {
                   createTask: false,
                 });
               } catch {
-                openURL(i.url);
+                Linking.openURL(i.url);
               }
             }}
             style={styles.itemText}

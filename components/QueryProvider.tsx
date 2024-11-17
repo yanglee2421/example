@@ -1,5 +1,5 @@
-import { qqlykm } from "@/api/qqlykm";
-import { useStorageStore } from "@/hooks/useStorageStore";
+import React from "react";
+import { AppState, Platform } from "react-native";
 import NetInfo from "@react-native-community/netinfo";
 import {
   focusManager,
@@ -7,8 +7,8 @@ import {
   QueryClient,
   QueryClientProvider,
 } from "@tanstack/react-query";
-import React from "react";
-import { AppState, Platform } from "react-native";
+import { qqlykm } from "@/api/qqlykm";
+import { useStorageStore } from "@/hooks/useStorageStore";
 
 const queryClient = new QueryClient({
   defaultOptions: {

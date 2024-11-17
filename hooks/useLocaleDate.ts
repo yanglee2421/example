@@ -1,26 +1,16 @@
+import { onAnimationFrame } from "@/lib/utils";
 import React from "react";
 
-export function useLocaleDate(languageTag: string) {
+export function useLocaleDate() {
   return React.useSyncExternalStore(
-    (onStoreChange) => {
-      let animate = 0;
-
-      const run = () => {
-        animate = requestAnimationFrame(run);
-        onStoreChange();
-      };
-
-      run();
-
-      return () => cancelAnimationFrame(animate);
-    },
-    () => getDateString(languageTag),
-    () => getDateString(languageTag),
+    onAnimationFrame,
+    () => getDateString(),
+    () => getDateString(),
   );
 }
 
-function getDateString(languageTag: string) {
-  return new Date().toLocaleDateString(languageTag, {
+function getDateString() {
+  return new Date().toLocaleDateString(void 0, {
     weekday: "short",
     year: "numeric",
     month: "2-digit",

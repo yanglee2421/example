@@ -1,9 +1,10 @@
 import {
   createTheme,
   ThemeProvider as RneuiThemeProvider,
+  useTheme,
 } from "@rneui/themed";
 import React from "react";
-import { useColorScheme } from "react-native";
+import { StatusBar, useColorScheme } from "react-native";
 
 const commonTheme = {
   lightColors: {
@@ -55,7 +56,22 @@ export const ThemeProvider = (props: React.PropsWithChildren) => {
     <RneuiThemeProvider
       theme={colorScheme === "dark" ? darkTheme : lightTheme}
     >
+      <RnStatusBar />
       {props.children}
     </RneuiThemeProvider>
   );
 };
+
+function RnStatusBar() {
+  const { theme } = useTheme();
+
+  return (
+    <StatusBar
+      animated
+      hidden={false}
+      barStyle={theme.mode !== "dark" ? "dark-content" : "light-content"}
+      // Android Only
+      backgroundColor={theme.colors.background}
+    />
+  );
+}
