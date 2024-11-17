@@ -64,6 +64,11 @@ const list = [
     label: "Rand Text",
     href: "/randtext",
   },
+  {
+    icon: <Icon name="cogs" />,
+    label: "Settings",
+    href: "/settings",
+  },
 ].sort((c, n) => c.label.localeCompare(n.label));
 
 export default function Account() {

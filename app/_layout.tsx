@@ -73,6 +73,7 @@ function RootRoute() {
       <Stack.Screen name="news" options={{ title: "News" }} />
       <Stack.Screen name="qrcode" options={{ title: "QR Code Scaner" }} />
       <Stack.Screen name="randtext" options={{ title: "Rand Text" }} />
+      <Stack.Screen name="settings" options={{ title: "Settings" }} />
       <Stack.Screen
         name="todolist"
         options={{ title: "To Do List" }}
