@@ -1,11 +1,10 @@
-import { Button, Card, makeStyles } from "@rneui/themed";
 import React from "react";
+import { Text, View } from "react-native";
 import { getIpAddressAsync } from "expo-network";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { setStringAsync } from "expo-clipboard";
 
 export default function Network() {
-  const styles = useStyles();
   const ip = useQuery({
     queryKey: ["getIpAddressAsync"],
     queryFn() {
@@ -25,31 +24,22 @@ export default function Network() {
   });
 
   return (
-    <Card>
-      <Card.Title>IP</Card.Title>
-      {ip.isPending && <Card.FeaturedSubtitle>Loading...
-      </Card.FeaturedSubtitle>}
+    <View>
+      <Text>IP</Text>
+      {ip.isPending && <Text>Loading...</Text>}
       {ip.isSuccess &&
         (
           <>
-            <Card.FeaturedSubtitle style={styles.ip}>
+            <Text>
               {ip.data}
-            </Card.FeaturedSubtitle>
-            <Button
-              icon={{ name: "content-copy", color: "#fff" }}
+            </Text>
+            <Text
               onPress={() => copy.mutate(ip.data)}
-              loading={copy.isPending}
             >
               Copy
-            </Button>
+            </Text>
           </>
         )}
-    </Card>
+    </View>
   );
 }
-
-const useStyles = makeStyles((theme) => ({
-  ip: {
-    color: theme.colors.black,
-  },
-}));

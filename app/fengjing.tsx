@@ -1,12 +1,14 @@
 import React from "react";
 import {
   FlatList,
+  Image,
+  Pressable,
   RefreshControl,
   ScrollView,
   Share,
+  Text,
   View,
 } from "react-native";
-import { Button, Card, Text, Tile, useTheme } from "@rneui/themed";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { fetchFengjing } from "@/api/fetchFengjing";
 import { Loading } from "@/components/Loading";
@@ -16,7 +18,6 @@ import { useStorageStore } from "@/hooks/useStorageStore";
 const fetcher = fetchFengjing();
 
 export default function Page() {
-  const { theme } = useTheme();
   const apikey = useStorageStore((s) => s.qqlykmKey);
   const fengjing = useInfiniteQuery({ ...fetcher, enabled: !!apikey });
   const queryClient = useQueryClient();
@@ -35,13 +36,10 @@ export default function Page() {
                 queryClient.removeQueries({ queryKey: fetcher.queryKey });
                 fengjing.refetch();
               }}
-              colors={[theme.colors.primary]}
             />
           }
         >
-          <Card>
-            <Text>Error</Text>
-          </Card>
+          <Text>Error</Text>
         </ScrollView>
       )}
       {fengjing.isSuccess && (
@@ -54,40 +52,25 @@ export default function Page() {
                   queryClient.removeQueries({ queryKey: fetcher.queryKey });
                   fengjing.refetch();
                 }}
-                colors={[theme.colors.primary]}
               />
             }
             data={fengjing.data.pages}
             renderItem={({ item, index }) => (
               <React.Fragment key={item.data.data.cover}>
-                <View
-                  style={{ margin: 12, marginBlockEnd: 0 }}
-                >
-                  <Tile
-                    imageSrc={{ uri: item.data.data.cover }}
-                    imageProps={{ resizeMode: "contain" }}
-                    width={imgWidth}
-                    height={imgWidth / 16 * 9}
-                    title={item.data.data.tag}
-                    featured
-                    activeOpacity={0.7}
-                    onPress={() =>
-                      Share.share({ url: item.data.data.cover })}
-                  />
-                </View>
-
+                <Image
+                  source={{ uri: item.data.data.cover }}
+                  width={imgWidth}
+                  height={imgWidth / 16 * 9}
+                />
                 {Object.is(index + 1, fengjing.data.pages.length) && (
-                  <View
-                    style={{ margin: 12 }}
+                  <Pressable
+                    onPress={() => fengjing.fetchNextPage()}
+                    onLayout={(e) =>
+                      setImgWidth(e.nativeEvent.layout.width)}
+                    android_ripple={{ radius: imgWidth }}
                   >
-                    <Button
-                      onPress={() => fengjing.fetchNextPage()}
-                      loading={fengjing.isFetchingNextPage}
-                      onLayout={(e) => setImgWidth(e.nativeEvent.layout.width)}
-                    >
-                      Click to fetch more
-                    </Button>
-                  </View>
+                    <Text>Click to fetch more</Text>
+                  </Pressable>
                 )}
               </React.Fragment>
             )}

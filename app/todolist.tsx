@@ -1,19 +1,15 @@
-import {
-  Avatar,
-  Button,
-  Card,
-  Icon,
-  Input,
-  ListItem,
-  Skeleton,
-  Text,
-  useTheme,
-} from "@rneui/themed";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { eq } from "drizzle-orm";
 import React from "react";
-import { FlatList, View } from "react-native";
+import {
+  FlatList,
+  Pressable,
+  RefreshControl,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
+import { eq } from "drizzle-orm";
 import { useImmer } from "use-immer";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { db } from "@/db/db";
 import { userTable } from "@/db/schema";
 import { fetchUserTable } from "@/api/fetchUserTable";
@@ -23,7 +19,6 @@ export default function ToDoList() {
     name: "",
     email: "",
   });
-  const theme = useTheme();
   const fetcher = fetchUserTable(params);
   const query = useQuery(fetcher);
   const queryClient = useQueryClient();
@@ -44,98 +39,65 @@ export default function ToDoList() {
 
   return (
     <View>
-      <Card>
-        <Card.Title>Search</Card.Title>
-        <Input
+      <View>
+        <TextInput
           value={params.name}
           onChangeText={(evt) => {
             updateParams((draft) => {
               draft.name = evt;
             });
           }}
-          label="name"
         />
-        <Input
+        <TextInput
           value={params.email}
           onChangeText={(evt) => {
             updateParams((draft) => {
               draft.email = evt;
             });
           }}
-          label={"email"}
         />
-        <Button
+        <Pressable
           onPress={() => {
             mutation.mutate();
           }}
           disabled={mutation.isPending}
-          icon={<Icon name="plus" color="white" />}
         >
-          create
-        </Button>
-      </Card>
-      <Card containerStyle={{ padding: 0 }}>
-        {(() => {
-          if (query.isPending) {
-            return <Skeleton />;
-          }
-
-          if (query.isError) {
-            return <Text style={{ color: "#f00" }}>{query.error.message}</Text>;
-          }
-
-          return (
-            <FlatList
-              data={query.data}
-              renderItem={(item) => {
-                return (
-                  <ListItem.Swipeable
-                    rightContent={() => (
-                      <Button
-                        containerStyle={{
-                          backgroundColor: theme.theme.colors.error,
-                          flex: 1,
-                          justifyContent: "center",
-                          alignItems: "center",
-                        }}
-                        type="clear"
-                        icon={{
-                          name: "delete-outline",
-                          type: "material-community",
-                          color: "white",
-                        }}
-                        onPress={async () => {
-                          await db
-                            .delete(userTable)
-                            .where(eq(userTable.id, item.item.id));
-                          query.refetch();
-                        }}
-                      />
-                    )}
-                    bottomDivider
-                  >
-                    <Avatar
-                      rounded
-                      source={{
-                        uri: "https://randomuser.me/api/portraits/men/36.jpg",
-                      }}
-                    />
-                    <ListItem.Content>
-                      <ListItem.Title>{item.item.name}</ListItem.Title>
-                      <ListItem.Subtitle>{item.item.email}</ListItem.Subtitle>
-                    </ListItem.Content>
-                    <ListItem.Chevron />
-                  </ListItem.Swipeable>
-                );
-              }}
+          <Text>
+            create
+          </Text>
+        </Pressable>
+      </View>
+      {query.isSuccess && (
+        <FlatList
+          refreshControl={
+            <RefreshControl
               refreshing={query.isRefetching}
-              onRefresh={() => {
-                query.refetch();
-              }}
+              onRefresh={() => query.refetch()}
+              colors={["#000"]}
             />
-          );
-        })()}
-      </Card>
+          }
+          data={query.data}
+          keyExtractor={(i) => i.id.toString()}
+          renderItem={(item) => {
+            return (
+              <View>
+                <Text>{item.item.name}</Text>
+                <Text>{item.item.email}</Text>
+                <Pressable
+                  onPress={async () => {
+                    await db
+                      .delete(userTable)
+                      .where(eq(userTable.id, item.item.id));
+                    query.refetch();
+                  }}
+                >
+                  <Text>Pressable</Text>
+                </Pressable>
+              </View>
+            );
+          }}
+        />
+      )}
     </View>
   );
 }

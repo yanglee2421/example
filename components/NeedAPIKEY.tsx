@@ -1,5 +1,5 @@
-import { Button, Card, Input } from "@rneui/themed";
 import React from "react";
+import { Button, Text, TextInput, View } from "react-native";
 import { useStorageStore } from "@/hooks/useStorageStore";
 
 export function NeedAPIKEY() {
@@ -7,22 +7,16 @@ export function NeedAPIKEY() {
   const [value, setValue] = React.useState("");
 
   return (
-    <Card>
-      <Card.Title>Need API Key</Card.Title>
-      <Input value={value} onChangeText={setValue} />
+    <View>
+      <Text>Need API Key</Text>
+      <TextInput value={value} onChangeText={setValue} />
       <Button
-        icon={{
-          name: "content-save-outline",
-          type: "material-community",
-          color: "#fff",
-        }}
+        title="Save"
         onPress={() =>
           set((d) => {
             d.qqlykmKey = value;
           })}
-      >
-        Save
-      </Button>
-    </Card>
+      />
+    </View>
   );
 }

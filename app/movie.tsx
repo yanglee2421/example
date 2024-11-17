@@ -1,5 +1,11 @@
-import { FlatList, RefreshControl, ScrollView } from "react-native";
-import { Button, Card, Text, useTheme } from "@rneui/themed";
+import {
+  FlatList,
+  Image,
+  RefreshControl,
+  ScrollView,
+  Text,
+  View,
+} from "react-native";
 import { useQuery } from "@tanstack/react-query";
 import { fetchJijiangshangying } from "@/api/fetchJijiangshangying";
 import { Loading } from "@/components/Loading";
@@ -11,7 +17,6 @@ const fetcher = fetchJijiangshangying();
 export default function Page() {
   const apikey = useStorageStore((s) => s.qqlykmKey);
   const movies = useQuery({ ...fetcher, enabled: !!apikey });
-  const { theme } = useTheme();
 
   return (
     <>
@@ -23,13 +28,10 @@ export default function Page() {
             <RefreshControl
               refreshing={movies.isRefetching}
               onRefresh={() => movies.refetch()}
-              colors={[theme.colors.primary]}
             />
           }
         >
-          <Card>
-            <Text>Error</Text>
-          </Card>
+          <Text>Error</Text>
         </ScrollView>
       )}
       {movies.isSuccess && (
@@ -39,40 +41,22 @@ export default function Page() {
               <RefreshControl
                 refreshing={movies.isRefetching}
                 onRefresh={() => movies.refetch()}
-                colors={[theme.colors.primary]}
               />
             }
             data={movies.data.data.data}
+            keyExtractor={(i) => i.title}
             renderItem={({ item }) => (
-              <Card key={item.title}>
-                <Card.Title>{item.title}</Card.Title>
-                <Card.Divider />
-                <Card.Image
+              <View key={item.title}>
+                <Text>{item.title}</Text>
+                <Image
                   source={{ uri: item.picUrl }}
                   resizeMode="contain"
                 />
-                <Card.FeaturedTitle
-                  style={{ color: theme.colors.black, marginBlockStart: 8 }}
-                >
-                  {item.director}
-                </Card.FeaturedTitle>
-                <Card.FeaturedSubtitle
-                  style={{ color: theme.colors.secondary }}
-                >
-                  {item.type}
-                </Card.FeaturedSubtitle>
+                <Text>{item.director}</Text>
+                <Text>{item.type}</Text>
                 <Text>{item.actors}</Text>
-                <Button
-                  disabled
-                  disabledStyle={{
-                    backgroundColor: theme.colors.primary,
-                    marginBlockStart: 8,
-                  }}
-                  disabledTitleStyle={{ color: "#fff" }}
-                >
-                  {item.releaseDateStr}
-                </Button>
-              </Card>
+                <Text>{item.releaseDateStr}</Text>
+              </View>
             )}
           />
         </>

@@ -1,12 +1,12 @@
 import React from "react";
 import {
   FlatList,
+  Pressable,
   RefreshControl,
   ScrollView,
   Share,
-  View,
+  Text,
 } from "react-native";
-import { Button, Card, Text, useTheme } from "@rneui/themed";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { fetchRandtext } from "@/api/fetchRandtext";
 import { Loading } from "@/components/Loading";
@@ -16,7 +16,6 @@ import { useStorageStore } from "@/hooks/useStorageStore";
 const fetcher = fetchRandtext();
 
 export default function Page() {
-  const { theme } = useTheme();
   const apikey = useStorageStore((s) => s.qqlykmKey);
   const randtext = useInfiniteQuery({ ...fetcher, enabled: !!apikey });
   const queryClient = useQueryClient();
@@ -34,13 +33,11 @@ export default function Page() {
                 queryClient.removeQueries({ queryKey: fetcher.queryKey });
                 randtext.refetch();
               }}
-              colors={[theme.colors.primary]}
+              colors={["#000"]}
             />
           }
         >
-          <Card>
-            <Text>Error</Text>
-          </Card>
+          <Text>Error</Text>
         </ScrollView>
       )}
       {randtext.isSuccess && (
@@ -53,31 +50,27 @@ export default function Page() {
                   queryClient.removeQueries({ queryKey: fetcher.queryKey });
                   randtext.refetch();
                 }}
-                colors={[theme.colors.primary]}
+                colors={["#000"]}
               />
             }
             data={randtext.data.pages}
             renderItem={({ item, index }) => (
               <React.Fragment key={item.data.data}>
-                <Card>
-                  <Text
-                    onLongPress={() => {
-                      Share.share({ message: item.data.data });
-                    }}
-                  >
-                    {item.data.data}
-                  </Text>
-                </Card>
+                <Text
+                  onLongPress={() =>
+                    Share.share({ message: item.data.data })}
+                >
+                  {item.data.data}
+                </Text>
                 {Object.is(index + 1, randtext.data.pages.length) && (
-                  <View style={{ padding: 12 }}>
-                    <Button
-                      onPress={() =>
-                        randtext.fetchNextPage()}
-                      loading={randtext.isFetchingNextPage}
-                    >
+                  <Pressable
+                    onPress={() => randtext.fetchNextPage()}
+                    disabled={randtext.isFetchingNextPage}
+                  >
+                    <Text>
                       Click to fetch more
-                    </Button>
-                  </View>
+                    </Text>
+                  </Pressable>
                 )}
               </React.Fragment>
             )}

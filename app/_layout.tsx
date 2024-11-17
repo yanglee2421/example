@@ -1,5 +1,5 @@
 import React from "react";
-import { useTheme } from "@rneui/themed";
+
 import { useFonts } from "expo-font";
 import { SplashScreen, Stack } from "expo-router";
 import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
@@ -8,7 +8,6 @@ import migrations from "@/drizzle/migrations.js";
 import { useStorageHasHydrated } from "@/hooks/useStorageStore";
 import { ErrorScreen } from "@/components/ErrorScreen";
 import { QueryProvider } from "@/components/QueryProvider";
-import { ThemeProvider } from "@/components/ThemeProvider";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -39,27 +38,15 @@ export default function RootLayout() {
 
   return hasHydrated && fontLoaded && dbState.success && (
     <QueryProvider>
-      <ThemeProvider>
-        <RootRoute />
-      </ThemeProvider>
+      <RootRoute />
     </QueryProvider>
   );
 }
 
 function RootRoute() {
-  const { theme } = useTheme();
-
   return (
     <Stack
-      screenOptions={{
-        headerTintColor: theme.colors.black,
-        headerStyle: {
-          backgroundColor: theme.colors.background,
-        },
-        contentStyle: {
-          backgroundColor: theme.colors.background,
-        },
-      }}
+      screenOptions={{}}
     >
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       <Stack.Screen

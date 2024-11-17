@@ -1,9 +1,6 @@
-import { makeStyles, Text } from "@rneui/themed";
-import { View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 
 export function Loading() {
-  const styles = useStyles();
-
   return (
     <View style={styles.container}>
       <Text style={styles.text}>Loading...</Text>
@@ -11,7 +8,7 @@ export function Loading() {
   );
 }
 
-const useStyles = makeStyles({
+const styles = StyleSheet.create({
   container: {
     padding: 12,
   },
