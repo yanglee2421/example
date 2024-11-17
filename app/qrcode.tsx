@@ -4,7 +4,7 @@ import React from "react";
 import { View } from "react-native";
 import { setStringAsync } from "expo-clipboard";
 import { useMutation } from "@tanstack/react-query";
-import { Empty } from "@/components/Empty";
+import { Loading } from "@/components/Loading";
 
 export default function Qrcode() {
   const [data, setData] = React.useState("");
@@ -27,7 +27,7 @@ export default function Qrcode() {
 
   if (!permission) {
     // Camera permissions are still loading.
-    return <Empty />;
+    return <Loading />;
   }
 
   if (!permission.granted) {

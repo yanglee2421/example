@@ -2,7 +2,7 @@ import { fetchCnBingImage } from "@/api/fetchBingImage";
 import { makeStyles, Text, Tile, useTheme } from "@rneui/themed";
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
-import { RefreshControl, ScrollView } from "react-native";
+import { RefreshControl, ScrollView, Share } from "react-native";
 import { openBrowserAsync } from "expo-web-browser";
 import { openURL } from "expo-linking";
 
@@ -15,14 +15,11 @@ export default function Bing() {
   return (
     <ScrollView
       contentContainerStyle={styles.container}
-      onLayout={(e) => {
-        setImgWidth(e.nativeEvent.layout.width);
-      }}
+      onLayout={(e) => setImgWidth(e.nativeEvent.layout.width)}
       refreshControl={
         <RefreshControl
           refreshing={bingImgs.isRefetching}
           onRefresh={() => bingImgs.refetch()}
-          progressBackgroundColor={theme.colors.black}
           colors={[theme.colors.primary]}
         />
       }
@@ -31,6 +28,9 @@ export default function Bing() {
         <Tile
           key={i.url}
           imageSrc={{ uri: `https://cn.bing.com${i.url}` }}
+          imageProps={{ resizeMode: "contain" }}
+          width={imgWidth - 24}
+          height={imgWidth / 16 * 9}
           title={i.title}
           caption={
             <Text
@@ -56,7 +56,8 @@ export default function Bing() {
             </Text>
           }
           featured
-          width={imgWidth - 24}
+          activeOpacity={.7}
+          onPress={() => Share.share({ url: `https://cn.bing.com${i.url}` })}
         />
       ))}
     </ScrollView>
@@ -65,8 +66,8 @@ export default function Bing() {
 
 const useStyles = makeStyles((theme) => ({
   container: {
-    gap: 12,
-    padding: 12,
+    paddingInline: 12,
+    paddingBlock: 8,
   },
   time: {
     color: theme.colors.black,

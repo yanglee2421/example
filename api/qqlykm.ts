@@ -8,9 +8,14 @@ export const qqlykm = axios.create({
 });
 
 qqlykm.interceptors.response.use((res) => {
-  if (!res.data.success) {
-    throw new Error(res.data.text.msg);
+  if (res.data.success) {
+    return res;
   }
 
-  return res;
+  if (res.data.code === 200) {
+    return res;
+  }
+
+  console.error(res);
+  throw new Error(res.data.msg);
 });

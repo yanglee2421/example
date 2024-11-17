@@ -16,7 +16,7 @@ const list = [
   },
   {
     icon: <Icon name="qrcode-scan" />,
-    label: "QR Code",
+    label: "QR Code Scaner",
     href: "/qrcode",
   },
   {
@@ -33,6 +33,36 @@ const list = [
     icon: <Icon name="newspaper-variant-outline" />,
     label: "News",
     href: "/news",
+  },
+  {
+    icon: <Icon name="robot-excited-outline" />,
+    label: "Joke",
+    href: "/joke",
+  },
+  {
+    icon: <Icon name="image-filter-hdr" />,
+    label: "Landscape",
+    href: "/fengjing",
+  },
+  {
+    icon: <Icon name="book-open-page-variant-outline" />,
+    label: "History",
+    href: "/history",
+  },
+  {
+    icon: <Icon name="dog" />,
+    label: "Locking Dog",
+    href: "/locking_dog",
+  },
+  {
+    icon: <Icon name="movie-outline" />,
+    label: "Movie",
+    href: "/movie",
+  },
+  {
+    icon: <Icon name="comment-quote-outline" />,
+    label: "Rand Text",
+    href: "/randtext",
   },
 ].sort((c, n) => c.label.localeCompare(n.label));
 

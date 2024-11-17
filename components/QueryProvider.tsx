@@ -13,8 +13,8 @@ import { AppState, Platform } from "react-native";
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 1000 * 60,
-      gcTime: 1000 * 60 * 2,
+      staleTime: 1000 * 60 * 3,
+      gcTime: 1000 * 60 * 5,
 
       refetchOnMount: true,
       refetchOnReconnect: true,
@@ -28,52 +28,6 @@ const queryClient = new QueryClient({
   },
 });
 
-const useSyncOnline = () =>
-  React.useEffect(() => {
-    if (Platform.OS === "web") {
-      return;
-    }
-
-    return NetInfo.addEventListener((state) => {
-      onlineManager.setOnline(
-        Boolean(state.isConnected && state.isInternetReachable),
-      );
-    });
-  }, []);
-
-const useSyncFocus = () =>
-  React.useEffect(() => {
-    if (Platform.OS === "web") {
-      return;
-    }
-
-    const subscription = AppState.addEventListener("change", (status) => {
-      focusManager.setFocused(status === "active");
-    });
-
-    return () => {
-      subscription.remove();
-    };
-  }, []);
-
-const useSyncQqlykm = () => {
-  const qqlykmKey = useStorageStore((s) => s.qqlykmKey);
-  React.useEffect(() => {
-    if (!qqlykmKey) return;
-
-    const id = qqlykm.interceptors.request.use((config) => {
-      const params = { ...(config.params || {}), key: qqlykmKey };
-      config.params = params;
-
-      return config;
-    });
-
-    return () => {
-      qqlykm.interceptors.request.eject(id);
-    };
-  }, [qqlykmKey]);
-};
-
 export const QueryProvider = (props: React.PropsWithChildren) => {
   useSyncOnline();
   useSyncFocus();
@@ -85,3 +39,47 @@ export const QueryProvider = (props: React.PropsWithChildren) => {
     </QueryClientProvider>
   );
 };
+
+function useSyncOnline() {
+  React.useEffect(() => {
+    if (Platform.OS === "web") return;
+
+    return NetInfo.addEventListener((state) =>
+      onlineManager.setOnline(
+        Boolean(state.isConnected && state.isInternetReachable),
+      )
+    );
+  }, []);
+}
+
+function useSyncFocus() {
+  React.useEffect(() => {
+    if (Platform.OS === "web") return;
+
+    const subscription = AppState.addEventListener(
+      "change",
+      (status) => focusManager.setFocused(status === "active"),
+    );
+
+    return () => subscription.remove();
+  }, []);
+}
+
+function useSyncQqlykm() {
+  const qqlykmKey = useStorageStore((s) => s.qqlykmKey);
+
+  // Checking the API_KEY must happen before the component is presented to the user
+  React.useInsertionEffect(() => {
+    const id = qqlykm.interceptors.request.use((config) => {
+      if (!qqlykmKey) {
+        throw new Error("API_KEY not ready");
+      }
+
+      config.params = { ...(config.params || {}), key: qqlykmKey };
+
+      return config;
+    });
+
+    return () => qqlykm.interceptors.request.eject(id);
+  }, [qqlykmKey]);
+}

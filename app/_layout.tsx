@@ -64,9 +64,15 @@ function RootRoute() {
       />
       <Stack.Screen name="about" options={{ title: "About" }} />
       <Stack.Screen name="bing" options={{ title: "Bing" }} />
+      <Stack.Screen name="fengjing" options={{ title: "Landscape" }} />
+      <Stack.Screen name="history" options={{ title: "History" }} />
+      <Stack.Screen name="joke" options={{ title: "Joke" }} />
+      <Stack.Screen name="locking_dog" options={{ title: "Locking Dog" }} />
+      <Stack.Screen name="movie" options={{ title: "Movie" }} />
       <Stack.Screen name="network" options={{ title: "Network" }} />
       <Stack.Screen name="news" options={{ title: "News" }} />
       <Stack.Screen name="qrcode" options={{ title: "QR Code Scaner" }} />
+      <Stack.Screen name="randtext" options={{ title: "Rand Text" }} />
       <Stack.Screen
         name="todolist"
         options={{ title: "To Do List" }}

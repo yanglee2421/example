@@ -51,9 +51,9 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="settings"
         options={{
-          title: "Settings",
+          title: "Apps",
           tabBarIcon({ color }) {
-            return <Icon name="cogs" size={28} color={color} />;
+            return <Icon name="apps" size={28} color={color} />;
           },
         }}
       />

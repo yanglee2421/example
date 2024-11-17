@@ -4,23 +4,25 @@ import { baseURL, qqlykm } from "./qqlykm";
 type Res = {
   success: true;
   data: {
-    joke: string;
+    cover:
+      "https://cdn-hw-static.shanhutech.cn/bizhi/staticwp/202209/99268cd01655e623d8a04a2cda2b40c0--1592461879.jpg";
+    tag: "自然风光,东北,青山,绿水";
   };
   text: {
-    msg: string;
-    copyright: string;
-    time: string;
+    msg: "获取成功";
+    copyright: "公共API https://qqlykm.cn";
+    time: "当前请求时间为：2023-10-19 20:06:05";
   };
 };
 
-const JOKE_INDEX_PATH = "/joke/index";
+const FENGJING_PATH = "/fengjing/index";
 
-export const fetchJoke = () =>
+export const fetchFengjing = () =>
   infiniteQueryOptions({
-    queryKey: [baseURL, JOKE_INDEX_PATH, "GET"],
+    queryKey: [baseURL, FENGJING_PATH, "GET"],
     queryFn({ signal }) {
       return qqlykm<Res>({
-        url: JOKE_INDEX_PATH,
+        url: FENGJING_PATH,
         signal,
       });
     },

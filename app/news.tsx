@@ -1,11 +1,16 @@
-import { fetchNews } from "@/api/fetchNews";
-import { Empty } from "@/components/Empty";
+import { RefreshControl, ScrollView, Share } from "react-native";
 import { Card, Text, useTheme } from "@rneui/themed";
 import { useQuery } from "@tanstack/react-query";
-import { RefreshControl, ScrollView } from "react-native";
+import { fetchNews } from "@/api/fetchNews";
+import { Loading } from "@/components/Loading";
+import { NeedAPIKEY } from "@/components/NeedAPIKEY";
+import { useStorageStore } from "@/hooks/useStorageStore";
+
+const fetcher = fetchNews();
 
 export default function News() {
-  const news = useQuery(fetchNews());
+  const apikey = useStorageStore((s) => s.qqlykmKey);
+  const news = useQuery({ ...fetcher, enabled: !!apikey });
   const { theme } = useTheme();
 
   return (
@@ -18,18 +23,26 @@ export default function News() {
         />
       }
     >
-      {news.isPending && <Empty />}
+      {news.isLoading && <Loading />}
+      {news.isPending && !news.isFetching && <NeedAPIKEY />}
+      {news.isError && (
+        <Card>
+          <Text>Error</Text>
+        </Card>
+      )}
       {news.isSuccess && (
         <>
           <Card>
-            <Card.Title>{news.data.data.data.date}</Card.Title>
+            <Card.FeaturedTitle style={{ color: theme.colors.black }}>
+              {news.data.data.data.date}
+            </Card.FeaturedTitle>
             <Card.FeaturedSubtitle style={{ color: theme.colors.secondary }}>
               {news.data.data.data.weiyu}
             </Card.FeaturedSubtitle>
           </Card>
           {news.data.data.data.news.map((i) => (
             <Card key={i}>
-              <Text>{i}</Text>
+              <Text onLongPress={() => Share.share({ message: i })}>{i}</Text>
             </Card>
           ))}
         </>

@@ -2,7 +2,7 @@ import { makeStyles, Text } from "@rneui/themed";
 import { Translation } from "react-i18next";
 import { View } from "react-native";
 
-export function Empty() {
+export function Loading() {
   const styles = useStyles();
 
   return (

@@ -2,27 +2,17 @@ import { infiniteQueryOptions } from "@tanstack/react-query";
 import { baseURL, qqlykm } from "./qqlykm";
 
 type Res = {
-  success: true;
-  data: {
-    joke: string;
-  };
-  text: {
-    msg: string;
-    copyright: string;
-    time: string;
-  };
+  "success": true;
+  "data": "你和他接吻的时候可以涂我送给你的口红吗？";
 };
 
-const JOKE_INDEX_PATH = "/joke/index";
+const DIARY_PATH = "/diary/index";
 
-export const fetchJoke = () =>
+export const fetchDiary = () =>
   infiniteQueryOptions({
-    queryKey: [baseURL, JOKE_INDEX_PATH, "GET"],
+    queryKey: [baseURL, DIARY_PATH, "GET"],
     queryFn({ signal }) {
-      return qqlykm<Res>({
-        url: JOKE_INDEX_PATH,
-        signal,
-      });
+      return qqlykm<Res>({ signal, url: DIARY_PATH });
     },
 
     initialPageParam: {

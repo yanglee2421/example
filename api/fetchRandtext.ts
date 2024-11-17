@@ -2,27 +2,21 @@ import { infiniteQueryOptions } from "@tanstack/react-query";
 import { baseURL, qqlykm } from "./qqlykm";
 
 type Res = {
-  success: true;
-  data: {
-    joke: string;
-  };
-  text: {
-    msg: string;
-    copyright: string;
-    time: string;
-  };
+  code: 200;
+  msg: "请求成功";
+  data: "功名万里外，心事一杯中。";
+  debug: "";
+  exec_time: 0.036495;
+  user_ip: "182.34.137.4";
 };
 
-const JOKE_INDEX_PATH = "/joke/index";
+const RANDTEXT_PATH = "/randtext/get";
 
-export const fetchJoke = () =>
+export const fetchRandtext = () =>
   infiniteQueryOptions({
-    queryKey: [baseURL, JOKE_INDEX_PATH, "GET"],
+    queryKey: [baseURL, RANDTEXT_PATH, "GET"],
     queryFn({ signal }) {
-      return qqlykm<Res>({
-        url: JOKE_INDEX_PATH,
-        signal,
-      });
+      return qqlykm<Res>({ signal, url: RANDTEXT_PATH });
     },
 
     initialPageParam: {
