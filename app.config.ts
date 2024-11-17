@@ -3,10 +3,10 @@ export default {
   name: "Example",
   slug: "example",
   scheme: "example",
-  version: "0.0.6",
+  version: "0.0.7",
   orientation: "portrait",
   icon: "./assets/icon.png",
-  userInterfaceStyle: "light",
+  userInterfaceStyle: "automatic",
   splash: {
     image: "./assets/icon.png",
     resizeMode: "contain",
