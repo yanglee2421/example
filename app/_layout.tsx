@@ -8,6 +8,7 @@ import migrations from "@/drizzle/migrations.js";
 import { useStorageHasHydrated } from "@/hooks/useStorageStore";
 import { ErrorScreen } from "@/components/ErrorScreen";
 import { QueryProvider } from "@/components/QueryProvider";
+import { StatusBar } from "react-native";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -38,6 +39,12 @@ export default function RootLayout() {
 
   return hasHydrated && fontLoaded && dbState.success && (
     <QueryProvider>
+      <StatusBar
+        barStyle={"dark-content"}
+        animated
+        //
+        backgroundColor={"#fff"}
+      />
       <RootRoute />
     </QueryProvider>
   );

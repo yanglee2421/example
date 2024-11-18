@@ -1,12 +1,13 @@
 import React from "react";
 import {
   FlatList,
+  Pressable,
   RefreshControl,
   ScrollView,
   Share,
+  Text,
   View,
 } from "react-native";
-import { Button, Card, Text, useTheme } from "@rneui/themed";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { fetchJoke } from "@/api/fetchJoke";
 import { Loading } from "@/components/Loading";
@@ -16,7 +17,6 @@ import { useStorageStore } from "@/hooks/useStorageStore";
 const fetcher = fetchJoke();
 
 export default function Page() {
-  const { theme } = useTheme();
   const apikey = useStorageStore((s) => s.qqlykmKey);
   const jokes = useInfiniteQuery({ ...fetcher, enabled: !!apikey });
   const queryClient = useQueryClient();
@@ -34,13 +34,10 @@ export default function Page() {
                 queryClient.removeQueries({ queryKey: fetcher.queryKey });
                 jokes.refetch();
               }}
-              colors={[theme.colors.primary]}
             />
           }
         >
-          <Card>
-            <Text>Error</Text>
-          </Card>
+          <Text>Error</Text>
         </ScrollView>
       )}
       {jokes.isSuccess && (
@@ -53,30 +50,28 @@ export default function Page() {
                   queryClient.removeQueries({ queryKey: fetcher.queryKey });
                   jokes.refetch();
                 }}
-                colors={[theme.colors.primary]}
               />
             }
             data={jokes.data.pages}
             renderItem={({ item, index }) => (
               <React.Fragment key={item.data.data.joke}>
-                <Card>
-                  <Text
-                    onLongPress={() => {
-                      Share.share({ message: item.data.data.joke });
-                    }}
-                  >
-                    {item.data.data.joke}
-                  </Text>
-                </Card>
+                <Text
+                  onLongPress={() => {
+                    Share.share({ message: item.data.data.joke });
+                  }}
+                >
+                  {item.data.data.joke}
+                </Text>
                 {Object.is(index + 1, jokes.data.pages.length) && (
                   <View style={{ padding: 12 }}>
-                    <Button
+                    <Pressable
                       onPress={() =>
                         jokes.fetchNextPage()}
-                      loading={jokes.isFetchingNextPage}
                     >
-                      Click to fetch more
-                    </Button>
+                      <Text>
+                        Click to fetch more
+                      </Text>
+                    </Pressable>
                   </View>
                 )}
               </React.Fragment>

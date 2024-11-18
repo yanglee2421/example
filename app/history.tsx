@@ -1,5 +1,4 @@
-import { Linking, RefreshControl, ScrollView } from "react-native";
-import { Card, makeStyles, Text, useTheme } from "@rneui/themed";
+import { Linking, RefreshControl, ScrollView, Text, View } from "react-native";
 import { useQuery } from "@tanstack/react-query";
 import { openBrowserAsync } from "expo-web-browser";
 import { fetchHistoryGet } from "@/api/fetchHistoryGet";
@@ -14,10 +13,8 @@ const fetcher = fetchHistoryGet();
 export default function Page() {
   const date = useLocaleDate();
   const time = useLocaleTime();
-  const { theme } = useTheme();
   const apikey = useStorageStore((s) => s.qqlykmKey);
   const history = useQuery({ ...fetcher, enabled: !!apikey });
-  const styles = useStyles();
 
   return (
     <ScrollView
@@ -25,35 +22,28 @@ export default function Page() {
         <RefreshControl
           refreshing={history.isRefetching}
           onRefresh={() => history.refetch()}
-          colors={[theme.colors.primary]}
         />
       }
     >
-      <Card>
-        <Card.FeaturedTitle style={{ color: theme.colors.black }}>
-          {time}
-        </Card.FeaturedTitle>
-        <Card.FeaturedSubtitle style={{ color: theme.colors.secondary }}>
-          {date}
-        </Card.FeaturedSubtitle>
-      </Card>
+      <Text>
+        {time}
+      </Text>
+      <Text>
+        {date}
+      </Text>
       {history.isLoading && <Loading />}
       {history.isPending && !history.isFetching && <NeedAPIKEY />}
-      {history.isError && (
-        <Card>
-          <Text>Error</Text>
-        </Card>
-      )}
+      {history.isError && <Text>Error</Text>}
       {history.isSuccess && history.data.data.data.map((i) => (
-        <Card key={i.url}>
-          <Card.FeaturedTitle style={styles.itemTitle}>
+        <View key={i.url}>
+          <Text>
             {i.year}
-          </Card.FeaturedTitle>
+          </Text>
           <Text
             onPress={async () => {
               try {
                 await openBrowserAsync(i.url, {
-                  toolbarColor: theme.colors.background,
+                  toolbarColor: "#000",
                   enableBarCollapsing: true,
                   enableDefaultShareMenuItem: true,
 
@@ -63,24 +53,11 @@ export default function Page() {
                 Linking.openURL(i.url);
               }
             }}
-            style={styles.itemText}
           >
             {i.title}
           </Text>
-        </Card>
+        </View>
       ))}
     </ScrollView>
   );
 }
-
-const useStyles = makeStyles((theme) => ({
-  itemTitle: {
-    color: theme.colors.black,
-  },
-  itemText: {
-    textDecorationLine: "underline",
-  },
-  empty: {
-    padding: 12,
-  },
-}));
