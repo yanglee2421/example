@@ -14,7 +14,7 @@ choco install -y microsoft-openjdk17
 # Install Android SDK
 sdkmanager "platform-tools"
 
-# Expo nuild
+# Expo build
 expo prebuild
 cd ./android
 
@@ -25,6 +25,13 @@ keytool -genkey -v -keystore my-upload-key.keystore -alias my-key-alias -keyalg 
 ./gradlew app:bundleRelease
 # For .apk
 ./gradlew app:assembleRelease
+# Or build by Expo
+expo build:android
+
+# Install Emulator
+sdkmanager "emulator" "platforms;android-34" "system-images;android-34;google_apis;x86_64"
+avdmanager create avd -n emulatorName -k "system-images;android-34;google_apis;x86_64" -d "pixel"
+emulator -avd emulatorName -gpu host
 ```
 
 ## Set Development Environment
