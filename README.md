@@ -5,6 +5,10 @@
 1. Windows Powershell
 
 ```powershell
+sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0" "cmdline-tools;latest"
+```
+
+```powershell
 # Install Ubuntu
 wsl --install
 # Unistall Ubuntu
