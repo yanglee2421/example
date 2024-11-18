@@ -7,6 +7,21 @@ import React from "react";
 
 type StoreState = {
   qqlykmKey: string;
+
+  theme: {
+    // Colors
+    primary: string;
+    secondary: string;
+    error: string;
+    warning: string;
+    info: string;
+    success: string;
+
+    textPrimary: string;
+    textSecondary: string;
+    background: string;
+    divider: string;
+  };
 };
 type StoreActions = {
   set(
@@ -21,7 +36,23 @@ type Store = StoreState & StoreActions;
 export const useStorageStore = create<Store>()(
   persist(
     immer((set) => {
-      return { set, qqlykmKey: "" };
+      return {
+        set,
+        qqlykmKey: "",
+        theme: {
+          primary: "",
+          secondary: "",
+          error: "",
+          warning: "",
+          info: "",
+          success: "",
+
+          textPrimary: "",
+          textSecondary: "",
+          background: "",
+          divider: "",
+        },
+      };
     }),
     {
       name: "useStorageStore",
