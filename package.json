@@ -24,11 +24,11 @@
     "drizzle-orm": "^0.36.3",
     "expo": "52.0.7",
     "expo-application": "~6.0.1",
-    "expo-camera": "~16.0.5",
+    "expo-camera": "~16.0.6",
     "expo-clipboard": "~7.0.0",
     "expo-font": "^13.0.1",
     "expo-network": "~7.0.0",
-    "expo-router": "4.0.6",
+    "expo-router": "4.0.7",
     "expo-sqlite": "~15.0.3",
     "expo-web-browser": "~14.0.1",
     "immer": "^10.1.1",
@@ -50,5 +50,5 @@
     "typescript": "^5.6.3"
   },
   "private": true,
-  "packageManager": "pnpm@9.6.0+sha512.38dc6fba8dba35b39340b9700112c2fe1e12f10b17134715a4aa98ccf7bb035e76fd981cf0bb384dfa98f8d6af5481c2bef2f4266a24bfa20c34eb7147ce0b5e"
+  "packageManager": "pnpm@9.14.2+sha512.6e2baf77d06b9362294152c851c4f278ede37ab1eba3a55fda317a4a17b209f4dbb973fb250a77abc463a341fcb1f17f17cfa24091c4eb319cda0d9b84278387"
 }
