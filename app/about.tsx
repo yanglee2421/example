@@ -1,15 +1,15 @@
 import React from "react";
-import { Linking, Pressable, ScrollView, Text } from "react-native";
+import { Linking, ScrollView } from "react-native";
 import { openBrowserAsync } from "expo-web-browser";
+import { Button } from "tamagui";
+import { Github } from "@tamagui/lucide-icons";
 
 const githubUrl = "https://github.com/yanglee2421";
 
 export default function About() {
-  const [width, setWidth] = React.useState(0);
-
   return (
-    <ScrollView>
-      <Pressable
+    <ScrollView contentContainerStyle={{ padding: 12 }}>
+      <Button
         onPress={async () => {
           try {
             await openBrowserAsync(githubUrl, {
@@ -23,16 +23,10 @@ export default function About() {
             Linking.openURL(githubUrl);
           }
         }}
-        onLayout={(e) => setWidth(e.nativeEvent.layout.width)}
-        android_ripple={{
-          foreground: true,
-          borderless: false,
-          radius: width,
-          color: "#000",
-        }}
+        icon={<Github />}
       >
-        <Text>&copy;2024 by Yotu_Lee</Text>
-      </Pressable>
+        &copy;2024 by Yotu_Lee
+      </Button>
     </ScrollView>
   );
 }

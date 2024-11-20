@@ -1,22 +1,32 @@
 import React from "react";
-import { Button, Text, TextInput, View } from "react-native";
 import { useStorageStore } from "@/hooks/useStorageStore";
+import { Button, Card, H4, Input, View } from "tamagui";
 
 export function NeedAPIKEY() {
   const set = useStorageStore((s) => s.set);
   const [value, setValue] = React.useState("");
 
   return (
-    <View>
-      <Text>Need API Key</Text>
-      <TextInput value={value} onChangeText={setValue} />
-      <Button
-        title="Save"
-        onPress={() =>
-          set((d) => {
-            d.qqlykmKey = value;
-          })}
-      />
-    </View>
+    <Card bordered margin="$2.5">
+      <Card.Header padded>
+        <H4>Need API Key</H4>
+      </Card.Header>
+      <View paddingInline="$4">
+        <Input value={value} onChangeText={setValue} />
+      </View>
+      <Card.Footer padded theme="dark_Button">
+        <Button
+          onPress={() =>
+            set((d) => {
+              d.qqlykmKey = value;
+            })}
+          flex={1}
+          backgroundColor={"$primary"}
+          color={"$color"}
+        >
+          Save
+        </Button>
+      </Card.Footer>
+    </Card>
   );
 }

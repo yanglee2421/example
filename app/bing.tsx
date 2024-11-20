@@ -1,16 +1,9 @@
 import React from "react";
-import {
-  ImageBackground,
-  Linking,
-  Pressable,
-  RefreshControl,
-  ScrollView,
-  Share,
-  Text,
-} from "react-native";
+import { Linking, RefreshControl, Share } from "react-native";
 import { openBrowserAsync } from "expo-web-browser";
 import { useQuery } from "@tanstack/react-query";
 import { fetchCnBingImage } from "@/api/fetchBingImage";
+import { Card, H5, Image, ScrollView, Text } from "tamagui";
 
 export default function Bing() {
   const bingImgs = useQuery(fetchCnBingImage({ format: "js", idx: 0, n: 8 }));
@@ -26,22 +19,28 @@ export default function Bing() {
           colors={["#000"]}
         />
       }
+      contentContainerStyle={{ gap: "$4", padding: "$3" }}
     >
       {bingImgs.isSuccess &&
         bingImgs.data.data.images.map((i) => (
-          <Pressable
+          <Card
             key={i.urlbase}
             onLongPress={async () =>
               Share.share({ message: `https://cn.bing.com${i.url}` })}
-            android_ripple={{
-              foreground: true,
-              borderless: false,
-              color: "#000",
-              radius: imgWidth,
-            }}
+            padded
           >
-            <ImageBackground source={{ uri: `https://cn.bing.com${i.url}` }}>
-              <Text>{i.title}</Text>
+            <Card.Header padded>
+              <H5>{i.title}</H5>
+            </Card.Header>
+            <Card.Background>
+              <Image
+                source={{ uri: `https://cn.bing.com${i.url}` }}
+                objectFit="contain"
+                width={imgWidth}
+                height={imgWidth / 16 * 9}
+              />
+            </Card.Background>
+            <Card.Footer padded>
               <Text
                 onPress={async () => {
                   try {
@@ -59,8 +58,8 @@ export default function Bing() {
               >
                 {i.copyright}
               </Text>
-            </ImageBackground>
-          </Pressable>
+            </Card.Footer>
+          </Card>
         ))}
     </ScrollView>
   );

@@ -1,23 +1,37 @@
 import { Tabs } from "expo-router";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useTheme } from "tamagui";
+import { Atom, Home, LayoutGrid } from "@tamagui/lucide-icons";
 
 export default function TabsLayout() {
+  const theme = useTheme();
+
   return (
     <Tabs
-      screenOptions={{ headerShown: true }}
+      screenOptions={{
+        headerShown: true,
+        headerStyle: {
+          backgroundColor: theme.background.get(),
+        },
+        headerTitleStyle: {
+          color: theme.color.get(),
+        },
+
+        sceneStyle: {
+          backgroundColor: theme.background.get(),
+        },
+
+        tabBarActiveTintColor: theme.primary.get(),
+        tabBarStyle: {
+          backgroundColor: theme.background.get(),
+        },
+      }}
     >
       <Tabs.Screen
         name="index"
         options={{
           title: "Home",
           tabBarIcon(props) {
-            return (
-              <MaterialCommunityIcons
-                name="home"
-                size={props.size}
-                color={props.color}
-              />
-            );
+            return <Home size={props.size} color={props.color} />;
           },
         }}
       />
@@ -26,13 +40,7 @@ export default function TabsLayout() {
         options={{
           title: "Atom",
           tabBarIcon(props) {
-            return (
-              <MaterialCommunityIcons
-                name="atom"
-                size={props.size}
-                color={props.color}
-              />
-            );
+            return <Atom size={props.size} color={props.color} />;
           },
         }}
       />
@@ -41,13 +49,7 @@ export default function TabsLayout() {
         options={{
           title: "Apps",
           tabBarIcon(props) {
-            return (
-              <MaterialCommunityIcons
-                name="apps"
-                size={props.size}
-                color={props.color}
-              />
-            );
+            return <LayoutGrid size={props.size} color={props.color} />;
           },
         }}
       />

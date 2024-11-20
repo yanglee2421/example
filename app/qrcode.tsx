@@ -1,9 +1,10 @@
 import React from "react";
-import { Pressable, Text, View } from "react-native";
 import { setStringAsync } from "expo-clipboard";
 import { type CameraType, CameraView, useCameraPermissions } from "expo-camera";
 import { useMutation } from "@tanstack/react-query";
 import { Loading } from "@/components/Loading";
+import { Button, Card, H4, Paragraph, Text, View } from "tamagui";
+import { SwitchCamera } from "@tamagui/lucide-icons";
 
 export default function Qrcode() {
   const [data, setData] = React.useState("");
@@ -30,28 +31,44 @@ export default function Qrcode() {
   if (!permission.granted) {
     // Camera permissions are not granted yet.
     return (
-      <View>
-        <Text>Need Permission</Text>
-        <Text>We need your permission to show the camera</Text>
-        <Pressable onPress={requestPermission}>
-          <Text>grant permission</Text>
-        </Pressable>
-      </View>
+      <Card elevate margin="$2.5">
+        <Card.Header padded>
+          <H4>Need Permission</H4>
+        </Card.Header>
+        <View paddingInline="$4">
+          <Paragraph>We need your permission to show the camera</Paragraph>
+        </View>
+        <Card.Footer padded theme="dark_Button">
+          <Button
+            onPress={requestPermission}
+            flex={1}
+            backgroundColor={"$primary"}
+            color="$color"
+          >
+            grant permission
+          </Button>
+        </Card.Footer>
+      </Card>
     );
   }
 
   if (data) {
     return (
-      <View>
-        <Text>QR Code</Text>
+      <Card>
+        <Card.Header padded>
+          <H4>QR Code</H4>
+        </Card.Header>
         <Text>{data}</Text>
-        <Pressable
-          onPress={() => copy.mutate(data)}
-          disabled={copy.isPending}
-        >
-          <Text>Copy</Text>
-        </Pressable>
-      </View>
+        <Card.Footer padded>
+          <Button
+            onPress={() => copy.mutate(data)}
+            disabled={copy.isPending}
+            flex={1}
+          >
+            Copy
+          </Button>
+        </Card.Footer>
+      </Card>
     );
   }
 
@@ -64,12 +81,15 @@ export default function Qrcode() {
       facing={facing}
       barcodeScannerSettings={{ barcodeTypes: ["qr"] }}
       onBarcodeScanned={(res) => setData(res.data)}
+      style={{ flex: 1, justifyContent: "flex-end", alignItems: "center" }}
     >
-      <Pressable
+      <Button
         onPress={toggleCameraFacing}
-      >
-        <Text>fac</Text>
-      </Pressable>
+        circular
+        icon={<SwitchCamera size={"$2"} />}
+        marginBlockEnd="$12"
+        size={"$6"}
+      />
     </CameraView>
   );
 }
