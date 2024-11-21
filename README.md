@@ -12,7 +12,7 @@ Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManage
 choco install -y microsoft-openjdk17
 
 # Install Android SDK
-sdkmanager "platform-tools"
+sdkmanager "platform-tools" "build-tools;34.0.0"
 
 # Expo build
 expo prebuild
