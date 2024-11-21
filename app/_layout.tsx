@@ -6,10 +6,9 @@ import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
 import { db } from "@/db/db";
 import migrations from "@/drizzle/migrations.js";
 import { useStorageHasHydrated } from "@/hooks/useStorageStore";
-import { ErrorScreen } from "@/components/ErrorScreen";
 import { QueryProvider } from "@/components/QueryProvider";
 import { ThemeProvider } from "@/components/ThemeProvider";
-import { useTheme } from "tamagui";
+import { Text, useTheme, View } from "tamagui";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -37,7 +36,13 @@ export default function RootLayout() {
   }, [fontLoaded, error, dbState.error, dbState.success, hasHydrated]);
 
   if (error || dbState.error) {
-    return <ErrorScreen />;
+    return (
+      <View>
+        {error && <Text>{error.message}</Text>}
+        <View></View>
+        {dbState.error && <Text>{dbState.error.message}</Text>}
+      </View>
+    );
   }
 
   return hasHydrated && fontLoaded && dbState.success && (
