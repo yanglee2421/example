@@ -3,7 +3,7 @@ import { Linking, RefreshControl, Share } from "react-native";
 import { openBrowserAsync } from "expo-web-browser";
 import { useQuery } from "@tanstack/react-query";
 import { fetchCnBingImage } from "@/api/fetchBingImage";
-import { Card, H5, Image, ScrollView, Text } from "tamagui";
+import { Card, getToken, H5, Image, ScrollView, Text } from "tamagui";
 
 export default function Bing() {
   const bingImgs = useQuery(fetchCnBingImage({ format: "js", idx: 0, n: 8 }));
@@ -16,7 +16,7 @@ export default function Bing() {
         <RefreshControl
           refreshing={bingImgs.isRefetching}
           onRefresh={() => bingImgs.refetch()}
-          colors={["#000"]}
+          colors={[getToken("$palette.primary")]}
         />
       }
       contentContainerStyle={{ gap: "$4", padding: "$3" }}
@@ -30,7 +30,7 @@ export default function Bing() {
             padded
           >
             <Card.Header padded>
-              <H5>{i.title}</H5>
+              <H5 color={"$gray12Dark"}>{i.title}</H5>
             </Card.Header>
             <Card.Background>
               <Image
@@ -55,6 +55,7 @@ export default function Bing() {
                     Linking.openURL(i.copyrightlink);
                   }
                 }}
+                color="$gray12Dark"
               >
                 {i.copyright}
               </Text>

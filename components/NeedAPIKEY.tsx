@@ -14,15 +14,15 @@ export function NeedAPIKEY() {
       <View paddingInline="$4">
         <Input value={value} onChangeText={setValue} />
       </View>
-      <Card.Footer padded theme="dark_Button">
+      <Card.Footer padded>
         <Button
           onPress={() =>
             set((d) => {
               d.qqlykmKey = value;
             })}
           flex={1}
-          backgroundColor={"$primary"}
-          color={"$color"}
+          backgroundColor={"$palette.primary"}
+          color={"$gray12Dark"}
         >
           Save
         </Button>

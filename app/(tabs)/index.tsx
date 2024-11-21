@@ -7,6 +7,7 @@ import {
   useAnimatedValue,
   View,
 } from "react-native";
+import { getToken } from "tamagui";
 
 export default function Page() {
   const rotateValue = useAnimatedValue(0);
@@ -42,7 +43,11 @@ export default function Page() {
             size={96}
           />
         )}
-        <MaterialCommunityIcons name="react" size={96} color="red" />
+        <MaterialCommunityIcons
+          name="react"
+          size={96}
+          color={getToken("$palette.primary")}
+        />
       </Animated.View>
     </View>
   );

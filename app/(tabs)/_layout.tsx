@@ -1,5 +1,5 @@
 import { Tabs } from "expo-router";
-import { useTheme } from "tamagui";
+import { getToken, useTheme } from "tamagui";
 import { Atom, Home, LayoutGrid } from "@tamagui/lucide-icons";
 
 export default function TabsLayout() {
@@ -20,7 +20,7 @@ export default function TabsLayout() {
           backgroundColor: theme.background.get(),
         },
 
-        tabBarActiveTintColor: theme.primary.get(),
+        tabBarActiveTintColor: getToken("$palette.primary"),
         tabBarStyle: {
           backgroundColor: theme.background.get(),
         },

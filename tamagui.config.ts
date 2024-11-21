@@ -6,8 +6,12 @@ const tokens = createTokens({
   size,
   space,
   zIndex,
-  color: { ...color, primary: "#6366f1" },
+  color,
   radius,
+
+  palette: {
+    primary: "#6366f1",
+  },
 });
 
 export const config = createTamagui({
@@ -19,5 +23,7 @@ export const config = createTamagui({
 export type Conf = typeof config;
 
 declare module "tamagui" {
-  interface TamaguiCustomConfig extends Conf {}
+  interface TamaguiCustomConfig extends Conf {
+    ignoreLint: void;
+  }
 }

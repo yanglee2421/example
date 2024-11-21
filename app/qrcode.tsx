@@ -38,12 +38,12 @@ export default function Qrcode() {
         <View paddingInline="$4">
           <Paragraph>We need your permission to show the camera</Paragraph>
         </View>
-        <Card.Footer padded theme="dark_Button">
+        <Card.Footer padded>
           <Button
             onPress={requestPermission}
             flex={1}
-            backgroundColor={"$primary"}
-            color="$color"
+            backgroundColor={"$palette.primary"}
+            color="$gray12Dark"
           >
             grant permission
           </Button>
