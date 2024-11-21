@@ -7,6 +7,7 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "lint": "expo lint",
+    "prebuild": "expo prebuild",
     "check": "expo install --check",
     "build": "eas build",
     "generate": "drizzle-kit generate"
@@ -22,7 +23,7 @@
     "@tanstack/react-query": "^5.60.5",
     "axios": "^1.7.7",
     "drizzle-orm": "^0.36.3",
-    "expo": "52.0.7",
+    "expo": "52.0.9",
     "expo-application": "~6.0.1",
     "expo-camera": "~16.0.6",
     "expo-clipboard": "~7.0.0",
