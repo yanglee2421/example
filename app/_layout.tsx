@@ -8,7 +8,7 @@ import migrations from "@/drizzle/migrations.js";
 import { useStorageHasHydrated } from "@/hooks/useStorageStore";
 import { QueryProvider } from "@/components/QueryProvider";
 import { ThemeProvider } from "@/components/ThemeProvider";
-import { Text, useTheme, View } from "tamagui";
+import {} from "@fluentui/react-native";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -17,8 +17,6 @@ export default function RootLayout() {
   const dbState = useMigrations(db, migrations);
   const [fontLoaded, error] = useFonts({
     SpaceMono: require("@/assets/fonts/SpaceMono-Regular.ttf"),
-    Inter: require("@tamagui/font-inter/otf/Inter-Medium.otf"),
-    InterBold: require("@tamagui/font-inter/otf/Inter-Bold.otf"),
   });
 
   React.useEffect(() => {
@@ -38,9 +36,6 @@ export default function RootLayout() {
   if (error || dbState.error) {
     return (
       <View>
-        {error && <Text>{error.message}</Text>}
-        <View></View>
-        {dbState.error && <Text>{dbState.error.message}</Text>}
       </View>
     );
   }
