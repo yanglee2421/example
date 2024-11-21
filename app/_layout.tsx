@@ -8,7 +8,6 @@ import migrations from "@/drizzle/migrations.js";
 import { useStorageHasHydrated } from "@/hooks/useStorageStore";
 import { QueryProvider } from "@/components/QueryProvider";
 import { ThemeProvider } from "@/components/ThemeProvider";
-import {} from "@fluentui/react-native";
 
 SplashScreen.preventAutoHideAsync();
 
