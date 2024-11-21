@@ -1,5 +1,5 @@
 import React from "react";
-import { StatusBar, useColorScheme } from "react-native";
+import { View } from "react-native";
 import { useFonts } from "expo-font";
 import { SplashScreen, Stack } from "expo-router";
 import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
@@ -50,53 +50,43 @@ export default function RootLayout() {
 }
 
 function RootRoute() {
-  const theme = useTheme();
-  const colorScheme = useColorScheme();
-
   return (
-    <>
-      <StatusBar
-        barStyle={colorScheme !== "dark" ? "dark-content" : "light-content"}
-        animated
-        backgroundColor={theme.background.get()}
-      />
-      <Stack
-        screenOptions={{
-          headerTintColor: theme.color.get(),
-          headerStyle: {
-            backgroundColor: theme.background.get(),
-          },
-          headerTitleStyle: {
-            color: theme.color.get(),
-          },
+    <Stack
+      screenOptions={{
+        // headerTintColor: theme.color.get(),
+        // headerStyle: {
+        //   backgroundColor: theme.background.get(),
+        // },
+        // headerTitleStyle: {
+        //   color: theme.color.get(),
+        // },
 
-          contentStyle: {
-            backgroundColor: theme.background.get(),
-          },
-        }}
-      >
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen
-          name="+not-found"
-          options={{ title: "Not Found" }}
-        />
-        <Stack.Screen name="about" options={{ title: "About" }} />
-        <Stack.Screen name="bing" options={{ title: "Bing" }} />
-        <Stack.Screen name="fengjing" options={{ title: "Landscape" }} />
-        <Stack.Screen name="history" options={{ title: "History" }} />
-        <Stack.Screen name="joke" options={{ title: "Joke" }} />
-        <Stack.Screen name="locking_dog" options={{ title: "Locking Dog" }} />
-        <Stack.Screen name="movie" options={{ title: "Movie" }} />
-        <Stack.Screen name="network" options={{ title: "Network" }} />
-        <Stack.Screen name="news" options={{ title: "News" }} />
-        <Stack.Screen name="qrcode" options={{ title: "QR Code Scaner" }} />
-        <Stack.Screen name="randtext" options={{ title: "Rand Text" }} />
-        <Stack.Screen name="settings" options={{ title: "Settings" }} />
-        <Stack.Screen
-          name="todolist"
-          options={{ title: "To Do List" }}
-        />
-      </Stack>
-    </>
+        // contentStyle: {
+        //   backgroundColor: theme.background.get(),
+        // },
+      }}
+    >
+      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      <Stack.Screen
+        name="+not-found"
+        options={{ title: "Not Found" }}
+      />
+      <Stack.Screen name="about" options={{ title: "About" }} />
+      <Stack.Screen name="bing" options={{ title: "Bing" }} />
+      <Stack.Screen name="fengjing" options={{ title: "Landscape" }} />
+      <Stack.Screen name="history" options={{ title: "History" }} />
+      <Stack.Screen name="joke" options={{ title: "Joke" }} />
+      <Stack.Screen name="locking_dog" options={{ title: "Locking Dog" }} />
+      <Stack.Screen name="movie" options={{ title: "Movie" }} />
+      <Stack.Screen name="network" options={{ title: "Network" }} />
+      <Stack.Screen name="news" options={{ title: "News" }} />
+      <Stack.Screen name="qrcode" options={{ title: "QR Code Scaner" }} />
+      <Stack.Screen name="randtext" options={{ title: "Rand Text" }} />
+      <Stack.Screen name="settings" options={{ title: "Settings" }} />
+      <Stack.Screen
+        name="todolist"
+        options={{ title: "To Do List" }}
+      />
+    </Stack>
   );
 }
