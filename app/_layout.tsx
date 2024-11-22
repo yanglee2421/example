@@ -5,7 +5,10 @@ import { SplashScreen, Stack } from "expo-router";
 import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
 import { db } from "@/db/db";
 import migrations from "@/drizzle/migrations.js";
-import { useStorageHasHydrated } from "@/hooks/useStorageStore";
+import {
+  useStorageHasHydrated,
+  useStorageStore,
+} from "@/hooks/useStorageStore";
 import { QueryProvider } from "@/components/QueryProvider";
 import { ThemeProvider } from "@/components/ThemeProvider";
 
@@ -46,20 +49,23 @@ export default function RootLayout() {
 }
 
 function RootRoute() {
+  const theme = useStorageStore((s) => s.theme);
+
   return (
     <Stack
       screenOptions={{
-        // headerTintColor: theme.color.get(),
-        // headerStyle: {
-        //   backgroundColor: theme.background.get(),
-        // },
-        // headerTitleStyle: {
-        //   color: theme.color.get(),
-        // },
+        headerTintColor: theme.palette.primary.main,
+        headerStyle: {
+          backgroundColor: theme.palette.background.default,
+        },
+        headerTitleStyle: {
+          color: theme.palette.text.primary,
+          fontFamily: theme.typography.body1.fontFamily,
+        },
 
-        // contentStyle: {
-        //   backgroundColor: theme.background.get(),
-        // },
+        contentStyle: {
+          backgroundColor: theme.palette.background.default,
+        },
       }}
     >
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />

@@ -1,4 +1,5 @@
-import { Fontisto, MaterialCommunityIcons } from "@expo/vector-icons";
+import { useStorageStore } from "@/hooks/useStorageStore";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import React from "react";
 import {
   Animated,
@@ -10,6 +11,7 @@ import {
 
 export default function Page() {
   const rotateValue = useAnimatedValue(0);
+  const theme = useStorageStore((s) => s.theme);
 
   React.useEffect(() => {
     const startRotation = () => {
@@ -36,15 +38,10 @@ export default function Page() {
       <Animated.View
         style={[styles.icon, { transform: [{ rotate }] }]}
       >
-        {void (
-          <Fontisto
-            name="atom"
-            size={96}
-          />
-        )}
         <MaterialCommunityIcons
           name="react"
           size={96}
+          color={theme.palette.text.icon}
         />
       </Animated.View>
     </View>

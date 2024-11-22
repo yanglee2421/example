@@ -1,26 +1,44 @@
 import { Tabs } from "expo-router";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useStorageStore } from "@/hooks/useStorageStore";
+import { Pressable } from "react-native";
+import React from "react";
 
 export default function TabsLayout() {
+  const theme = useStorageStore((s) => s.theme);
+
   return (
     <Tabs
       screenOptions={{
-        // headerShown: true,
-        // headerStyle: {
-        //   backgroundColor: theme.background.get(),
-        // },
-        // headerTitleStyle: {
-        //   color: theme.color.get(),
-        // },
+        headerShown: true,
+        headerStyle: {
+          backgroundColor: theme.palette.background.default,
+          borderBottomColor: theme.palette.divider,
+          borderBottomWidth: 1,
+        },
+        headerTitleStyle: {
+          color: theme.palette.text.primary,
+          fontFamily: theme.typography.body1.fontFamily,
+        },
 
-        // sceneStyle: {
-        //   backgroundColor: theme.background.get(),
-        // },
+        sceneStyle: {
+          backgroundColor: theme.palette.background.default,
+        },
 
-        // tabBarActiveTintColor: getToken("$palette.primary"),
-        // tabBarStyle: {
-        //   backgroundColor: theme.background.get(),
-        // },
+        tabBarActiveTintColor: theme.palette.primary.main,
+        tabBarStyle: {
+          backgroundColor: theme.palette.background.default,
+        },
+        tabBarLabelStyle: {
+          fontFamily: theme.typography.body1.fontFamily,
+        },
+        tabBarButton(props) {
+          return (
+            <TabBarButton {...props}>
+              {props.children}
+            </TabBarButton>
+          );
+        },
       }}
     >
       <Tabs.Screen
@@ -69,5 +87,28 @@ export default function TabsLayout() {
         }}
       />
     </Tabs>
+  );
+}
+
+function TabBarButton(
+  props: React.PropsWithChildren<{
+    onPress?(e: NonNullable<unknown>): void;
+    style?: NonNullable<unknown> | null;
+  }>,
+) {
+  const theme = useStorageStore((s) => s.theme);
+
+  return (
+    <Pressable
+      onPress={props.onPress}
+      style={props.style}
+      android_ripple={{
+        borderless: false,
+        foreground: true,
+        color: theme.palette.action.hover,
+      }}
+    >
+      {props.children}
+    </Pressable>
   );
 }
