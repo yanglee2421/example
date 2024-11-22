@@ -105,8 +105,16 @@ const darkTheme = {
       fontFamily: "SpaceMono",
       fontWeight: "400" as const,
       fontSize: htmlFontSize * 1,
-      lineHeight: 1.5,
+      lineHeight: htmlFontSize * 1 * 1.5,
       letterSpacing: htmlFontSize * 1 * 0.00938,
+    },
+    button: {
+      fontFamily: "SpaceMono",
+      fontWeight: "500",
+      fontSize: htmlFontSize * 0.875,
+      lineHeight: htmlFontSize * 0.875 * 1.75,
+      letterSpacing: htmlFontSize * 0.875 * 0.02857,
+      textTransform: "uppercase" as const,
     },
   },
 };
@@ -138,6 +146,7 @@ export const useStorageStore = create<Store>()(
     {
       name: "useStorageStore",
       storage: createJSONStorage(() => AsyncStorage),
+      version: 1,
     },
   ),
 );
