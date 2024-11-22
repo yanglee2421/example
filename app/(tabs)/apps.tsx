@@ -1,110 +1,93 @@
-// import { Link } from "expo-router";
-// import { FlatList } from "react-native";
-// import { ListItem } from "tamagui";
-// import {
-//   BookOpen,
-//   Clapperboard,
-//   Copyright,
-//   Dog,
-//   Info,
-//   ListTodo,
-//   Mountain,
-//   Network,
-//   Newspaper,
-//   QrCode,
-//   Quote,
-//   Settings,
-//   Smile,
-// } from "@tamagui/lucide-icons";
-// import { Fontisto } from "@expo/vector-icons";
+import { Link } from "expo-router";
+import { FlatList, Text, View } from "react-native";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
-// const list = [
-//   {
-//     icon: <Info />,
-//     label: "Not Found",
-//     href: "/404",
-//   },
-//   {
-//     icon: <Copyright />,
-//     label: "About",
-//     href: "/about",
-//   },
-//   {
-//     icon: <ListTodo />,
-//     label: "To Do List",
-//     href: "/todolist",
-//   },
-//   {
-//     icon: <QrCode />,
-//     label: "QR Code Scaner",
-//     href: "/qrcode",
-//   },
-//   {
-//     icon: <Network />,
-//     label: "Network",
-//     href: "/network",
-//   },
-//   {
-//     icon: <Fontisto name="bing" />,
-//     label: "Bing",
-//     href: "/bing",
-//   },
-//   {
-//     icon: <Newspaper />,
-//     label: "News",
-//     href: "/news",
-//   },
-//   {
-//     icon: <Smile />,
-//     label: "Joke",
-//     href: "/joke",
-//   },
-//   {
-//     icon: <Mountain />,
-//     label: "Landscape",
-//     href: "/fengjing",
-//   },
-//   {
-//     icon: <BookOpen />,
-//     label: "History",
-//     href: "/history",
-//   },
-//   {
-//     icon: <Dog />,
-//     label: "Locking Dog",
-//     href: "/locking_dog",
-//   },
-//   {
-//     icon: <Clapperboard />,
-//     label: "Movie",
-//     href: "/movie",
-//   },
-//   {
-//     icon: <Quote />,
-//     label: "Rand Text",
-//     href: "/randtext",
-//   },
-//   {
-//     icon: <Settings />,
-//     label: "Settings",
-//     href: "/settings",
-//   },
-// ].sort((c, n) => c.label.localeCompare(n.label));
+const list = [
+  {
+    icon: <MaterialCommunityIcons />,
+    label: "Not Found",
+    href: "/404",
+  },
+  {
+    icon: <MaterialCommunityIcons />,
+    label: "About",
+    href: "/about",
+  },
+  {
+    icon: <MaterialCommunityIcons />,
+    label: "To Do List",
+    href: "/todolist",
+  },
+  {
+    icon: <MaterialCommunityIcons />,
+    label: "QR Code Scaner",
+    href: "/qrcode",
+  },
+  {
+    icon: <MaterialCommunityIcons />,
+    label: "Network",
+    href: "/network",
+  },
+  {
+    icon: <MaterialCommunityIcons name="microsoft-bing" />,
+    label: "Bing",
+    href: "/bing",
+  },
+  {
+    icon: <MaterialCommunityIcons />,
+    label: "News",
+    href: "/news",
+  },
+  {
+    icon: <MaterialCommunityIcons />,
+    label: "Joke",
+    href: "/joke",
+  },
+  {
+    icon: <MaterialCommunityIcons />,
+    label: "Landscape",
+    href: "/fengjing",
+  },
+  {
+    icon: <MaterialCommunityIcons />,
+    label: "History",
+    href: "/history",
+  },
+  {
+    icon: <MaterialCommunityIcons />,
+    label: "Locking Dog",
+    href: "/locking_dog",
+  },
+  {
+    icon: <MaterialCommunityIcons name="movie-outline" />,
+    label: "Movie",
+    href: "/movie",
+  },
+  {
+    icon: <MaterialCommunityIcons name="text" />,
+    label: "Rand Text",
+    href: "/randtext",
+  },
+  {
+    icon: <MaterialCommunityIcons />,
+    label: "Settings",
+    href: "/settings",
+  },
+].sort((c, n) => c.label.localeCompare(n.label));
 
-// export default function Account() {
-//   return (
-//     <FlatList
-//       data={list}
-//       keyExtractor={(i) => i.href}
-//       renderItem={(i) => (
-//         <Link href={i.item.href} key={i.item.label} asChild>
-//           <ListItem icon={i.item.icon} title={i.item.label} />
-//         </Link>
-//       )}
-//     />
-//   );
-// }
-
-export default function Page() {
-  return <></>;
+export default function Account() {
+  return (
+    <FlatList
+      data={list}
+      keyExtractor={(i) => i.href}
+      renderItem={(i) => (
+        <Link href={i.item.href} key={i.item.label} asChild>
+          <View style={{ flexDirection: "row", borderWidth: 1 }}>
+            {i.item.icon}
+            <Text>{i.item.label}</Text>
+          </View>
+        </Link>
+      )}
+    />
+  );
 }

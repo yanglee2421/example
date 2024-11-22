@@ -33,10 +33,7 @@ export default function RootLayout() {
   }, [fontLoaded, error, dbState.error, dbState.success, hasHydrated]);
 
   if (error || dbState.error) {
-    return (
-      <View>
-      </View>
-    );
+    return <View></View>;
   }
 
   return hasHydrated && fontLoaded && dbState.success && (
