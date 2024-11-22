@@ -105,7 +105,7 @@ function TabBarButton(
       android_ripple={{
         borderless: false,
         foreground: true,
-        color: theme.palette.action.hover,
+        color: theme.palette.action.focus,
       }}
     >
       {props.children}

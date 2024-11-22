@@ -181,10 +181,15 @@ export default function Account() {
             android_ripple={{
               borderless: false,
               foreground: true,
-              color: theme.palette.action.hover,
+              color: theme.palette.action.focus,
             }}
           >
-            <View style={styles.itemView}>
+            <View
+              style={[styles.itemView, {
+                paddingInline: theme.space(4),
+                paddingBlock: theme.space(3),
+              }]}
+            >
               {i.item.icon}
               <Text
                 style={[styles.itemText, {
@@ -209,9 +214,6 @@ const styles = StyleSheet.create({
   itemLink: {
     borderWidth: 1,
     borderColor: "transparent",
-
-    paddingInline: 12,
-    paddingBlock: 8,
   },
   itemView: {
     flexDirection: "row",

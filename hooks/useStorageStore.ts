@@ -5,16 +5,144 @@ import { immer } from "zustand/middleware/immer";
 import { type WritableDraft } from "immer";
 import React from "react";
 
+const color = (
+  main: string,
+  light: string,
+  dark: string,
+  contrastText: string,
+) => ({ main, light, dark, contrastText });
+
+const black = "#000";
+const white = "#fff";
+const common = { black, white };
+const shape = { borderRadius: 4 };
+const space = (abs: number) => abs * 4;
+
 const htmlFontSize = 16;
+const fontFamily = "SpaceMono";
 
-const darkTheme = {
+type FontWeight = "300" | "400" | "500" | "600" | "700";
+
+const text = (
+  fontWeight: FontWeight,
+  size: number,
+  lh: number,
+  ls: number,
+  textTransform?: string,
+) => ({
+  fontFamily,
+  fontWeight,
+  fontSize: htmlFontSize * size,
+  lineHeight: htmlFontSize * size * lh,
+  letterSpacing: htmlFontSize * size * ls,
+  textTransform,
+});
+
+const typography = {
+  htmlFontSize,
+  fontFamily,
+  fontSize: 14,
+  fontWeightLight: "300" as const,
+  fontWeightRegular: "400" as const,
+  fontWeightMedium: "500" as const,
+  fontWeightBold: "700" as const,
+
+  h1: text("300", 6, 1.167, -0.01562),
+  h2: text("300", 3.75, 1.2, -0.00833),
+  h3: text("400", 3, 1.167, 0),
+  h4: text("400", 2.125, 1.235, 0.00735),
+  h5: text("400", 1.5, 1.334, 0),
+  h6: text("500", 1.25, 1.6, 0.0075),
+  subtitle1: text("400", 1, 1.75, 0.00938),
+  subtitle2: text("500", 0.875, 1.57, 0.00714),
+
+  body1: {
+    fontFamily,
+    fontWeight: "400" as const,
+    fontSize: htmlFontSize * 1,
+    lineHeight: htmlFontSize * 1 * 1.5,
+    letterSpacing: htmlFontSize * 1 * 0.00938,
+  },
+  body2: text("400", 0.875, 1.42, 0.01071),
+  button: {
+    fontFamily,
+    fontWeight: "500",
+    fontSize: htmlFontSize * 0.875,
+    lineHeight: htmlFontSize * 0.875 * 1.75,
+    letterSpacing: htmlFontSize * 0.875 * 0.02857,
+    textTransform: "uppercase" as const,
+  },
+  caption: text("400", 0.75, 1.66, 0.03333),
+  overline: text("400", 0.75, 2.66, 0.08333, "uppercase"),
+};
+
+const zIndex = {
+  mobileStepper: 1000,
+  fab: 1050,
+  speedDial: 1050,
+  appBar: 1100,
+  drawer: 1200,
+  modal: 1300,
+  snackbar: 1400,
+  tooltip: 1500,
+};
+
+export const lightTheme = {
+  shape,
+  space,
+  typography,
+  zIndex,
   palette: {
-    mode: "dark",
+    common,
+    mode: "light",
 
-    common: {
-      black: "#000",
-      white: "#fff",
+    primary: color("#1976d2", "#42a5f5", "#1565c0", white),
+    secondary: color("#9c27b0", "#ba68c8", "#7b1fa2", white),
+    error: color("#d32f2f", "#ef5350", "#c62828", white),
+    warning: color("#ed6c02", "#ff9800", "#e65100", white),
+    info: color("#0288d1", "#03a9f4", "#01579b", white),
+    success: color("#2e7d32", "#4caf50", "#1b5e20", white),
+
+    grey: {},
+
+    text: {
+      primary: "rgba(0, 0, 0, 0.87)",
+      secondary: "rgba(0, 0, 0, 0.6)",
+      disabled: "rgba(0, 0, 0, 0.38)",
+      icon: "rgba(0, 0, 0, 0.87)",
     },
+
+    divider: "rgba(0, 0, 0, 0.12)",
+
+    background: {
+      paper: white,
+      default: white,
+    },
+
+    action: {
+      active: "rgba(0, 0, 0, 0.54)",
+      hover: "rgba(0, 0, 0, 0.04)",
+      hoverOpacity: 0.04,
+      selected: "rgba(0, 0, 0, 0.08)",
+      selectedOpacity: 0.08,
+      disabled: "rgba(0, 0, 0, 0.26)",
+      disabledBackground: "rgba(0, 0, 0, 0.12)",
+      disabledOpacity: 0.38,
+      focus: "rgba(0, 0, 0, 0.12)",
+      focusOpacity: 0.12,
+      activatedOpacity: 0.12,
+    },
+  },
+};
+
+export const darkTheme = {
+  shape,
+  space,
+  typography,
+  zIndex,
+  palette: {
+    common,
+    mode: "dark",
 
     primary: {
       main: "#90caf9",
@@ -71,7 +199,6 @@ const darkTheme = {
 
     action: {
       active: "#fff",
-      activatedOpacity: 0.24,
       hover: "rgba(255, 255, 255, 0.08)",
       hoverOpacity: 0.08,
       selected: "rgba(255, 255, 255, 0.16)",
@@ -81,40 +208,7 @@ const darkTheme = {
       disabledOpacity: 0.12,
       focus: "rgba(255, 255, 255, 0.12)",
       focusOpacity: 0.12,
-    },
-  },
-
-  shape: {
-    borderRadius: 4,
-  },
-
-  space(abs: number) {
-    return abs * 4;
-  },
-
-  typography: {
-    htmlFontSize,
-    fontFamily: "SpaceMono",
-    fontSize: 14,
-    fontWeightLight: "300" as const,
-    fontWeightRegular: "400" as const,
-    fontWeightMedium: "500" as const,
-    fontWeightBold: "700" as const,
-
-    body1: {
-      fontFamily: "SpaceMono",
-      fontWeight: "400" as const,
-      fontSize: htmlFontSize * 1,
-      lineHeight: htmlFontSize * 1 * 1.5,
-      letterSpacing: htmlFontSize * 1 * 0.00938,
-    },
-    button: {
-      fontFamily: "SpaceMono",
-      fontWeight: "500",
-      fontSize: htmlFontSize * 0.875,
-      lineHeight: htmlFontSize * 0.875 * 1.75,
-      letterSpacing: htmlFontSize * 0.875 * 0.02857,
-      textTransform: "uppercase" as const,
+      activatedOpacity: 0.24,
     },
   },
 };
