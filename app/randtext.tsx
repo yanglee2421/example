@@ -6,6 +6,7 @@ import {
   ScrollView,
   Share,
   Text,
+  View,
 } from "react-native";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { fetchRandtext } from "@/api/fetchRandtext";
@@ -30,7 +31,11 @@ export default function Page() {
   return (
     <>
       {randtext.isLoading && <Loading />}
-      {randtext.isPending && !randtext.isFetching && <NeedAPIKEY />}
+      {randtext.isPending && !randtext.isFetching && (
+        <View style={{ padding: theme.space(3) }}>
+          <NeedAPIKEY />
+        </View>
+      )}
       {randtext.isError && (
         <ScrollView
           refreshControl={
@@ -66,21 +71,19 @@ export default function Page() {
                 colors={[theme.palette.primary.main]}
               />
             }
-            contentContainerStyle={{
-              padding: theme.space(3),
-              gap: theme.space(3),
-            }}
             data={randtext.data.pages}
             keyExtractor={(i) => i.data.data}
             renderItem={({ item, index }) => (
               <>
                 <Pressable
                   onPress={() => Share.share({ message: item.data.data })}
-                  style={[theme.shape, {
+                  style={[{
                     borderWidth: 1,
-                    borderColor: theme.palette.divider,
+                    borderColor: "transparent",
+                    borderBlockEndColor: theme.palette.divider,
 
-                    padding: theme.space(3),
+                    paddingInline: theme.space(6),
+                    paddingBlock: theme.space(3),
                   }]}
                   android_ripple={android_ripple(theme.palette.action.focus)}
                 >
@@ -99,23 +102,18 @@ export default function Page() {
                     disabled={randtext.isFetchingNextPage}
                     style={[
                       {
-                        backgroundColor: randtext.isFetchingNextPage
-                          ? theme.palette.action.disabledBackground
-                          : theme.palette.primary.main,
-
-                        paddingInline: theme.space(4),
-                        paddingBlock: theme.space(2),
-                        marginBlockStart: theme.space(3),
+                        paddingInline: theme.space(6),
+                        paddingBlock: theme.space(3),
                       },
                       theme.shape,
                     ]}
                     android_ripple={android_ripple(theme.palette.action.focus)}
                   >
                     <Text
-                      style={[theme.typography.button, {
+                      style={[theme.typography.body1, {
                         color: randtext.isFetchingNextPage
-                          ? theme.palette.action.disabled
-                          : theme.palette.primary.contrastText,
+                          ? theme.palette.text.disabled
+                          : theme.palette.text.primary,
                         textAlign: "center",
                       }]}
                     >

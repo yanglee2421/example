@@ -10,7 +10,6 @@ export function NeedAPIKEY() {
   return (
     <View
       style={{
-        margin: 16,
         borderWidth: 1,
         borderColor: theme.palette.divider,
         padding: 12,

@@ -33,15 +33,15 @@ export default function Page() {
           colors={[theme.palette.primary.main]}
         />
       }
-      contentContainerStyle={{ padding: theme.space(3), gap: theme.space(3) }}
     >
       <View
-        style={[theme.shape, {
+        style={[{
           borderWidth: 1,
-          borderColor: theme.palette.divider,
+          borderColor: "transparent",
+          borderBlockEndColor: theme.palette.divider,
 
-          paddingInline: theme.space(4),
-          paddingBlock: theme.space(2),
+          paddingInline: theme.space(6),
+          paddingBlock: theme.space(3),
         }]}
       >
         <Text
@@ -78,12 +78,13 @@ export default function Page() {
                 Linking.openURL(i.url);
               }
             }}
-            style={[theme.shape, {
-              paddingInline: theme.space(4),
-              paddingBlock: theme.space(2),
+            style={[{
+              paddingInline: theme.space(6),
+              paddingBlock: theme.space(3),
 
               borderWidth: 1,
-              borderColor: theme.palette.divider,
+              borderColor: "transparent",
+              borderBlockEndColor: theme.palette.divider,
             }]}
             android_ripple={{
               color: theme.palette.action.focus,
@@ -99,7 +100,7 @@ export default function Page() {
               {i.year}
             </Text>
             <Text
-              style={[theme.typography.body1, {
+              style={[theme.typography.body2, {
                 color: theme.palette.text.secondary,
               }]}
             >
