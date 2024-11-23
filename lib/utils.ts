@@ -10,3 +10,9 @@ export function onAnimationFrame(cb: () => void) {
 
   return () => cancelAnimationFrame(animate);
 }
+
+export const android_ripple = (color: string) => ({
+  color,
+  foreground: true,
+  borderless: false,
+});

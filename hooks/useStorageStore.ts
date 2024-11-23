@@ -22,13 +22,14 @@ const htmlFontSize = 16;
 const fontFamily = "SpaceMono";
 
 type FontWeight = "300" | "400" | "500" | "600" | "700";
+type TextTransform = "uppercase" | "lowercase";
 
 const text = (
   fontWeight: FontWeight,
   size: number,
   lh: number,
   ls: number,
-  textTransform?: string,
+  textTransform?: TextTransform,
 ) => ({
   fontFamily,
   fontWeight,
@@ -66,7 +67,7 @@ const typography = {
   body2: text("400", 0.875, 1.42, 0.01071),
   button: {
     fontFamily,
-    fontWeight: "500",
+    fontWeight: "500" as const,
     fontSize: htmlFontSize * 0.875,
     lineHeight: htmlFontSize * 0.875 * 1.75,
     letterSpacing: htmlFontSize * 0.875 * 0.02857,

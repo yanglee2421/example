@@ -34,28 +34,26 @@ export function NeedAPIKEY() {
           set((d) => {
             d.qqlykmKey = value;
           })}
-        style={{
+        style={[{
           backgroundColor: theme.palette.primary.main,
 
-          padding: 16,
-          paddingBlock: 8,
-
-          borderRadius: theme.shape.borderRadius,
-        }}
+          padding: theme.space(4),
+          paddingBlock: theme.space(2),
+        }, theme.shape]}
         android_ripple={{
-          color: theme.palette.action.hover,
+          color: theme.palette.action.focus,
           foreground: true,
           borderless: false,
         }}
       >
         <Text
-          style={{
+          style={[{
             textAlign: "center",
             color: theme.palette.primary.contrastText,
             fontSize: theme.typography.button.fontSize,
             textTransform: theme.typography.button.textTransform,
             lineHeight: theme.typography.button.lineHeight,
-          }}
+          }]}
         >
           Save
         </Text>

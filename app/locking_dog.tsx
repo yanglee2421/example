@@ -15,6 +15,7 @@ import { Loading } from "@/components/Loading";
 import { NeedAPIKEY } from "@/components/NeedAPIKEY";
 import { useStorageStore } from "@/hooks/useStorageStore";
 import { setStringAsync } from "expo-clipboard";
+import { android_ripple } from "@/lib/utils";
 
 const fetcher = fetchDiary();
 
@@ -22,6 +23,7 @@ export default function Page() {
   const apikey = useStorageStore((s) => s.qqlykmKey);
   const diary = useInfiniteQuery({ ...fetcher, enabled: !!apikey });
   const queryClient = useQueryClient();
+  const theme = useStorageStore((s) => s.theme);
 
   return (
     <>
@@ -54,11 +56,16 @@ export default function Page() {
                 }}
               />
             }
+            contentContainerStyle={{
+              padding: theme.space(3),
+              gap: theme.space(3),
+            }}
             data={diary.data.pages}
+            keyExtractor={(i) => i.data.data}
             renderItem={({ item, index }) => (
-              <React.Fragment key={item.data.data}>
-                <Text
-                  onLongPress={async () => {
+              <>
+                <Pressable
+                  onPress={async () => {
                     try {
                       await setStringAsync(item.data.data);
                       await Share.share({ message: item.data.data });
@@ -66,24 +73,50 @@ export default function Page() {
                       Alert.alert("Error");
                     }
                   }}
+                  style={[theme.shape, {
+                    borderColor: theme.palette.divider,
+                    borderWidth: 1,
+
+                    padding: theme.space(3),
+                  }]}
+                  android_ripple={android_ripple(theme.palette.action.focus)}
                 >
-                  {item.data.data}
-                </Text>
+                  <Text
+                    style={[theme.typography.body1, {
+                      color: theme.palette.text.primary,
+                    }]}
+                  >
+                    {item.data.data}
+                  </Text>
+                </Pressable>
 
                 {Object.is(index + 1, diary.data.pages.length) && (
-                  <View
-                    style={{ margin: 12 }}
+                  <Pressable
+                    onPress={() => diary.fetchNextPage()}
+                    style={[theme.shape, {
+                      backgroundColor: diary.isFetchingNextPage
+                        ? theme.palette.action.disabledBackground
+                        : theme.palette.primary.main,
+
+                      paddingInline: theme.space(4),
+                      paddingBlock: theme.space(2),
+                      marginBlockStart: theme.space(3),
+                    }]}
+                    android_ripple={android_ripple(theme.palette.action.focus)}
                   >
-                    <Pressable
-                      onPress={() => diary.fetchNextPage()}
+                    <Text
+                      style={[theme.typography.button, {
+                        color: diary.isFetchingNextPage
+                          ? theme.palette.action.disabled
+                          : theme.palette.primary.contrastText,
+                        textAlign: "center",
+                      }]}
                     >
-                      <Text>
-                        Click to fetch more
-                      </Text>
-                    </Pressable>
-                  </View>
+                      Click to fetch more
+                    </Text>
+                  </Pressable>
                 )}
-              </React.Fragment>
+              </>
             )}
           />
         </>

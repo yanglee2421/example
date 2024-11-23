@@ -20,6 +20,7 @@ export default function Page() {
   const apikey = useStorageStore((s) => s.qqlykmKey);
   const jokes = useInfiniteQuery({ ...fetcher, enabled: !!apikey });
   const queryClient = useQueryClient();
+  const theme = useStorageStore((s) => s.theme);
 
   return (
     <>
@@ -34,10 +35,17 @@ export default function Page() {
                 queryClient.removeQueries({ queryKey: fetcher.queryKey });
                 jokes.refetch();
               }}
+              colors={[theme.palette.primary.main]}
             />
           }
         >
-          <Text>Error</Text>
+          <Text
+            style={[theme.typography.body1, {
+              color: theme.palette.text.primary,
+            }]}
+          >
+            Error
+          </Text>
         </ScrollView>
       )}
       {jokes.isSuccess && (
@@ -50,31 +58,71 @@ export default function Page() {
                   queryClient.removeQueries({ queryKey: fetcher.queryKey });
                   jokes.refetch();
                 }}
+                colors={[theme.palette.primary.main]}
               />
             }
+            contentContainerStyle={{
+              padding: theme.space(3),
+              gap: theme.space(3),
+            }}
             data={jokes.data.pages}
+            keyExtractor={(i) => i.data.data.joke}
             renderItem={({ item, index }) => (
-              <React.Fragment key={item.data.data.joke}>
-                <Text
-                  onLongPress={() => {
-                    Share.share({ message: item.data.data.joke });
-                  }}
+              <>
+                <View
+                  style={[{
+                    borderWidth: 1,
+                    borderColor: theme.palette.divider,
+
+                    paddingInline: theme.space(4),
+                    paddingBlock: theme.space(2),
+                  }, theme.shape]}
                 >
-                  {item.data.data.joke}
-                </Text>
+                  <Text
+                    onLongPress={() => {
+                      Share.share({ message: item.data.data.joke });
+                    }}
+                    style={[theme.typography.body1, {
+                      color: theme.palette.text.primary,
+                    }]}
+                  >
+                    {item.data.data.joke}
+                  </Text>
+                </View>
+
                 {Object.is(index + 1, jokes.data.pages.length) && (
-                  <View style={{ padding: 12 }}>
-                    <Pressable
-                      onPress={() =>
-                        jokes.fetchNextPage()}
+                  <Pressable
+                    onPress={() => jokes.fetchNextPage()}
+                    disabled={jokes.isFetchingNextPage}
+                    style={[{
+                      backgroundColor: jokes.isFetchingNextPage
+                        ? theme.palette.action.disabledBackground
+                        : theme.palette.primary.main,
+
+                      paddingInline: theme.space(4),
+                      paddingBlock: theme.space(2),
+
+                      marginBlockStart: theme.space(3),
+                    }, theme.shape]}
+                    android_ripple={{
+                      color: theme.palette.action.focus,
+                      foreground: true,
+                      borderless: false,
+                    }}
+                  >
+                    <Text
+                      style={[theme.typography.button, {
+                        color: jokes.isFetchingNextPage
+                          ? theme.palette.action.disabled
+                          : theme.palette.primary.contrastText,
+                        textAlign: "center",
+                      }]}
                     >
-                      <Text>
-                        Click to fetch more
-                      </Text>
-                    </Pressable>
-                  </View>
+                      Click to fetch more
+                    </Text>
+                  </Pressable>
                 )}
-              </React.Fragment>
+              </>
             )}
           />
         </>
