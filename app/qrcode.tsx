@@ -120,8 +120,8 @@ export default function Qrcode() {
           borderRadius: 99999,
           backgroundColor: theme.palette.common.white,
 
-          width: theme.space(16),
-          height: theme.space(16),
+          width: theme.space(14),
+          height: theme.space(14),
 
           marginBlockEnd: theme.space(12),
 

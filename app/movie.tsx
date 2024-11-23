@@ -17,6 +17,7 @@ const fetcher = fetchJijiangshangying();
 export default function Page() {
   const apikey = useStorageStore((s) => s.qqlykmKey);
   const movies = useQuery({ ...fetcher, enabled: !!apikey });
+  const theme = useStorageStore((s) => s.theme);
 
   return (
     <>
@@ -28,10 +29,17 @@ export default function Page() {
             <RefreshControl
               refreshing={movies.isRefetching}
               onRefresh={() => movies.refetch()}
+              colors={[theme.palette.primary.main]}
             />
           }
         >
-          <Text>Error</Text>
+          <Text
+            style={[theme.typography.body1, {
+              color: theme.palette.error.main,
+            }]}
+          >
+            Error
+          </Text>
         </ScrollView>
       )}
       {movies.isSuccess && (
@@ -41,21 +49,64 @@ export default function Page() {
               <RefreshControl
                 refreshing={movies.isRefetching}
                 onRefresh={() => movies.refetch()}
+                colors={[theme.palette.primary.main]}
               />
             }
+            contentContainerStyle={{
+              padding: theme.space(3),
+              gap: theme.space(3),
+            }}
             data={movies.data.data.data}
             keyExtractor={(i) => i.title}
             renderItem={({ item }) => (
-              <View key={item.title}>
-                <Text>{item.title}</Text>
+              <View
+                style={[theme.shape, {
+                  borderColor: theme.palette.divider,
+                  borderWidth: 1,
+
+                  padding: theme.space(3),
+                }]}
+              >
                 <Image
                   source={{ uri: item.picUrl }}
                   resizeMode="contain"
+                  height={theme.space(40)}
                 />
-                <Text>{item.director}</Text>
-                <Text>{item.type}</Text>
-                <Text>{item.actors}</Text>
-                <Text>{item.releaseDateStr}</Text>
+                <Text
+                  style={[theme.typography.h6, {
+                    color: theme.palette.text.primary,
+                  }]}
+                >
+                  {item.title}
+                </Text>
+                <Text
+                  style={[theme.typography.subtitle1, {
+                    color: theme.palette.text.primary,
+                  }]}
+                >
+                  {item.director}
+                </Text>
+                <Text
+                  style={[theme.typography.subtitle2, {
+                    color: theme.palette.text.primary,
+                  }]}
+                >
+                  {item.type}
+                </Text>
+                <Text
+                  style={[theme.typography.caption, {
+                    color: theme.palette.text.primary,
+                  }]}
+                >
+                  {item.actors}
+                </Text>
+                <Text
+                  style={[theme.typography.overline, {
+                    color: theme.palette.text.secondary,
+                  }]}
+                >
+                  {item.releaseDateStr}
+                </Text>
               </View>
             )}
           />

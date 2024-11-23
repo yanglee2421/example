@@ -7,7 +7,6 @@ import {
   ScrollView,
   Share,
   Text,
-  View,
 } from "react-native";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { fetchDiary } from "@/api/fetchDiary";
@@ -21,7 +20,12 @@ const fetcher = fetchDiary();
 
 export default function Page() {
   const apikey = useStorageStore((s) => s.qqlykmKey);
-  const diary = useInfiniteQuery({ ...fetcher, enabled: !!apikey });
+  const diary = useInfiniteQuery({
+    ...fetcher,
+    enabled: !!apikey,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  });
   const queryClient = useQueryClient();
   const theme = useStorageStore((s) => s.theme);
 
@@ -38,6 +42,7 @@ export default function Page() {
                 queryClient.removeQueries({ queryKey: fetcher.queryKey });
                 diary.refetch();
               }}
+              colors={[theme.palette.primary.main]}
             />
           }
         >
@@ -93,6 +98,7 @@ export default function Page() {
                 {Object.is(index + 1, diary.data.pages.length) && (
                   <Pressable
                     onPress={() => diary.fetchNextPage()}
+                    disabled={diary.isFetchingNextPage}
                     style={[theme.shape, {
                       backgroundColor: diary.isFetchingNextPage
                         ? theme.palette.action.disabledBackground

@@ -18,7 +18,12 @@ const fetcher = fetchJoke();
 
 export default function Page() {
   const apikey = useStorageStore((s) => s.qqlykmKey);
-  const jokes = useInfiniteQuery({ ...fetcher, enabled: !!apikey });
+  const jokes = useInfiniteQuery({
+    ...fetcher,
+    enabled: !!apikey,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  });
   const queryClient = useQueryClient();
   const theme = useStorageStore((s) => s.theme);
 
@@ -38,6 +43,7 @@ export default function Page() {
               colors={[theme.palette.primary.main]}
             />
           }
+          contentContainerStyle={{ padding: theme.space(6) }}
         >
           <Text
             style={[theme.typography.body1, {

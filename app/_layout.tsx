@@ -56,7 +56,7 @@ function RootRoute() {
       screenOptions={{
         headerTintColor: theme.palette.primary.main,
         headerStyle: {
-          backgroundColor: theme.palette.background.default,
+          backgroundColor: theme.palette.background.paper,
         },
         headerTitleStyle: {
           color: theme.palette.text.primary,

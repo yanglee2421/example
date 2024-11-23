@@ -104,7 +104,8 @@ export default function Bing() {
                   alignItems: "center",
                   justifyContent: "center",
 
-                  backgroundColor: `rgba(0,0,0,${.42})`,
+                  backgroundColor:
+                    `rgba(0,0,0,${theme.palette.action.disabledOpacity})`,
                 }}
               >
                 <Text

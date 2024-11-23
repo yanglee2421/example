@@ -12,7 +12,7 @@ export default function TabsLayout() {
       screenOptions={{
         headerShown: true,
         headerStyle: {
-          backgroundColor: theme.palette.background.default,
+          backgroundColor: theme.palette.background.paper,
           borderBottomColor: theme.palette.divider,
           borderBottomWidth: 1,
         },
@@ -27,7 +27,7 @@ export default function TabsLayout() {
 
         tabBarActiveTintColor: theme.palette.primary.main,
         tabBarStyle: {
-          backgroundColor: theme.palette.background.default,
+          backgroundColor: theme.palette.background.paper,
         },
         tabBarLabelStyle: {
           fontFamily: theme.typography.body1.fontFamily,

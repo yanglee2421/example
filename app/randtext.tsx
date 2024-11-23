@@ -12,13 +12,20 @@ import { fetchRandtext } from "@/api/fetchRandtext";
 import { Loading } from "@/components/Loading";
 import { NeedAPIKEY } from "@/components/NeedAPIKEY";
 import { useStorageStore } from "@/hooks/useStorageStore";
+import { android_ripple } from "@/lib/utils";
 
 const fetcher = fetchRandtext();
 
 export default function Page() {
   const apikey = useStorageStore((s) => s.qqlykmKey);
-  const randtext = useInfiniteQuery({ ...fetcher, enabled: !!apikey });
+  const randtext = useInfiniteQuery({
+    ...fetcher,
+    enabled: !!apikey,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  });
   const queryClient = useQueryClient();
+  const theme = useStorageStore((s) => s.theme);
 
   return (
     <>
@@ -33,11 +40,17 @@ export default function Page() {
                 queryClient.removeQueries({ queryKey: fetcher.queryKey });
                 randtext.refetch();
               }}
-              colors={["#000"]}
+              colors={[theme.palette.primary.main]}
             />
           }
         >
-          <Text>Error</Text>
+          <Text
+            style={[theme.typography.body1, {
+              color: theme.palette.error.main,
+            }]}
+          >
+            Error
+          </Text>
         </ScrollView>
       )}
       {randtext.isSuccess && (
@@ -50,29 +63,67 @@ export default function Page() {
                   queryClient.removeQueries({ queryKey: fetcher.queryKey });
                   randtext.refetch();
                 }}
-                colors={["#000"]}
+                colors={[theme.palette.primary.main]}
               />
             }
+            contentContainerStyle={{
+              padding: theme.space(3),
+              gap: theme.space(3),
+            }}
             data={randtext.data.pages}
+            keyExtractor={(i) => i.data.data}
             renderItem={({ item, index }) => (
-              <React.Fragment key={item.data.data}>
-                <Text
-                  onLongPress={() =>
-                    Share.share({ message: item.data.data })}
+              <>
+                <Pressable
+                  onPress={() => Share.share({ message: item.data.data })}
+                  style={[theme.shape, {
+                    borderWidth: 1,
+                    borderColor: theme.palette.divider,
+
+                    padding: theme.space(3),
+                  }]}
+                  android_ripple={android_ripple(theme.palette.action.focus)}
                 >
-                  {item.data.data}
-                </Text>
+                  <Text
+                    style={[theme.typography.body1, {
+                      color: theme.palette.text.primary,
+                    }]}
+                  >
+                    {item.data.data}
+                  </Text>
+                </Pressable>
+
                 {Object.is(index + 1, randtext.data.pages.length) && (
                   <Pressable
                     onPress={() => randtext.fetchNextPage()}
                     disabled={randtext.isFetchingNextPage}
+                    style={[
+                      {
+                        backgroundColor: randtext.isFetchingNextPage
+                          ? theme.palette.action.disabledBackground
+                          : theme.palette.primary.main,
+
+                        paddingInline: theme.space(4),
+                        paddingBlock: theme.space(2),
+                        marginBlockStart: theme.space(3),
+                      },
+                      theme.shape,
+                    ]}
+                    android_ripple={android_ripple(theme.palette.action.focus)}
                   >
-                    <Text>
+                    <Text
+                      style={[theme.typography.button, {
+                        color: randtext.isFetchingNextPage
+                          ? theme.palette.action.disabled
+                          : theme.palette.primary.contrastText,
+                        textAlign: "center",
+                      }]}
+                    >
                       Click to fetch more
                     </Text>
                   </Pressable>
                 )}
-              </React.Fragment>
+              </>
             )}
           />
         </>
