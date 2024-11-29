@@ -4,8 +4,9 @@ import { type CameraType, CameraView, useCameraPermissions } from "expo-camera";
 import { useMutation } from "@tanstack/react-query";
 import { Loading } from "@/components/Loading";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { Pressable, Text, View } from "react-native";
+import { Pressable, Text, ToastAndroid, View } from "react-native";
 import { useStorageStore } from "@/hooks/useStorageStore";
+import { android_ripple } from "@/lib/utils";
 
 export default function Qrcode() {
   const [data, setData] = React.useState("");
@@ -88,15 +89,40 @@ export default function Qrcode() {
 
   if (data) {
     return (
-      <View>
-        <Text>QR Code</Text>
-        <Text>{data}</Text>
-        <Pressable
-          onPress={() => copy.mutate(data)}
-          disabled={copy.isPending}
+      <View
+        style={[theme.shape, {
+          margin: theme.space(3),
+          paddingInline: theme.space(5),
+          paddingBlock: theme.space(3),
+
+          borderColor: theme.palette.divider,
+          borderWidth: 1,
+        }]}
+      >
+        <Text
+          style={[theme.typography.h5, { color: theme.palette.text.primary }]}
         >
-          <Text>
-            Copy
+          QR Code
+        </Text>
+        <Pressable
+          onPress={() =>
+            copy.mutate(data, {
+              onError(error) {
+                ToastAndroid.show(error.message, 1000 * 2);
+              },
+              onSuccess() {
+                ToastAndroid.show("Copied!", 1000 * 2);
+              },
+            })}
+          disabled={copy.isPending}
+          android_ripple={android_ripple(theme.palette.action.focus)}
+        >
+          <Text
+            style={[theme.typography.body1, {
+              color: theme.palette.text.secondary,
+            }]}
+          >
+            {data}
           </Text>
         </Pressable>
       </View>
@@ -123,7 +149,7 @@ export default function Qrcode() {
           width: theme.space(14),
           height: theme.space(14),
 
-          marginBlockEnd: theme.space(12),
+          marginBlockEnd: theme.space(16),
 
           justifyContent: "center",
           alignItems: "center",

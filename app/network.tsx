@@ -95,7 +95,7 @@ export default function Network() {
               },
               onSuccess() {
                 ToastAndroid.showWithGravity(
-                  "Copyed",
+                  "Copied",
                   1000 * 2,
                   ToastAndroid.BOTTOM,
                 );
