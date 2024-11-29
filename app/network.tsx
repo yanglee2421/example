@@ -1,20 +1,34 @@
 import React from "react";
-import { getIpAddressAsync } from "expo-network";
+import * as ExpoNet from "expo-network";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { setStringAsync } from "expo-clipboard";
 import { useStorageStore } from "@/hooks/useStorageStore";
-import { Pressable, ScrollView, Text, View } from "react-native";
+import { Pressable, ScrollView, Text, ToastAndroid } from "react-native";
 import { android_ripple } from "@/lib/utils";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { ActivityAction, startActivityAsync } from "expo-intent-launcher";
 
 export default function Network() {
   const theme = useStorageStore((s) => s.theme);
   const ip = useQuery({
     queryKey: ["getIpAddressAsync"],
     queryFn() {
-      return getIpAddressAsync();
+      return ExpoNet.getIpAddressAsync();
     },
   });
+
+  const state = ExpoNet.useNetworkState();
+
+  const refetch = ip.refetch;
+  React.useEffect(() => {
+    const sub = ExpoNet.addNetworkStateListener(() => {
+      refetch();
+    });
+
+    return () => {
+      sub.remove();
+    };
+  }, [refetch]);
+
   const copy = useMutation<boolean, Error, string>({
     async mutationFn(data) {
       const ok = await setStringAsync(data);
@@ -28,80 +42,107 @@ export default function Network() {
   });
 
   return (
-    <ScrollView contentContainerStyle={{ padding: theme.space(3) }}>
-      <View
+    <ScrollView
+      contentContainerStyle={{ padding: theme.space(3), gap: theme.space(4) }}
+    >
+      <Pressable
+        onPress={() => startActivityAsync(ActivityAction.WIFI_SETTINGS)}
         style={[theme.shape, {
           borderColor: theme.palette.divider,
           borderWidth: 1,
 
           padding: theme.space(3),
         }]}
+        android_ripple={android_ripple(theme.palette.action.focus)}
       >
         <Text
-          style={[theme.typography.h5, { color: theme.palette.text.primary }]}
+          style={[theme.typography.body1, {
+            color: theme.palette.text.primary,
+          }]}
         >
-          IP
+          {state.type}
         </Text>
-        {ip.isPending && (
+        <Text
+          style={[
+            theme.typography.body2,
+            {
+              color: netSelector(
+                !!state.isConnected,
+                !!state.isInternetReachable,
+                theme.palette.error.main,
+                theme.palette.warning.main,
+                theme.palette.success.main,
+              ),
+            },
+          ]}
+        >
+          {netSelector(
+            !!state.isConnected,
+            !!state.isInternetReachable,
+            "No Connected",
+            "Connected but no internet",
+            "Ready",
+          )}
+        </Text>
+      </Pressable>
+
+      {ip.isSuccess && (
+        <Pressable
+          onPress={() =>
+            copy.mutate(ip.data, {
+              onError(error) {
+                ToastAndroid.show(error.message, 1000 * 2);
+              },
+              onSuccess() {
+                ToastAndroid.showWithGravity(
+                  "Copyed",
+                  1000 * 2,
+                  ToastAndroid.BOTTOM,
+                );
+              },
+            })}
+          style={[theme.shape, {
+            borderColor: theme.palette.divider,
+            borderWidth: 1,
+
+            padding: theme.space(3),
+          }]}
+          android_ripple={android_ripple(theme.palette.action.focus)}
+        >
           <Text
             style={[theme.typography.body1, {
               color: theme.palette.text.primary,
             }]}
           >
-            Loading...
+            IP
           </Text>
-        )}
-        {ip.isSuccess && (
           <Text
-            style={[theme.typography.body1, {
-              color: theme.palette.text.primary,
+            style={[theme.typography.body2, {
+              color: theme.palette.text.secondary,
             }]}
           >
             {ip.data}
           </Text>
-        )}
-        {ip.isSuccess && (
-          <Pressable
-            onPress={() => copy.mutate(ip.data)}
-            disabled={copy.isPending}
-            style={[{
-              backgroundColor: copy.isPending
-                ? theme.palette.action.disabledBackground
-                : theme.palette.primary.main,
-
-              paddingInline: theme.space(4),
-              paddingBlock: theme.space(2),
-              marginBlockStart: theme.space(3),
-
-              borderWidth: 1,
-              borderColor: "transparent",
-
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: theme.space(2),
-            }, theme.shape]}
-            android_ripple={android_ripple(theme.palette.action.focus)}
-          >
-            <MaterialCommunityIcons
-              name="content-copy"
-              size={theme.space(5)}
-              color={theme.palette.primary.contrastText}
-              style={{ marginInlineStart: theme.space(-1) }}
-            />
-            <Text
-              style={[theme.typography.button, {
-                color: copy.isPending
-                  ? theme.palette.action.disabled
-                  : theme.palette.primary.contrastText,
-                textAlign: "center",
-              }]}
-            >
-              Copy
-            </Text>
-          </Pressable>
-        )}
-      </View>
+        </Pressable>
+      )}
     </ScrollView>
   );
+}
+
+function netSelector<TError, TWarning, TSuccess>(
+  isConnected: boolean,
+  isInternetReachable: boolean,
+  error: TError,
+  warning: TWarning,
+  success: TSuccess,
+) {
+  if (!isConnected) {
+    return error;
+  }
+
+  if (!isInternetReachable) {
+    return warning;
+  }
+
+  return success;
 }
