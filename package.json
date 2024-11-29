@@ -4,11 +4,11 @@
   "main": "expo-router/entry",
   "scripts": {
     "start": "expo start",
-    "android": "expo start --android",
     "ios": "expo start --ios",
+    "dev": "expo start --android",
+    "prebuild": "expo prebuild --clean",
     "lint": "expo lint",
     "check": "expo install --check",
-    "prebuild": "expo prebuild",
     "build": "eas build",
     "generate": "drizzle-kit generate"
   },
