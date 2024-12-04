@@ -23,7 +23,7 @@ export default function RootLayout() {
 
   React.useEffect(() => {
     // Load Failed
-    if (dbState.error || dbState.success) {
+    if (dbState.error || error) {
       SplashScreen.hideAsync();
       return;
     }
