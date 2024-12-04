@@ -78,10 +78,6 @@ export default function ToDoList() {
     },
   });
 
-  React.useEffect(() => {
-    mutation.mutate();
-  }, [mutation.mutate]);
-
   return (
     <View>
       <Animated.View
