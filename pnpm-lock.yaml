@@ -93,6 +93,7 @@ importers:
       eas-cli:
         specifier: ^13.2.3
         version: 13.2.3(@types/node@22.9.1)(expo-modules-autolinking@2.0.3)(typescript@5.6.3)
+        version: 13.2.3(@types/node@22.9.1)(expo-modules-autolinking@2.0.3)(typescript@5.6.3)
       eslint-config-expo:
         specifier: ~8.0.1
         version: 8.0.1(eslint@8.57.0)(typescript@5.6.3)
@@ -1178,6 +1179,8 @@ packages:
 
   '@expo/fingerprint@0.11.3':
     resolution: {integrity: sha512-9lgXmcIePvZ7Wef63XtvuN3HfCUevF4E4tQPdEbH9/dUWwpOvvwQ3KT4OJ9jdh8JJ3nTdO9eDQ/8k8xr1aQ5Kg==}
+  '@expo/fingerprint@0.11.3':
+    resolution: {integrity: sha512-9lgXmcIePvZ7Wef63XtvuN3HfCUevF4E4tQPdEbH9/dUWwpOvvwQ3KT4OJ9jdh8JJ3nTdO9eDQ/8k8xr1aQ5Kg==}
     hasBin: true
 
   '@expo/image-utils@0.5.1':
@@ -2033,6 +2036,8 @@ packages:
     peerDependencies:
       '@babel/core': ^7.0.0
 
+  babel-preset-expo@12.0.3:
+    resolution: {integrity: sha512-1695e8y3U/HjifKx33vcNnFMSUSXwPWwhFxRlL6NRx2TENN6gySH82gPOWgxcra6gi+EJgXx52xG3PcqTjwW6w==}
   babel-preset-expo@12.0.3:
     resolution: {integrity: sha512-1695e8y3U/HjifKx33vcNnFMSUSXwPWwhFxRlL6NRx2TENN6gySH82gPOWgxcra6gi+EJgXx52xG3PcqTjwW6w==}
     peerDependencies:
@@ -2932,17 +2937,25 @@ packages:
 
   expo-modules-autolinking@2.0.3:
     resolution: {integrity: sha512-Q/ALJ54eS7Cr7cmbP+unEDTkHFQivQerWWrqZxuXOrSFYGCYU22+/xAZXaJOpZwseOVsP74zSkoRY/wBimVs7w==}
+  expo-modules-autolinking@2.0.3:
+    resolution: {integrity: sha512-Q/ALJ54eS7Cr7cmbP+unEDTkHFQivQerWWrqZxuXOrSFYGCYU22+/xAZXaJOpZwseOVsP74zSkoRY/wBimVs7w==}
     hasBin: true
 
   expo-modules-core@2.1.1:
     resolution: {integrity: sha512-yQzYCLR2mre4BNMXuqkeJ0oSNgmGEMI6BcmIzeNZbC2NFEjiaDpKvlV9bclYCtyVhUEVNbJcEPYMr6c1Y4eR4w==}
+  expo-modules-core@2.1.1:
+    resolution: {integrity: sha512-yQzYCLR2mre4BNMXuqkeJ0oSNgmGEMI6BcmIzeNZbC2NFEjiaDpKvlV9bclYCtyVhUEVNbJcEPYMr6c1Y4eR4w==}
 
+  expo-network@7.0.3:
+    resolution: {integrity: sha512-WPpiXJR5/k2LFmSDAENRLjVyOK4cVuFakQpTY0sVPXwD5mL9IWTgxK8yJZ6hAGXdPUUUM9+TJvOWr8TfjOWznw==}
   expo-network@7.0.3:
     resolution: {integrity: sha512-WPpiXJR5/k2LFmSDAENRLjVyOK4cVuFakQpTY0sVPXwD5mL9IWTgxK8yJZ6hAGXdPUUUM9+TJvOWr8TfjOWznw==}
     peerDependencies:
       expo: '*'
       react: '*'
 
+  expo-router@4.0.11:
+    resolution: {integrity: sha512-2Qrd/fk98kC+CTg1umbuUaBaGkpdGStPpkSR99SoAjX6KWC1WhNMCv0hGFn7cRmSNOWQzgIfLGLERhRY1o4myw==}
   expo-router@4.0.11:
     resolution: {integrity: sha512-2Qrd/fk98kC+CTg1umbuUaBaGkpdGStPpkSR99SoAjX6KWC1WhNMCv0hGFn7cRmSNOWQzgIfLGLERhRY1o4myw==}
     peerDependencies:
@@ -6925,6 +6938,7 @@ snapshots:
       - supports-color
 
   '@expo/fingerprint@0.11.3':
+  '@expo/fingerprint@0.11.3':
     dependencies:
       '@expo/spawn-async': 1.7.2
       arg: 5.0.2
@@ -7100,6 +7114,7 @@ snapshots:
       - typescript
 
   '@expo/prebuild-config@7.0.9(expo-modules-autolinking@2.0.3)':
+  '@expo/prebuild-config@7.0.9(expo-modules-autolinking@2.0.3)':
     dependencies:
       '@expo/config': 9.0.4
       '@expo/config-plugins': 8.0.10
@@ -7108,6 +7123,7 @@ snapshots:
       '@expo/json-file': 8.3.3
       '@react-native/normalize-colors': 0.74.85
       debug: 4.3.7(supports-color@8.1.1)
+      expo-modules-autolinking: 2.0.3
       expo-modules-autolinking: 2.0.3
       fs-extra: 9.1.0
       resolve-from: 5.0.0
@@ -8294,6 +8310,7 @@ snapshots:
       '@babel/plugin-syntax-top-level-await': 7.14.5(@babel/core@7.26.0)
 
   babel-preset-expo@12.0.3(@babel/core@7.26.0)(@babel/preset-env@7.24.7(@babel/core@7.26.0)):
+  babel-preset-expo@12.0.3(@babel/core@7.26.0)(@babel/preset-env@7.24.7(@babel/core@7.26.0)):
     dependencies:
       '@babel/plugin-proposal-decorators': 7.25.9(@babel/core@7.26.0)
       '@babel/plugin-transform-export-namespace-from': 7.25.9(@babel/core@7.26.0)
@@ -8786,6 +8803,7 @@ snapshots:
     optional: true
 
   eas-cli@13.2.3(@types/node@22.9.1)(expo-modules-autolinking@2.0.3)(typescript@5.6.3):
+  eas-cli@13.2.3(@types/node@22.9.1)(expo-modules-autolinking@2.0.3)(typescript@5.6.3):
     dependencies:
       '@expo/apple-utils': 2.1.0
       '@expo/code-signing-certificates': 0.0.5
@@ -8803,6 +8821,7 @@ snapshots:
       '@expo/plist': 0.1.3
       '@expo/plugin-help': 5.1.23(@types/node@22.9.1)(typescript@5.6.3)
       '@expo/plugin-warn-if-update-available': 2.5.1(@types/node@22.9.1)(typescript@5.6.3)
+      '@expo/prebuild-config': 7.0.9(expo-modules-autolinking@2.0.3)
       '@expo/prebuild-config': 7.0.9(expo-modules-autolinking@2.0.3)
       '@expo/results': 1.0.0
       '@expo/rudder-sdk-node': 1.1.1
@@ -9381,6 +9400,7 @@ snapshots:
       - supports-color
 
   expo-modules-autolinking@2.0.3:
+  expo-modules-autolinking@2.0.3:
     dependencies:
       '@expo/spawn-async': 1.7.2
       chalk: 4.1.2
@@ -9391,6 +9411,7 @@ snapshots:
       require-from-string: 2.0.2
       resolve-from: 5.0.0
 
+  expo-modules-core@2.1.1:
   expo-modules-core@2.1.1:
     dependencies:
       invariant: 2.2.4
