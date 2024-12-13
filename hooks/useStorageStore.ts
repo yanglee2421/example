@@ -234,14 +234,14 @@ export const useStorageStore = create<Store>()(
     immer((set) => {
       return {
         set,
-        qqlykmKey: "",
+        qqlykmKey: "GY7rE1J3f4ovi4wGONXshLHOHv",
         theme: darkTheme,
       };
     }),
     {
       name: "useStorageStore",
       storage: createJSONStorage(() => AsyncStorage),
-      version: 1,
+      version: 2,
     },
   ),
 );

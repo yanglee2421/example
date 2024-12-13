@@ -1,11 +1,12 @@
 import { useStorageStore } from "@/hooks/useStorageStore";
 import { android_ripple } from "@/lib/utils";
-import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
-import React from "react";
+import DateTimePicker from "@react-native-community/datetimepicker";
 import { View, Pressable, Text } from "react-native";
+import React from "react";
 
 export default function Page() {
-  const [date, setDate] = React.useState(() => new Date());
+  const [show, setShow] = React.useState(false);
+  const [date, setDate] = React.useState<Date>(() => new Date());
   const theme = useStorageStore((s) => s.theme);
 
   return (
@@ -16,17 +17,7 @@ export default function Page() {
         {date.toLocaleString()}
       </Text>
       <Pressable
-        onPress={() => {
-          DateTimePickerAndroid.open({
-            value: date,
-            onChange(e, val) {
-              val && setDate(val);
-              void e;
-            },
-            mode: "time",
-            is24Hour: true,
-          });
-        }}
+        onPress={() => setShow(true)}
         android_ripple={android_ripple(theme.palette.action.focus)}
       >
         <Text
@@ -38,6 +29,19 @@ export default function Page() {
           pick date
         </Text>
       </Pressable>
+      {show && (
+        <DateTimePicker
+          value={date}
+          onChange={(e, val) => {
+            void e;
+            val && setDate(val);
+            setShow(false);
+          }}
+          mode="date"
+          is24Hour
+          accentColor={"red"}
+        />
+      )}
     </View>
   );
 }

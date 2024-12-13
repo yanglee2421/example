@@ -39,6 +39,25 @@ export default {
         recordAudioAndroid: true,
       },
     ],
+    [
+      "@react-native-community/datetimepicker",
+      {
+        "android": {
+          "datePicker": {
+            "colorAccent": {
+              "light": "#FF5722",
+            },
+            "textColorPrimary": {
+              "light": "#FF5722",
+            },
+          },
+          "timePicker": {
+            "background": { "light": "#FF5722", "dark": "#383838" },
+            "numbersBackgroundColor": { "light": "#FF5722", "dark": "#383838" },
+          },
+        },
+      },
+    ],
   ],
   extra: {
     router: {
