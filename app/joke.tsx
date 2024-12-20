@@ -1,3 +1,4 @@
+import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import React from "react";
 import {
   FlatList,
@@ -8,7 +9,6 @@ import {
   Text,
   View,
 } from "react-native";
-import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { fetchJoke } from "@/api/fetchJoke";
 import { Loading } from "@/components/Loading";
 import { NeedAPIKEY } from "@/components/NeedAPIKEY";
@@ -46,9 +46,12 @@ export default function Page() {
           contentContainerStyle={{ padding: theme.space(6) }}
         >
           <Text
-            style={[theme.typography.body1, {
-              color: theme.palette.text.primary,
-            }]}
+            style={[
+              theme.typography.body1,
+              {
+                color: theme.palette.text.primary,
+              },
+            ]}
           >
             Error
           </Text>
@@ -76,21 +79,27 @@ export default function Page() {
             renderItem={({ item, index }) => (
               <>
                 <View
-                  style={[{
-                    borderWidth: 1,
-                    borderColor: theme.palette.divider,
+                  style={[
+                    {
+                      borderWidth: 1,
+                      borderColor: theme.palette.divider,
 
-                    paddingInline: theme.space(4),
-                    paddingBlock: theme.space(2),
-                  }, theme.shape]}
+                      paddingInline: theme.space(4),
+                      paddingBlock: theme.space(2),
+                    },
+                    theme.shape,
+                  ]}
                 >
                   <Text
                     onLongPress={() => {
                       Share.share({ message: item.data.data.joke });
                     }}
-                    style={[theme.typography.body1, {
-                      color: theme.palette.text.primary,
-                    }]}
+                    style={[
+                      theme.typography.body1,
+                      {
+                        color: theme.palette.text.primary,
+                      },
+                    ]}
                   >
                     {item.data.data.joke}
                   </Text>
@@ -100,16 +109,19 @@ export default function Page() {
                   <Pressable
                     onPress={() => jokes.fetchNextPage()}
                     disabled={jokes.isFetchingNextPage}
-                    style={[{
-                      backgroundColor: jokes.isFetchingNextPage
-                        ? theme.palette.action.disabledBackground
-                        : theme.palette.primary.main,
+                    style={[
+                      {
+                        backgroundColor: jokes.isFetchingNextPage
+                          ? theme.palette.action.disabledBackground
+                          : theme.palette.primary.main,
 
-                      paddingInline: theme.space(4),
-                      paddingBlock: theme.space(2),
+                        paddingInline: theme.space(4),
+                        paddingBlock: theme.space(2),
 
-                      marginBlockStart: theme.space(3),
-                    }, theme.shape]}
+                        marginBlockStart: theme.space(3),
+                      },
+                      theme.shape,
+                    ]}
                     android_ripple={{
                       color: theme.palette.action.focus,
                       foreground: true,
@@ -117,12 +129,15 @@ export default function Page() {
                     }}
                   >
                     <Text
-                      style={[theme.typography.button, {
-                        color: jokes.isFetchingNextPage
-                          ? theme.palette.action.disabled
-                          : theme.palette.primary.contrastText,
-                        textAlign: "center",
-                      }]}
+                      style={[
+                        theme.typography.button,
+                        {
+                          color: jokes.isFetchingNextPage
+                            ? theme.palette.action.disabled
+                            : theme.palette.primary.contrastText,
+                          textAlign: "center",
+                        },
+                      ]}
                     >
                       Click to fetch more
                     </Text>

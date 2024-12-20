@@ -1,3 +1,5 @@
+import { useQuery } from "@tanstack/react-query";
+import { openBrowserAsync } from "expo-web-browser";
 import React from "react";
 import {
   ImageBackground,
@@ -9,12 +11,10 @@ import {
   Text,
   View,
 } from "react-native";
-import { openBrowserAsync } from "expo-web-browser";
-import { useQuery } from "@tanstack/react-query";
 import { fetchCnBingImage } from "@/api/fetchBingImage";
-import { useStorageStore } from "@/hooks/useStorageStore";
 import { useLocaleDate } from "@/hooks/useLocaleDate";
 import { useLocaleTime } from "@/hooks/useLocaleTime";
+import { useStorageStore } from "@/hooks/useStorageStore";
 
 export default function Bing() {
   const bingImgs = useQuery(fetchCnBingImage({ format: "js", idx: 0, n: 8 }));
@@ -37,26 +37,35 @@ export default function Bing() {
       }}
     >
       <View
-        style={[theme.shape, {
-          borderColor: theme.palette.divider,
-          borderWidth: 1,
+        style={[
+          theme.shape,
+          {
+            borderColor: theme.palette.divider,
+            borderWidth: 1,
 
-          paddingInline: theme.space(4),
-          paddingBlock: theme.space(3),
-        }]}
+            paddingInline: theme.space(4),
+            paddingBlock: theme.space(3),
+          },
+        ]}
       >
         <Text style={[theme.typography.h5]}>Bing</Text>
         <Text
-          style={[theme.typography.subtitle1, {
-            color: theme.palette.text.primary,
-          }]}
+          style={[
+            theme.typography.subtitle1,
+            {
+              color: theme.palette.text.primary,
+            },
+          ]}
         >
           {time}
         </Text>
         <Text
-          style={[theme.typography.subtitle2, {
-            color: theme.palette.text.secondary,
-          }]}
+          style={[
+            theme.typography.subtitle2,
+            {
+              color: theme.palette.text.secondary,
+            },
+          ]}
         >
           {date}
         </Text>
@@ -79,7 +88,8 @@ export default function Bing() {
               }
             }}
             onLongPress={async () =>
-              Share.share({ message: `https://cn.bing.com${i.url}` })}
+              Share.share({ message: `https://cn.bing.com${i.url}` })
+            }
             android_ripple={{
               borderless: false,
               foreground: true,
@@ -89,12 +99,14 @@ export default function Bing() {
           >
             <ImageBackground
               source={{ uri: `https://cn.bing.com${i.url}` }}
-              style={[{
-                paddingInline: theme.space(4),
-                paddingBlock: theme.space(3),
+              style={[
+                {
+                  paddingInline: theme.space(4),
+                  paddingBlock: theme.space(3),
 
-                aspectRatio: 16 / 9,
-              }]}
+                  aspectRatio: 16 / 9,
+                },
+              ]}
             >
               <View
                 style={{
@@ -104,23 +116,28 @@ export default function Bing() {
                   alignItems: "center",
                   justifyContent: "center",
 
-                  backgroundColor:
-                    `rgba(0,0,0,${theme.palette.action.disabledOpacity})`,
+                  backgroundColor: `rgba(0,0,0,${theme.palette.action.disabledOpacity})`,
                 }}
               >
                 <Text
-                  style={[theme.typography.h6, {
-                    color: theme.palette.common.white,
-                    textAlign: "center",
-                  }]}
+                  style={[
+                    theme.typography.h6,
+                    {
+                      color: theme.palette.common.white,
+                      textAlign: "center",
+                    },
+                  ]}
                 >
                   {i.title}
                 </Text>
                 <Text
-                  style={[theme.typography.body2, {
-                    color: theme.palette.common.white,
-                    textAlign: "center",
-                  }]}
+                  style={[
+                    theme.typography.body2,
+                    {
+                      color: theme.palette.common.white,
+                      textAlign: "center",
+                    },
+                  ]}
                 >
                   {i.copyright}
                 </Text>

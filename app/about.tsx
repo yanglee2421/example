@@ -1,7 +1,7 @@
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { openBrowserAsync } from "expo-web-browser";
 import React from "react";
 import { Linking, Pressable, ScrollView, Text } from "react-native";
-import { openBrowserAsync } from "expo-web-browser";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useStorageStore } from "@/hooks/useStorageStore";
 import { android_ripple } from "@/lib/utils";
 
@@ -26,18 +26,20 @@ export default function About() {
             Linking.openURL(githubUrl);
           }
         }}
-        style={[{
-          borderWidth: 1,
-          borderColor: "transparent",
+        style={[
+          {
+            borderWidth: 1,
+            borderColor: "transparent",
 
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "center",
-          gap: theme.space(2),
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: theme.space(2),
 
-          paddingInline: theme.space(4),
-          paddingBlock: theme.space(2),
-        }]}
+            paddingInline: theme.space(4),
+            paddingBlock: theme.space(2),
+          },
+        ]}
         android_ripple={android_ripple(theme.palette.action.focus)}
       >
         <MaterialCommunityIcons
@@ -47,9 +49,12 @@ export default function About() {
           style={[{ marginInlineStart: theme.space(-1) }]}
         />
         <Text
-          style={[theme.typography.button, {
-            color: theme.palette.text.primary,
-          }]}
+          style={[
+            theme.typography.button,
+            {
+              color: theme.palette.text.primary,
+            },
+          ]}
         >
           &copy;2024 by Yotu_Lee
         </Text>

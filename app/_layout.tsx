@@ -1,16 +1,16 @@
-import React from "react";
-import { View } from "react-native";
-import { useFonts } from "expo-font";
 import { SplashScreen, Stack } from "expo-router";
+import { useFonts } from "expo-font";
 import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
+import { View } from "react-native";
+import React from "react";
 import { db } from "@/db/db";
 import migrations from "@/drizzle/migrations.js";
+import { QueryProvider } from "@/components/QueryProvider";
+import { ThemeProvider } from "@/components/ThemeProvider";
 import {
   useStorageHasHydrated,
   useStorageStore,
 } from "@/hooks/useStorageStore";
-import { QueryProvider } from "@/components/QueryProvider";
-import { ThemeProvider } from "@/components/ThemeProvider";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -39,12 +39,16 @@ export default function RootLayout() {
     return <View></View>;
   }
 
-  return hasHydrated && fontLoaded && dbState.success && (
-    <QueryProvider>
-      <ThemeProvider>
-        <RootRoute />
-      </ThemeProvider>
-    </QueryProvider>
+  return (
+    hasHydrated &&
+    fontLoaded &&
+    dbState.success && (
+      <QueryProvider>
+        <ThemeProvider>
+          <RootRoute />
+        </ThemeProvider>
+      </QueryProvider>
+    )
   );
 }
 
@@ -69,10 +73,7 @@ function RootRoute() {
       }}
     >
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      <Stack.Screen
-        name="+not-found"
-        options={{ title: "Not Found" }}
-      />
+      <Stack.Screen name="+not-found" options={{ title: "Not Found" }} />
       <Stack.Screen name="about" options={{ title: "About" }} />
       <Stack.Screen name="bing" options={{ title: "Bing" }} />
       <Stack.Screen name="fengjing" options={{ title: "Landscape" }} />
@@ -85,10 +86,7 @@ function RootRoute() {
       <Stack.Screen name="qrcode" options={{ title: "QR Code Scaner" }} />
       <Stack.Screen name="randtext" options={{ title: "Rand Text" }} />
       <Stack.Screen name="settings" options={{ title: "Settings" }} />
-      <Stack.Screen
-        name="todolist"
-        options={{ title: "To Do List" }}
-      />
+      <Stack.Screen name="todolist" options={{ title: "To Do List" }} />
     </Stack>
   );
 }
