@@ -32,6 +32,28 @@ avdmanager create avd -n emulatorName -k "system-images;android-34;google_apis;x
 emulator -avd emulatorName -gpu host
 ```
 
+## Note
+
+```properties
+# android/gradle.properties
+MYAPP_UPLOAD_STORE_FILE=my-upload-key.keystore
+MYAPP_UPLOAD_KEY_ALIAS=my-key-alias
+MYAPP_UPLOAD_STORE_PASSWORD=123456
+MYAPP_UPLOAD_KEY_PASSWORD=123456
+
+# android/app/build.gradle
+release {
+            if (project.hasProperty('MYAPP_UPLOAD_STORE_FILE')) {
+                storeFile file(MYAPP_UPLOAD_STORE_FILE)
+                storePassword MYAPP_UPLOAD_STORE_PASSWORD
+                keyAlias MYAPP_UPLOAD_KEY_ALIAS
+                keyPassword MYAPP_UPLOAD_KEY_PASSWORD
+            }
+        }
+
+signingConfig signingConfigs.release
+```
+
 ## Set Development Environment
 
 1. Install WSL

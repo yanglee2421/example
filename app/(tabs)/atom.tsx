@@ -22,7 +22,7 @@ export default function Page() {
           duration: 1000 * 12,
           easing: Easing.linear,
           useNativeDriver: true,
-        }),
+        })
       ).start();
     };
     startRotation();
@@ -35,9 +35,7 @@ export default function Page() {
 
   return (
     <View style={styles.iconWrapper}>
-      <Animated.View
-        style={[styles.icon, { transform: [{ rotate }] }]}
-      >
+      <Animated.View style={[styles.icon, { transform: [{ rotate }] }]}>
         <MaterialCommunityIcons
           name="react"
           size={96}

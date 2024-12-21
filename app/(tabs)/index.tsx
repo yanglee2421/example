@@ -1,8 +1,8 @@
 import { useStorageStore } from "@/hooks/useStorageStore";
 import { android_ripple } from "@/lib/utils";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { View, Pressable, Text } from "react-native";
 import React from "react";
+import { Pressable, Text, View } from "react-native";
 
 export default function Page() {
   const [show, setShow] = React.useState(false);

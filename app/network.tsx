@@ -1,19 +1,35 @@
-import React from "react";
-import * as ExpoNet from "expo-network";
+import { android_ripple } from "@/lib/utils";
+import { useStorageStore } from "@/hooks/useStorageStore";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { setStringAsync } from "expo-clipboard";
-import { useStorageStore } from "@/hooks/useStorageStore";
-import { Pressable, ScrollView, Text, ToastAndroid } from "react-native";
-import { android_ripple } from "@/lib/utils";
+import * as ExpoNet from "expo-network";
 import { ActivityAction, startActivityAsync } from "expo-intent-launcher";
+import React from "react";
+import { Pressable, ScrollView, Text, ToastAndroid } from "react-native";
+
+const netSelector = <TError, TWarning, TSuccess>(
+  isConnected: boolean,
+  isInternetReachable: boolean,
+  error: TError,
+  warning: TWarning,
+  success: TSuccess
+) => {
+  if (!isConnected) {
+    return error;
+  }
+
+  if (!isInternetReachable) {
+    return warning;
+  }
+
+  return success;
+};
 
 export default function Network() {
   const theme = useStorageStore((s) => s.theme);
   const ip = useQuery({
     queryKey: ["getIpAddressAsync"],
-    queryFn() {
-      return ExpoNet.getIpAddressAsync();
-    },
+    queryFn: () => ExpoNet.getIpAddressAsync(),
   });
 
   const state = ExpoNet.useNetworkState();
@@ -30,7 +46,7 @@ export default function Network() {
   }, [refetch]);
 
   const copy = useMutation<boolean, Error, string>({
-    async mutationFn(data) {
+    mutationFn: async (data) => {
       const ok = await setStringAsync(data);
 
       if (ok) {
@@ -47,18 +63,24 @@ export default function Network() {
     >
       <Pressable
         onPress={() => startActivityAsync(ActivityAction.WIFI_SETTINGS)}
-        style={[theme.shape, {
-          borderColor: theme.palette.divider,
-          borderWidth: 1,
+        style={[
+          theme.shape,
+          {
+            borderColor: theme.palette.divider,
+            borderWidth: 1,
 
-          padding: theme.space(3),
-        }]}
+            padding: theme.space(3),
+          },
+        ]}
         android_ripple={android_ripple(theme.palette.action.focus)}
       >
         <Text
-          style={[theme.typography.body1, {
-            color: theme.palette.text.primary,
-          }]}
+          style={[
+            theme.typography.body1,
+            {
+              color: theme.palette.text.primary,
+            },
+          ]}
         >
           {state.type}
         </Text>
@@ -71,7 +93,7 @@ export default function Network() {
                 !!state.isInternetReachable,
                 theme.palette.error.main,
                 theme.palette.warning.main,
-                theme.palette.success.main,
+                theme.palette.success.main
               ),
             },
           ]}
@@ -81,7 +103,7 @@ export default function Network() {
             !!state.isInternetReachable,
             "No Connected",
             "Connected but no internet",
-            "Ready",
+            "Ready"
           )}
         </Text>
       </Pressable>
@@ -97,29 +119,39 @@ export default function Network() {
                 ToastAndroid.showWithGravity(
                   "Copied",
                   1000 * 2,
-                  ToastAndroid.BOTTOM,
+                  ToastAndroid.BOTTOM
                 );
               },
-            })}
-          style={[theme.shape, {
-            borderColor: theme.palette.divider,
-            borderWidth: 1,
+            })
+          }
+          style={[
+            theme.shape,
+            {
+              borderColor: theme.palette.divider,
+              borderWidth: 1,
 
-            padding: theme.space(3),
-          }]}
+              padding: theme.space(3),
+            },
+          ]}
           android_ripple={android_ripple(theme.palette.action.focus)}
         >
           <Text
-            style={[theme.typography.body1, {
-              color: theme.palette.text.primary,
-            }]}
+            style={[
+              theme.typography.body1,
+              {
+                color: theme.palette.text.primary,
+              },
+            ]}
           >
             IP
           </Text>
           <Text
-            style={[theme.typography.body2, {
-              color: theme.palette.text.secondary,
-            }]}
+            style={[
+              theme.typography.body2,
+              {
+                color: theme.palette.text.secondary,
+              },
+            ]}
           >
             {ip.data}
           </Text>
@@ -127,22 +159,4 @@ export default function Network() {
       )}
     </ScrollView>
   );
-}
-
-function netSelector<TError, TWarning, TSuccess>(
-  isConnected: boolean,
-  isInternetReachable: boolean,
-  error: TError,
-  warning: TWarning,
-  success: TSuccess,
-) {
-  if (!isConnected) {
-    return error;
-  }
-
-  if (!isInternetReachable) {
-    return warning;
-  }
-
-  return success;
 }

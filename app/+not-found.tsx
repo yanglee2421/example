@@ -1,16 +1,16 @@
-import { useStorageStore } from "@/hooks/useStorageStore";
 import { android_ripple } from "@/lib/utils";
+import { useStorageStore } from "@/hooks/useStorageStore";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { fetch } from "expo/fetch";
 import React from "react";
 import {
+  Keyboard,
   Pressable,
   ScrollView,
+  Text,
   TextInput,
   View,
-  Text,
-  Keyboard,
 } from "react-native";
-import { fetch } from "expo/fetch";
 
 export default function Page() {
   const theme = useStorageStore((s) => s.theme);
@@ -154,7 +154,7 @@ export default function Page() {
           >
             <MaterialCommunityIcons
               size={theme.typography.h5.fontSize}
-              color={theme.palette.text.icon}
+              color={theme.palette.primary.main}
               name="send-outline"
             />
           </Pressable>

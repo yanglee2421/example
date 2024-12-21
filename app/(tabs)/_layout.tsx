@@ -1,8 +1,8 @@
-import { Tabs } from "expo-router";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useStorageStore } from "@/hooks/useStorageStore";
-import { Pressable } from "react-native";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { Tabs } from "expo-router";
 import React from "react";
+import { Pressable } from "react-native";
 
 export default function TabsLayout() {
   const theme = useStorageStore((s) => s.theme);
@@ -33,11 +33,7 @@ export default function TabsLayout() {
           fontFamily: theme.typography.body1.fontFamily,
         },
         tabBarButton(props) {
-          return (
-            <TabBarButton {...props}>
-              {props.children}
-            </TabBarButton>
-          );
+          return <TabBarButton {...props}>{props.children}</TabBarButton>;
         },
       }}
     >
@@ -90,12 +86,12 @@ export default function TabsLayout() {
   );
 }
 
-function TabBarButton(
-  props: React.PropsWithChildren<{
-    onPress?(e: NonNullable<unknown>): void;
-    style?: NonNullable<unknown> | null;
-  }>,
-) {
+type TabBarButtonProps = React.PropsWithChildren<{
+  onPress?(e: NonNullable<unknown>): void;
+  style?: NonNullable<unknown> | null;
+}>;
+
+const TabBarButton = (props: TabBarButtonProps) => {
   const theme = useStorageStore((s) => s.theme);
 
   return (
@@ -111,4 +107,4 @@ function TabBarButton(
       {props.children}
     </Pressable>
   );
-}
+};

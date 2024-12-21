@@ -1,7 +1,8 @@
-import { Link } from "expo-router";
-import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useStorageStore } from "@/hooks/useStorageStore";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { Link } from "expo-router";
+import React from "react";
+import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 
 export default function Account() {
   const theme = useStorageStore((s) => s.theme);
@@ -173,9 +174,12 @@ export default function Account() {
           href={i.item.href}
           key={i.item.label}
           asChild
-          style={[styles.itemLink, {
-            borderBlockEndColor: theme.palette.divider,
-          }]}
+          style={[
+            styles.itemLink,
+            {
+              borderBlockEndColor: theme.palette.divider,
+            },
+          ]}
         >
           <Pressable
             android_ripple={{
@@ -185,20 +189,26 @@ export default function Account() {
             }}
           >
             <View
-              style={[styles.itemView, {
-                paddingInline: theme.space(4),
-                paddingBlock: theme.space(3),
-              }]}
+              style={[
+                styles.itemView,
+                {
+                  paddingInline: theme.space(4),
+                  paddingBlock: theme.space(3),
+                },
+              ]}
             >
               {i.item.icon}
               <Text
-                style={[styles.itemText, {
-                  color: theme.palette.text.primary,
-                  fontSize: theme.typography.body1.fontSize,
-                  fontFamily: theme.typography.body1.fontFamily,
-                  fontWeight: theme.typography.body1.fontWeight,
-                  letterSpacing: theme.typography.body1.letterSpacing,
-                }]}
+                style={[
+                  styles.itemText,
+                  {
+                    color: theme.palette.text.primary,
+                    fontSize: theme.typography.body1.fontSize,
+                    fontFamily: theme.typography.body1.fontFamily,
+                    fontWeight: theme.typography.body1.fontWeight,
+                    letterSpacing: theme.typography.body1.letterSpacing,
+                  },
+                ]}
               >
                 {i.item.label}
               </Text>

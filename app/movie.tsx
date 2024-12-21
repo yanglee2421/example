@@ -1,3 +1,5 @@
+import { useQuery } from "@tanstack/react-query";
+import React from "react";
 import {
   FlatList,
   Image,
@@ -6,7 +8,6 @@ import {
   Text,
   View,
 } from "react-native";
-import { useQuery } from "@tanstack/react-query";
 import { fetchJijiangshangying } from "@/api/fetchJijiangshangying";
 import { Loading } from "@/components/Loading";
 import { NeedAPIKEY } from "@/components/NeedAPIKEY";
@@ -34,9 +35,12 @@ export default function Page() {
           }
         >
           <Text
-            style={[theme.typography.body1, {
-              color: theme.palette.error.main,
-            }]}
+            style={[
+              theme.typography.body1,
+              {
+                color: theme.palette.error.main,
+              },
+            ]}
           >
             Error
           </Text>
@@ -60,12 +64,15 @@ export default function Page() {
             keyExtractor={(i) => i.title}
             renderItem={({ item }) => (
               <View
-                style={[theme.shape, {
-                  borderColor: theme.palette.divider,
-                  borderWidth: 1,
+                style={[
+                  theme.shape,
+                  {
+                    borderColor: theme.palette.divider,
+                    borderWidth: 1,
 
-                  padding: theme.space(3),
-                }]}
+                    padding: theme.space(3),
+                  },
+                ]}
               >
                 <Image
                   source={{ uri: item.picUrl }}
@@ -73,37 +80,52 @@ export default function Page() {
                   height={theme.space(40)}
                 />
                 <Text
-                  style={[theme.typography.h6, {
-                    color: theme.palette.text.primary,
-                  }]}
+                  style={[
+                    theme.typography.h6,
+                    {
+                      color: theme.palette.text.primary,
+                    },
+                  ]}
                 >
                   {item.title}
                 </Text>
                 <Text
-                  style={[theme.typography.subtitle1, {
-                    color: theme.palette.text.primary,
-                  }]}
+                  style={[
+                    theme.typography.subtitle1,
+                    {
+                      color: theme.palette.text.primary,
+                    },
+                  ]}
                 >
                   {item.director}
                 </Text>
                 <Text
-                  style={[theme.typography.subtitle2, {
-                    color: theme.palette.text.primary,
-                  }]}
+                  style={[
+                    theme.typography.subtitle2,
+                    {
+                      color: theme.palette.text.primary,
+                    },
+                  ]}
                 >
                   {item.type}
                 </Text>
                 <Text
-                  style={[theme.typography.caption, {
-                    color: theme.palette.text.primary,
-                  }]}
+                  style={[
+                    theme.typography.caption,
+                    {
+                      color: theme.palette.text.primary,
+                    },
+                  ]}
                 >
                   {item.actors}
                 </Text>
                 <Text
-                  style={[theme.typography.overline, {
-                    color: theme.palette.text.secondary,
-                  }]}
+                  style={[
+                    theme.typography.overline,
+                    {
+                      color: theme.palette.text.secondary,
+                    },
+                  ]}
                 >
                   {item.releaseDateStr}
                 </Text>
