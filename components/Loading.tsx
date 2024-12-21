@@ -1,7 +1,7 @@
 import { useStorageStore } from "@/hooks/useStorageStore";
 import { Text, View } from "react-native";
 
-export function Loading() {
+export const Loading = () => {
   const theme = useStorageStore((s) => s.theme);
 
   return (
@@ -13,4 +13,4 @@ export function Loading() {
       </Text>
     </View>
   );
-}
+};

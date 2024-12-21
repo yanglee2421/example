@@ -40,32 +40,31 @@ export const QueryProvider = (props: React.PropsWithChildren) => {
   );
 };
 
-function useSyncOnline() {
+const useSyncOnline = () => {
   React.useEffect(() => {
     if (Platform.OS === "web") return;
 
     return NetInfo.addEventListener((state) =>
       onlineManager.setOnline(
-        Boolean(state.isConnected && state.isInternetReachable),
+        Boolean(state.isConnected && state.isInternetReachable)
       )
     );
   }, []);
-}
+};
 
-function useSyncFocus() {
+const useSyncFocus = () => {
   React.useEffect(() => {
     if (Platform.OS === "web") return;
 
-    const subscription = AppState.addEventListener(
-      "change",
-      (status) => focusManager.setFocused(status === "active"),
+    const subscription = AppState.addEventListener("change", (status) =>
+      focusManager.setFocused(status === "active")
     );
 
     return () => subscription.remove();
   }, []);
-}
+};
 
-function useSyncQqlykm() {
+const useSyncQqlykm = () => {
   const qqlykmKey = useStorageStore((s) => s.qqlykmKey);
 
   // Checking the API_KEY must happen before the component is presented to the user
@@ -82,4 +81,4 @@ function useSyncQqlykm() {
 
     return () => qqlykm.interceptors.request.eject(id);
   }, [qqlykmKey]);
-}
+};

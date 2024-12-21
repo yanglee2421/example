@@ -2,7 +2,7 @@ import React from "react";
 import { useStorageStore } from "@/hooks/useStorageStore";
 import { Pressable, Text, TextInput, View } from "react-native";
 
-export function NeedAPIKEY() {
+export const NeedAPIKEY = () => {
   const set = useStorageStore((s) => s.set);
   const [value, setValue] = React.useState("");
   const theme = useStorageStore((s) => s.theme);
@@ -32,13 +32,17 @@ export function NeedAPIKEY() {
         onPress={() =>
           set((d) => {
             d.qqlykmKey = value;
-          })}
-        style={[{
-          backgroundColor: theme.palette.primary.main,
+          })
+        }
+        style={[
+          {
+            backgroundColor: theme.palette.primary.main,
 
-          padding: theme.space(4),
-          paddingBlock: theme.space(2),
-        }, theme.shape]}
+            padding: theme.space(4),
+            paddingBlock: theme.space(2),
+          },
+          theme.shape,
+        ]}
         android_ripple={{
           color: theme.palette.action.focus,
           foreground: true,
@@ -46,17 +50,19 @@ export function NeedAPIKEY() {
         }}
       >
         <Text
-          style={[{
-            textAlign: "center",
-            color: theme.palette.primary.contrastText,
-            fontSize: theme.typography.button.fontSize,
-            textTransform: theme.typography.button.textTransform,
-            lineHeight: theme.typography.button.lineHeight,
-          }]}
+          style={[
+            {
+              textAlign: "center",
+              color: theme.palette.primary.contrastText,
+              fontSize: theme.typography.button.fontSize,
+              textTransform: theme.typography.button.textTransform,
+              lineHeight: theme.typography.button.lineHeight,
+            },
+          ]}
         >
           Save
         </Text>
       </Pressable>
     </View>
   );
-}
+};

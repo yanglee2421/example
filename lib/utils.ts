@@ -1,4 +1,4 @@
-export function onAnimationFrame(cb: () => void) {
+export const onAnimationFrame = (cb: () => void) => {
   let animate = 0;
 
   const run = () => {
@@ -9,7 +9,7 @@ export function onAnimationFrame(cb: () => void) {
   run();
 
   return () => cancelAnimationFrame(animate);
-}
+};
 
 export const android_ripple = (color: string) => ({
   color,
