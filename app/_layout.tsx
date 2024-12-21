@@ -14,45 +14,7 @@ import {
 
 SplashScreen.preventAutoHideAsync();
 
-export default function RootLayout() {
-  const hasHydrated = useStorageHasHydrated();
-  const dbState = useMigrations(db, migrations);
-  const [fontLoaded, error] = useFonts({
-    SpaceMono: require("@/assets/fonts/SpaceMono-Regular.ttf"),
-  });
-
-  React.useEffect(() => {
-    // Load Failed
-    if (dbState.error || error) {
-      SplashScreen.hideAsync();
-      return;
-    }
-
-    // Load Successfully
-    if (hasHydrated && fontLoaded && dbState.success) {
-      SplashScreen.hideAsync();
-      return;
-    }
-  }, [fontLoaded, error, dbState.error, dbState.success, hasHydrated]);
-
-  if (error || dbState.error) {
-    return <View></View>;
-  }
-
-  return (
-    hasHydrated &&
-    fontLoaded &&
-    dbState.success && (
-      <QueryProvider>
-        <ThemeProvider>
-          <RootRoute />
-        </ThemeProvider>
-      </QueryProvider>
-    )
-  );
-}
-
-function RootRoute() {
+const RootRoute = () => {
   const theme = useStorageStore((s) => s.theme);
 
   return (
@@ -88,5 +50,43 @@ function RootRoute() {
       <Stack.Screen name="settings" options={{ title: "Settings" }} />
       <Stack.Screen name="todolist" options={{ title: "To Do List" }} />
     </Stack>
+  );
+};
+
+export default function RootLayout() {
+  const hasHydrated = useStorageHasHydrated();
+  const dbState = useMigrations(db, migrations);
+  const [fontLoaded, error] = useFonts({
+    SpaceMono: require("@/assets/fonts/SpaceMono-Regular.ttf"),
+  });
+
+  React.useEffect(() => {
+    // Load Failed
+    if (dbState.error || error) {
+      SplashScreen.hideAsync();
+      return;
+    }
+
+    // Load Successfully
+    if (hasHydrated && fontLoaded && dbState.success) {
+      SplashScreen.hideAsync();
+      return;
+    }
+  }, [fontLoaded, error, dbState.error, dbState.success, hasHydrated]);
+
+  if (error || dbState.error) {
+    return <View></View>;
+  }
+
+  return (
+    hasHydrated &&
+    fontLoaded &&
+    dbState.success && (
+      <QueryProvider>
+        <ThemeProvider>
+          <RootRoute />
+        </ThemeProvider>
+      </QueryProvider>
+    )
   );
 }
