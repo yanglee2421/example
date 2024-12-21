@@ -146,14 +146,14 @@ export default function Page() {
               borderWidth: 1,
               borderColor: "transparent",
 
-              width: theme.space(8),
-              height: theme.space(8),
+              width: theme.space(10),
+              height: theme.space(10),
 
               overflow: "hidden",
             }}
           >
             <MaterialCommunityIcons
-              size={theme.typography.h6.fontSize}
+              size={theme.typography.h5.fontSize}
               color={theme.palette.text.icon}
               name="send-outline"
             />
