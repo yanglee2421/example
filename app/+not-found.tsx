@@ -55,10 +55,10 @@ export default function Page() {
           borderBlockStartColor: theme.palette.divider,
           elevation: 0,
           paddingInline: theme.space(3),
-          paddingBlockEnd: theme.space(2),
+          paddingBlock: theme.space(2),
         }}
       >
-        <View style={{}}>
+        <View>
           <TextInput
             value={search}
             onChangeText={setSearch}
