@@ -2,7 +2,14 @@ import { useStorageStore } from "@/hooks/useStorageStore";
 import { android_ripple } from "@/lib/utils";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import React from "react";
-import { Pressable, ScrollView, TextInput, View, Text } from "react-native";
+import {
+  Pressable,
+  ScrollView,
+  TextInput,
+  View,
+  Text,
+  Keyboard,
+} from "react-native";
 import { fetch } from "expo/fetch";
 
 export default function Page() {
@@ -43,93 +50,115 @@ export default function Page() {
 
       <View
         style={{
-          flexDirection: "row",
-          borderColor: theme.palette.divider,
           borderWidth: 1,
+          borderColor: "transparent",
+          borderBlockStartColor: theme.palette.divider,
           elevation: 0,
+          paddingInline: theme.space(3),
+          paddingBlockEnd: theme.space(2),
         }}
       >
-        <TextInput
-          value={search}
-          onChangeText={setSearch}
-          placeholder="Search"
-          style={{ flex: 1 }}
-        />
-        <Pressable
-          onPress={async () => {
-            setMsg("");
+        <View style={{}}>
+          <TextInput
+            value={search}
+            onChangeText={setSearch}
+            multiline
+            placeholder="Search"
+            placeholderTextColor={theme.palette.text.secondary}
+            style={[
+              theme.typography.body1,
+              { color: theme.palette.text.primary },
+            ]}
+          />
+        </View>
 
-            const res = await fetch(
-              "https://spark-api-open.xf-yun.com/v1/chat/completions",
-              {
-                method: "POST",
-                body: JSON.stringify({
-                  model: "4.0Ultra",
-                  messages: [
-                    {
-                      role: "system",
-                      content: "你是知识渊博的助理",
-                    },
-                    {
-                      role: "user",
-                      content: search,
-                    },
-                  ],
-                  stream: true,
-                  tools: [
-                    {
-                      type: "web_search",
-                      web_search: {
-                        enable: false,
+        <View style={{ flexDirection: "row" }}>
+          <View style={{ marginInlineStart: "auto" }}></View>
+          <Pressable
+            onPress={async () => {
+              Keyboard.dismiss();
+              setSearch("");
+              setMsg("");
+
+              const res = await fetch(
+                "https://spark-api-open.xf-yun.com/v1/chat/completions",
+                {
+                  method: "POST",
+                  body: JSON.stringify({
+                    model: "4.0Ultra",
+                    messages: [
+                      {
+                        role: "system",
+                        content: "你是知识渊博的助理",
                       },
-                    },
-                  ],
-                }),
-                headers: {
-                  Authorization:
-                    "Bearer rCJALwydCHKaiiBolPGv:gxneLXlgwLjQQcsNnnEW",
-                },
-              }
-            );
+                      {
+                        role: "user",
+                        content: search,
+                      },
+                    ],
+                    stream: true,
+                    tools: [
+                      {
+                        type: "web_search",
+                        web_search: {
+                          enable: false,
+                        },
+                      },
+                    ],
+                  }),
+                  headers: {
+                    Authorization:
+                      "Bearer rCJALwydCHKaiiBolPGv:gxneLXlgwLjQQcsNnnEW",
+                  },
+                }
+              );
 
-            console.log(res);
+              console.log(res);
 
-            const reader = res.body?.getReader();
+              const reader = res.body?.getReader();
 
-            if (reader) {
-              const decoder = new TextDecoder();
-              let content = "";
+              if (reader) {
+                const decoder = new TextDecoder();
+                let content = "";
 
-              while (true) {
-                const { done, value } = await reader.read();
-                const decocded = decoder.decode(value, { stream: true });
-                console.log(decocded);
-                content += getContent(decocded);
-                setMsg(content);
+                while (true) {
+                  const { done, value } = await reader.read();
+                  const decocded = decoder.decode(value, { stream: true });
+                  console.log(decocded);
+                  content += getContent(decocded);
+                  setMsg(content);
 
-                if (done) {
-                  setMsg("");
-                  setMsgList((prev) => [...prev, content]);
-                  break;
+                  if (done) {
+                    setMsg("");
+                    setMsgList((prev) => [...prev, content]);
+                    break;
+                  }
                 }
               }
-            }
-          }}
-          android_ripple={android_ripple(theme.palette.action.focus)}
-          style={{
-            backgroundColor: theme.palette.primary.main,
-            paddingInline: theme.space(5),
-            paddingBlock: theme.space(3),
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <MaterialCommunityIcons
-            size={theme.typography.button.fontSize}
-            color={theme.palette.primary.contrastText}
-            name="send-outline"
-          />
-        </Pressable>
+            }}
+            android_ripple={android_ripple(theme.palette.action.focus)}
+            style={{
+              flex: 0,
+              justifyContent: "center",
+              alignItems: "center",
+
+              borderRadius: 99999,
+              borderWidth: 1,
+              borderColor: "transparent",
+
+              width: theme.space(8),
+              height: theme.space(8),
+
+              overflow: "hidden",
+            }}
+          >
+            <MaterialCommunityIcons
+              size={theme.typography.h6.fontSize}
+              color={theme.palette.text.icon}
+              name="send-outline"
+            />
+          </Pressable>
+        </View>
       </View>
     </View>
   );
