@@ -14,6 +14,7 @@ import { Loading } from "@/components/Loading";
 import { NeedAPIKEY } from "@/components/NeedAPIKEY";
 import { useStorageStore } from "@/hooks/useStorageStore";
 import { android_ripple } from "@/lib/utils";
+import { useThemeStore } from "@/hooks/useThemeStore";
 
 const fetcher = fetchRandtext();
 
@@ -26,13 +27,13 @@ export default function Page() {
     refetchOnReconnect: false,
   });
   const queryClient = useQueryClient();
-  const theme = useStorageStore((s) => s.theme);
+  const theme = useThemeStore((s) => s.theme);
 
   return (
     <>
       {randtext.isLoading && <Loading />}
       {randtext.isPending && !randtext.isFetching && (
-        <View style={{ padding: theme.space(3) }}>
+        <View style={{ padding: theme.spacing(3) }}>
           <NeedAPIKEY />
         </View>
       )}
@@ -50,9 +51,12 @@ export default function Page() {
           }
         >
           <Text
-            style={[theme.typography.body1, {
-              color: theme.palette.error.main,
-            }]}
+            style={[
+              theme.typography.body1,
+              {
+                color: theme.palette.error.main,
+              },
+            ]}
           >
             Error
           </Text>
@@ -77,20 +81,25 @@ export default function Page() {
               <>
                 <Pressable
                   onPress={() => Share.share({ message: item.data.data })}
-                  style={[{
-                    borderWidth: 1,
-                    borderColor: "transparent",
-                    borderBlockEndColor: theme.palette.divider,
+                  style={[
+                    {
+                      borderWidth: 1,
+                      borderColor: "transparent",
+                      borderBlockEndColor: theme.palette.divider,
 
-                    paddingInline: theme.space(6),
-                    paddingBlock: theme.space(3),
-                  }]}
+                      paddingInline: theme.spacing(6),
+                      paddingBlock: theme.spacing(3),
+                    },
+                  ]}
                   android_ripple={android_ripple(theme.palette.action.focus)}
                 >
                   <Text
-                    style={[theme.typography.body1, {
-                      color: theme.palette.text.primary,
-                    }]}
+                    style={[
+                      theme.typography.body1,
+                      {
+                        color: theme.palette.text.primary,
+                      },
+                    ]}
                   >
                     {item.data.data}
                   </Text>
@@ -102,20 +111,23 @@ export default function Page() {
                     disabled={randtext.isFetchingNextPage}
                     style={[
                       {
-                        paddingInline: theme.space(6),
-                        paddingBlock: theme.space(3),
+                        paddingInline: theme.spacing(6),
+                        paddingBlock: theme.spacing(3),
                       },
                       theme.shape,
                     ]}
                     android_ripple={android_ripple(theme.palette.action.focus)}
                   >
                     <Text
-                      style={[theme.typography.body1, {
-                        color: randtext.isFetchingNextPage
-                          ? theme.palette.text.disabled
-                          : theme.palette.text.primary,
-                        textAlign: "center",
-                      }]}
+                      style={[
+                        theme.typography.body1,
+                        {
+                          color: randtext.isFetchingNextPage
+                            ? theme.palette.text.disabled
+                            : theme.palette.text.primary,
+                          textAlign: "center",
+                        },
+                      ]}
                     >
                       Click to fetch more
                     </Text>

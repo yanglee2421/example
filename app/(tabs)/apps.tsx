@@ -1,11 +1,11 @@
-import { useStorageStore } from "@/hooks/useStorageStore";
+import { useThemeStore } from "@/hooks/useThemeStore";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Link } from "expo-router";
 import React from "react";
 import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 
 export default function Account() {
-  const theme = useStorageStore((s) => s.theme);
+  const theme = useThemeStore((s) => s.theme);
   const iconSize = theme.typography.body1.fontSize * 1.4;
 
   const list = [
@@ -192,8 +192,8 @@ export default function Account() {
               style={[
                 styles.itemView,
                 {
-                  paddingInline: theme.space(4),
-                  paddingBlock: theme.space(3),
+                  paddingInline: theme.spacing(4),
+                  paddingBlock: theme.spacing(3),
                 },
               ]}
             >

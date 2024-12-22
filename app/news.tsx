@@ -12,13 +12,14 @@ import {
   Text,
   View,
 } from "react-native";
+import { useThemeStore } from "@/hooks/useThemeStore";
 
 const fetcher = fetchNews();
 
 export default function News() {
   const apikey = useStorageStore((s) => s.qqlykmKey);
   const news = useQuery({ ...fetcher, enabled: !!apikey });
-  const theme = useStorageStore((s) => s.theme);
+  const theme = useThemeStore((s) => s.theme);
 
   const render = () => {
     if (news.isLoading) {
@@ -42,8 +43,8 @@ export default function News() {
               borderColor: "transparent",
               borderBlockEndColor: theme.palette.divider,
 
-              paddingInline: theme.space(6),
-              paddingBlock: theme.space(3),
+              paddingInline: theme.spacing(6),
+              paddingBlock: theme.spacing(3),
             }}
           >
             <Text
@@ -78,8 +79,8 @@ export default function News() {
                   borderColor: "transparent",
                   borderBlockEndColor: theme.palette.divider,
 
-                  paddingInline: theme.space(6),
-                  paddingBlock: theme.space(3),
+                  paddingInline: theme.spacing(6),
+                  paddingBlock: theme.spacing(3),
                 },
               ]}
               android_ripple={android_ripple(theme.palette.action.focus)}

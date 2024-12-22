@@ -14,6 +14,7 @@ import { useLocaleTime } from "@/hooks/useLocaleTime";
 import { Loading } from "@/components/Loading";
 import { NeedAPIKEY } from "@/components/NeedAPIKEY";
 import { useStorageStore } from "@/hooks/useStorageStore";
+import { useThemeStore } from "@/hooks/useThemeStore";
 
 const fetcher = fetchHistoryGet();
 
@@ -22,7 +23,7 @@ export default function Page() {
   const time = useLocaleTime();
   const apikey = useStorageStore((s) => s.qqlykmKey);
   const history = useQuery({ ...fetcher, enabled: !!apikey });
-  const theme = useStorageStore((s) => s.theme);
+  const theme = useThemeStore((s) => s.theme);
 
   return (
     <ScrollView
@@ -35,14 +36,16 @@ export default function Page() {
       }
     >
       <View
-        style={[{
-          borderWidth: 1,
-          borderColor: "transparent",
-          borderBlockEndColor: theme.palette.divider,
+        style={[
+          {
+            borderWidth: 1,
+            borderColor: "transparent",
+            borderBlockEndColor: theme.palette.divider,
 
-          paddingInline: theme.space(6),
-          paddingBlock: theme.space(3),
-        }]}
+            paddingInline: theme.spacing(6),
+            paddingBlock: theme.spacing(3),
+          },
+        ]}
       >
         <Text
           style={[theme.typography.h5, { color: theme.palette.text.primary }]}
@@ -50,9 +53,12 @@ export default function Page() {
           {time}
         </Text>
         <Text
-          style={[theme.typography.body1, {
-            color: theme.palette.text.secondary,
-          }]}
+          style={[
+            theme.typography.body1,
+            {
+              color: theme.palette.text.secondary,
+            },
+          ]}
         >
           {date}
         </Text>
@@ -78,14 +84,16 @@ export default function Page() {
                 Linking.openURL(i.url);
               }
             }}
-            style={[{
-              paddingInline: theme.space(6),
-              paddingBlock: theme.space(3),
+            style={[
+              {
+                paddingInline: theme.spacing(6),
+                paddingBlock: theme.spacing(3),
 
-              borderWidth: 1,
-              borderColor: "transparent",
-              borderBlockEndColor: theme.palette.divider,
-            }]}
+                borderWidth: 1,
+                borderColor: "transparent",
+                borderBlockEndColor: theme.palette.divider,
+              },
+            ]}
             android_ripple={{
               color: theme.palette.action.focus,
               foreground: true,
@@ -93,16 +101,22 @@ export default function Page() {
             }}
           >
             <Text
-              style={[theme.typography.body1, {
-                color: theme.palette.text.primary,
-              }]}
+              style={[
+                theme.typography.body1,
+                {
+                  color: theme.palette.text.primary,
+                },
+              ]}
             >
               {i.year}
             </Text>
             <Text
-              style={[theme.typography.body2, {
-                color: theme.palette.text.secondary,
-              }]}
+              style={[
+                theme.typography.body2,
+                {
+                  color: theme.palette.text.secondary,
+                },
+              ]}
             >
               {i.title}
             </Text>

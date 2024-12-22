@@ -14,11 +14,11 @@ import {
 import { fetchCnBingImage } from "@/api/fetchBingImage";
 import { useLocaleDate } from "@/hooks/useLocaleDate";
 import { useLocaleTime } from "@/hooks/useLocaleTime";
-import { useStorageStore } from "@/hooks/useStorageStore";
+import { useThemeStore } from "@/hooks/useThemeStore";
 
 export default function Bing() {
   const bingImgs = useQuery(fetchCnBingImage({ format: "js", idx: 0, n: 8 }));
-  const theme = useStorageStore((s) => s.theme);
+  const theme = useThemeStore((s) => s.theme);
   const date = useLocaleDate();
   const time = useLocaleTime();
 
@@ -32,8 +32,8 @@ export default function Bing() {
         />
       }
       contentContainerStyle={{
-        gap: theme.space(4),
-        padding: theme.space(3),
+        gap: theme.spacing(4),
+        padding: theme.spacing(3),
       }}
     >
       <View
@@ -43,8 +43,8 @@ export default function Bing() {
             borderColor: theme.palette.divider,
             borderWidth: 1,
 
-            paddingInline: theme.space(4),
-            paddingBlock: theme.space(3),
+            paddingInline: theme.spacing(4),
+            paddingBlock: theme.spacing(3),
           },
         ]}
       >
@@ -101,8 +101,8 @@ export default function Bing() {
               source={{ uri: `https://cn.bing.com${i.url}` }}
               style={[
                 {
-                  paddingInline: theme.space(4),
-                  paddingBlock: theme.space(3),
+                  paddingInline: theme.spacing(4),
+                  paddingBlock: theme.spacing(3),
 
                   aspectRatio: 16 / 9,
                 },

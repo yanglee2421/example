@@ -12,13 +12,14 @@ import { fetchJijiangshangying } from "@/api/fetchJijiangshangying";
 import { Loading } from "@/components/Loading";
 import { NeedAPIKEY } from "@/components/NeedAPIKEY";
 import { useStorageStore } from "@/hooks/useStorageStore";
+import { useThemeStore } from "@/hooks/useThemeStore";
 
 const fetcher = fetchJijiangshangying();
 
 export default function Page() {
   const apikey = useStorageStore((s) => s.qqlykmKey);
   const movies = useQuery({ ...fetcher, enabled: !!apikey });
-  const theme = useStorageStore((s) => s.theme);
+  const theme = useThemeStore((s) => s.theme);
 
   return (
     <>
@@ -57,8 +58,8 @@ export default function Page() {
               />
             }
             contentContainerStyle={{
-              padding: theme.space(3),
-              gap: theme.space(3),
+              padding: theme.spacing(3),
+              gap: theme.spacing(3),
             }}
             data={movies.data.data.data}
             keyExtractor={(i) => i.title}
@@ -70,14 +71,14 @@ export default function Page() {
                     borderColor: theme.palette.divider,
                     borderWidth: 1,
 
-                    padding: theme.space(3),
+                    padding: theme.spacing(3),
                   },
                 ]}
               >
                 <Image
                   source={{ uri: item.picUrl }}
                   resizeMode="contain"
-                  height={theme.space(40)}
+                  height={theme.spacing(40)}
                 />
                 <Text
                   style={[

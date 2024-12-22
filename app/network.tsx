@@ -1,11 +1,11 @@
 import { android_ripple } from "@/lib/utils";
-import { useStorageStore } from "@/hooks/useStorageStore";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { setStringAsync } from "expo-clipboard";
 import * as ExpoNet from "expo-network";
 import { ActivityAction, startActivityAsync } from "expo-intent-launcher";
 import React from "react";
 import { Pressable, ScrollView, Text, ToastAndroid } from "react-native";
+import { useThemeStore } from "@/hooks/useThemeStore";
 
 const netSelector = <TError, TWarning, TSuccess>(
   isConnected: boolean,
@@ -26,7 +26,7 @@ const netSelector = <TError, TWarning, TSuccess>(
 };
 
 export default function Network() {
-  const theme = useStorageStore((s) => s.theme);
+  const theme = useThemeStore((s) => s.theme);
   const ip = useQuery({
     queryKey: ["getIpAddressAsync"],
     queryFn: () => ExpoNet.getIpAddressAsync(),
@@ -59,7 +59,10 @@ export default function Network() {
 
   return (
     <ScrollView
-      contentContainerStyle={{ padding: theme.space(3), gap: theme.space(4) }}
+      contentContainerStyle={{
+        padding: theme.spacing(3),
+        gap: theme.spacing(4),
+      }}
     >
       <Pressable
         onPress={() => startActivityAsync(ActivityAction.WIFI_SETTINGS)}
@@ -69,7 +72,7 @@ export default function Network() {
             borderColor: theme.palette.divider,
             borderWidth: 1,
 
-            padding: theme.space(3),
+            padding: theme.spacing(3),
           },
         ]}
         android_ripple={android_ripple(theme.palette.action.focus)}
@@ -130,7 +133,7 @@ export default function Network() {
               borderColor: theme.palette.divider,
               borderWidth: 1,
 
-              padding: theme.space(3),
+              padding: theme.spacing(3),
             },
           ]}
           android_ripple={android_ripple(theme.palette.action.focus)}

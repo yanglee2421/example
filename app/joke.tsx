@@ -13,6 +13,7 @@ import { fetchJoke } from "@/api/fetchJoke";
 import { Loading } from "@/components/Loading";
 import { NeedAPIKEY } from "@/components/NeedAPIKEY";
 import { useStorageStore } from "@/hooks/useStorageStore";
+import { useThemeStore } from "@/hooks/useThemeStore";
 
 const fetcher = fetchJoke();
 
@@ -25,7 +26,7 @@ export default function Page() {
     refetchOnReconnect: false,
   });
   const queryClient = useQueryClient();
-  const theme = useStorageStore((s) => s.theme);
+  const theme = useThemeStore((s) => s.theme);
 
   return (
     <>
@@ -43,7 +44,7 @@ export default function Page() {
               colors={[theme.palette.primary.main]}
             />
           }
-          contentContainerStyle={{ padding: theme.space(6) }}
+          contentContainerStyle={{ padding: theme.spacing(6) }}
         >
           <Text
             style={[
@@ -71,8 +72,8 @@ export default function Page() {
               />
             }
             contentContainerStyle={{
-              padding: theme.space(3),
-              gap: theme.space(3),
+              padding: theme.spacing(3),
+              gap: theme.spacing(3),
             }}
             data={jokes.data.pages}
             keyExtractor={(i) => i.data.data.joke}
@@ -84,8 +85,8 @@ export default function Page() {
                       borderWidth: 1,
                       borderColor: theme.palette.divider,
 
-                      paddingInline: theme.space(4),
-                      paddingBlock: theme.space(2),
+                      paddingInline: theme.spacing(4),
+                      paddingBlock: theme.spacing(2),
                     },
                     theme.shape,
                   ]}
@@ -115,10 +116,10 @@ export default function Page() {
                           ? theme.palette.action.disabledBackground
                           : theme.palette.primary.main,
 
-                        paddingInline: theme.space(4),
-                        paddingBlock: theme.space(2),
+                        paddingInline: theme.spacing(4),
+                        paddingBlock: theme.spacing(2),
 
-                        marginBlockStart: theme.space(3),
+                        marginBlockStart: theme.spacing(3),
                       },
                       theme.shape,
                     ]}

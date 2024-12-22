@@ -5,14 +5,14 @@ import { useMutation } from "@tanstack/react-query";
 import { Loading } from "@/components/Loading";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Pressable, Text, ToastAndroid, View } from "react-native";
-import { useStorageStore } from "@/hooks/useStorageStore";
 import { android_ripple } from "@/lib/utils";
+import { useThemeStore } from "@/hooks/useThemeStore";
 
 export default function Qrcode() {
   const [data, setData] = React.useState("");
   const [facing, setFacing] = React.useState<CameraType>("back");
   const [permission, requestPermission] = useCameraPermissions();
-  const theme = useStorageStore((s) => s.theme);
+  const theme = useThemeStore((s) => s.theme);
 
   const copy = useMutation<boolean, Error, string>({
     async mutationFn(data) {
@@ -40,9 +40,9 @@ export default function Qrcode() {
             borderColor: theme.palette.divider,
             borderWidth: 1,
 
-            paddingInline: theme.space(4),
-            paddingBlock: theme.space(3),
-            margin: theme.space(6),
+            paddingInline: theme.spacing(4),
+            paddingBlock: theme.spacing(3),
+            margin: theme.spacing(6),
           },
           theme.shape,
         ]}
@@ -53,21 +53,27 @@ export default function Qrcode() {
           Need Permission
         </Text>
         <Text
-          style={[theme.typography.body1, {
-            color: theme.palette.text.primary,
-          }]}
+          style={[
+            theme.typography.body1,
+            {
+              color: theme.palette.text.primary,
+            },
+          ]}
         >
           We need your permission to show the camera
         </Text>
 
         <Pressable
           onPress={requestPermission}
-          style={[{
-            backgroundColor: theme.palette.primary.main,
+          style={[
+            {
+              backgroundColor: theme.palette.primary.main,
 
-            paddingInline: theme.space(4),
-            paddingBlock: theme.space(2),
-          }, theme.shape]}
+              paddingInline: theme.spacing(4),
+              paddingBlock: theme.spacing(2),
+            },
+            theme.shape,
+          ]}
           android_ripple={{
             color: theme.palette.action.focus,
             foreground: true,
@@ -75,10 +81,14 @@ export default function Qrcode() {
           }}
         >
           <Text
-            style={[theme.typography.button, , {
-              color: theme.palette.primary.contrastText,
-              textAlign: "center",
-            }]}
+            style={[
+              theme.typography.button,
+              ,
+              {
+                color: theme.palette.primary.contrastText,
+                textAlign: "center",
+              },
+            ]}
           >
             grant permission
           </Text>
@@ -90,14 +100,17 @@ export default function Qrcode() {
   if (data) {
     return (
       <View
-        style={[theme.shape, {
-          margin: theme.space(3),
-          paddingInline: theme.space(5),
-          paddingBlock: theme.space(3),
+        style={[
+          theme.shape,
+          {
+            margin: theme.spacing(3),
+            paddingInline: theme.spacing(5),
+            paddingBlock: theme.spacing(3),
 
-          borderColor: theme.palette.divider,
-          borderWidth: 1,
-        }]}
+            borderColor: theme.palette.divider,
+            borderWidth: 1,
+          },
+        ]}
       >
         <Text
           style={[theme.typography.h5, { color: theme.palette.text.primary }]}
@@ -113,14 +126,18 @@ export default function Qrcode() {
               onSuccess() {
                 ToastAndroid.show("Copied!", 1000 * 2);
               },
-            })}
+            })
+          }
           disabled={copy.isPending}
           android_ripple={android_ripple(theme.palette.action.focus)}
         >
           <Text
-            style={[theme.typography.body1, {
-              color: theme.palette.text.secondary,
-            }]}
+            style={[
+              theme.typography.body1,
+              {
+                color: theme.palette.text.secondary,
+              },
+            ]}
           >
             {data}
           </Text>
@@ -142,18 +159,20 @@ export default function Qrcode() {
     >
       <Pressable
         onPress={toggleCameraFacing}
-        style={[{
-          borderRadius: 99999,
-          backgroundColor: theme.palette.common.white,
+        style={[
+          {
+            borderRadius: 99999,
+            backgroundColor: theme.palette.common.white,
 
-          width: theme.space(14),
-          height: theme.space(14),
+            width: theme.spacing(14),
+            height: theme.spacing(14),
 
-          marginBlockEnd: theme.space(16),
+            marginBlockEnd: theme.spacing(16),
 
-          justifyContent: "center",
-          alignItems: "center",
-        }]}
+            justifyContent: "center",
+            alignItems: "center",
+          },
+        ]}
       >
         <MaterialCommunityIcons
           name="camera-flip-outline"

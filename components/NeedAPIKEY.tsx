@@ -1,11 +1,12 @@
 import React from "react";
 import { useStorageStore } from "@/hooks/useStorageStore";
 import { Pressable, Text, TextInput, View } from "react-native";
+import { useThemeStore } from "@/hooks/useThemeStore";
 
 export const NeedAPIKEY = () => {
   const set = useStorageStore((s) => s.set);
   const [value, setValue] = React.useState("");
-  const theme = useStorageStore((s) => s.theme);
+  const theme = useThemeStore((s) => s.theme);
 
   return (
     <View
@@ -38,8 +39,8 @@ export const NeedAPIKEY = () => {
           {
             backgroundColor: theme.palette.primary.main,
 
-            padding: theme.space(4),
-            paddingBlock: theme.space(2),
+            padding: theme.spacing(4),
+            paddingBlock: theme.spacing(2),
           },
           theme.shape,
         ]}

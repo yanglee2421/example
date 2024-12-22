@@ -15,6 +15,7 @@ import { NeedAPIKEY } from "@/components/NeedAPIKEY";
 import { useStorageStore } from "@/hooks/useStorageStore";
 import { setStringAsync } from "expo-clipboard";
 import { android_ripple } from "@/lib/utils";
+import { useThemeStore } from "@/hooks/useThemeStore";
 
 const fetcher = fetchDiary();
 
@@ -27,7 +28,7 @@ export default function Page() {
     refetchOnReconnect: false,
   });
   const queryClient = useQueryClient();
-  const theme = useStorageStore((s) => s.theme);
+  const theme = useThemeStore((s) => s.theme);
 
   return (
     <>
@@ -62,8 +63,8 @@ export default function Page() {
               />
             }
             contentContainerStyle={{
-              padding: theme.space(3),
-              gap: theme.space(3),
+              padding: theme.spacing(3),
+              gap: theme.spacing(3),
             }}
             data={diary.data.pages}
             keyExtractor={(i) => i.data.data}
@@ -78,18 +79,24 @@ export default function Page() {
                       Alert.alert("Error");
                     }
                   }}
-                  style={[theme.shape, {
-                    borderColor: theme.palette.divider,
-                    borderWidth: 1,
+                  style={[
+                    theme.shape,
+                    {
+                      borderColor: theme.palette.divider,
+                      borderWidth: 1,
 
-                    padding: theme.space(3),
-                  }]}
+                      padding: theme.spacing(3),
+                    },
+                  ]}
                   android_ripple={android_ripple(theme.palette.action.focus)}
                 >
                   <Text
-                    style={[theme.typography.body1, {
-                      color: theme.palette.text.primary,
-                    }]}
+                    style={[
+                      theme.typography.body1,
+                      {
+                        color: theme.palette.text.primary,
+                      },
+                    ]}
                   >
                     {item.data.data}
                   </Text>
@@ -99,24 +106,30 @@ export default function Page() {
                   <Pressable
                     onPress={() => diary.fetchNextPage()}
                     disabled={diary.isFetchingNextPage}
-                    style={[theme.shape, {
-                      backgroundColor: diary.isFetchingNextPage
-                        ? theme.palette.action.disabledBackground
-                        : theme.palette.primary.main,
+                    style={[
+                      theme.shape,
+                      {
+                        backgroundColor: diary.isFetchingNextPage
+                          ? theme.palette.action.disabledBackground
+                          : theme.palette.primary.main,
 
-                      paddingInline: theme.space(4),
-                      paddingBlock: theme.space(2),
-                      marginBlockStart: theme.space(3),
-                    }]}
+                        paddingInline: theme.spacing(4),
+                        paddingBlock: theme.spacing(2),
+                        marginBlockStart: theme.spacing(3),
+                      },
+                    ]}
                     android_ripple={android_ripple(theme.palette.action.focus)}
                   >
                     <Text
-                      style={[theme.typography.button, {
-                        color: diary.isFetchingNextPage
-                          ? theme.palette.action.disabled
-                          : theme.palette.primary.contrastText,
-                        textAlign: "center",
-                      }]}
+                      style={[
+                        theme.typography.button,
+                        {
+                          color: diary.isFetchingNextPage
+                            ? theme.palette.action.disabled
+                            : theme.palette.primary.contrastText,
+                          textAlign: "center",
+                        },
+                      ]}
                     >
                       Click to fetch more
                     </Text>

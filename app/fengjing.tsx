@@ -14,6 +14,7 @@ import { Loading } from "@/components/Loading";
 import { NeedAPIKEY } from "@/components/NeedAPIKEY";
 import { useStorageStore } from "@/hooks/useStorageStore";
 import { android_ripple } from "@/lib/utils";
+import { useThemeStore } from "@/hooks/useThemeStore";
 
 const fetcher = fetchFengjing();
 
@@ -21,7 +22,7 @@ export default function Page() {
   const apikey = useStorageStore((s) => s.qqlykmKey);
   const fengjing = useInfiniteQuery({ ...fetcher, enabled: !!apikey });
   const queryClient = useQueryClient();
-  const theme = useStorageStore((s) => s.theme);
+  const theme = useThemeStore((s) => s.theme);
 
   return (
     <>
@@ -41,9 +42,12 @@ export default function Page() {
           }
         >
           <Text
-            style={[theme.typography.body1, {
-              color: theme.palette.error.main,
-            }]}
+            style={[
+              theme.typography.body1,
+              {
+                color: theme.palette.error.main,
+              },
+            ]}
           >
             Error
           </Text>
@@ -63,8 +67,8 @@ export default function Page() {
               />
             }
             contentContainerStyle={{
-              padding: theme.space(3),
-              gap: theme.space(3),
+              padding: theme.spacing(3),
+              gap: theme.spacing(3),
             }}
             data={fengjing.data.pages}
             keyExtractor={(i) => i.data.data.cover}
@@ -79,23 +83,28 @@ export default function Page() {
                 >
                   <Pressable
                     onPress={() =>
-                      Share.share({ message: item.data.data.cover })}
-                    style={[{
-                      backgroundColor:
-                        `rgba(0,0,0,${theme.palette.action.disabledOpacity})`,
-                      position: "absolute",
-                      inset: 0,
+                      Share.share({ message: item.data.data.cover })
+                    }
+                    style={[
+                      {
+                        backgroundColor: `rgba(0,0,0,${theme.palette.action.disabledOpacity})`,
+                        position: "absolute",
+                        inset: 0,
 
-                      justifyContent: "center",
-                      alignItems: "center",
-                    }]}
+                        justifyContent: "center",
+                        alignItems: "center",
+                      },
+                    ]}
                     android_ripple={android_ripple(theme.palette.action.focus)}
                   >
                     <Text
-                      style={[theme.typography.h6, {
-                        color: theme.palette.common.white,
-                        textAlign: "center",
-                      }]}
+                      style={[
+                        theme.typography.h6,
+                        {
+                          color: theme.palette.common.white,
+                          textAlign: "center",
+                        },
+                      ]}
                     >
                       {item.data.data.tag}
                     </Text>
@@ -106,24 +115,30 @@ export default function Page() {
                   <Pressable
                     onPress={() => fengjing.fetchNextPage()}
                     disabled={fengjing.isFetchingNextPage}
-                    style={[theme.shape, {
-                      backgroundColor: fengjing.isPending
-                        ? theme.palette.action.disabledBackground
-                        : theme.palette.primary.main,
+                    style={[
+                      theme.shape,
+                      {
+                        backgroundColor: fengjing.isPending
+                          ? theme.palette.action.disabledBackground
+                          : theme.palette.primary.main,
 
-                      paddingInline: theme.space(4),
-                      paddingBlock: theme.space(2),
-                      marginBlockStart: theme.space(3),
-                    }]}
+                        paddingInline: theme.spacing(4),
+                        paddingBlock: theme.spacing(2),
+                        marginBlockStart: theme.spacing(3),
+                      },
+                    ]}
                     android_ripple={android_ripple(theme.palette.action.focus)}
                   >
                     <Text
-                      style={[theme.typography.button, {
-                        color: fengjing.isPending
-                          ? theme.palette.action.disabled
-                          : theme.palette.primary.contrastText,
-                        textAlign: "center",
-                      }]}
+                      style={[
+                        theme.typography.button,
+                        {
+                          color: fengjing.isPending
+                            ? theme.palette.action.disabled
+                            : theme.palette.primary.contrastText,
+                          textAlign: "center",
+                        },
+                      ]}
                     >
                       Click to fetch more
                     </Text>

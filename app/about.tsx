@@ -2,16 +2,16 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { openBrowserAsync } from "expo-web-browser";
 import React from "react";
 import { Linking, Pressable, ScrollView, Text } from "react-native";
-import { useStorageStore } from "@/hooks/useStorageStore";
+import { useThemeStore } from "@/hooks/useThemeStore";
 import { android_ripple } from "@/lib/utils";
 
 const githubUrl = "https://github.com/yanglee2421";
 
 export default function About() {
-  const theme = useStorageStore((s) => s.theme);
+  const theme = useThemeStore((s) => s.theme);
 
   return (
-    <ScrollView contentContainerStyle={{ padding: theme.space(3) }}>
+    <ScrollView contentContainerStyle={{ padding: theme.spacing(3) }}>
       <Pressable
         onPress={async () => {
           try {
@@ -34,10 +34,10 @@ export default function About() {
             flexDirection: "row",
             alignItems: "center",
             justifyContent: "center",
-            gap: theme.space(2),
+            gap: theme.spacing(2),
 
-            paddingInline: theme.space(4),
-            paddingBlock: theme.space(2),
+            paddingInline: theme.spacing(4),
+            paddingBlock: theme.spacing(2),
           },
         ]}
         android_ripple={android_ripple(theme.palette.action.focus)}
@@ -45,8 +45,8 @@ export default function About() {
         <MaterialCommunityIcons
           name="github"
           color={theme.palette.text.primary}
-          size={theme.space(5)}
-          style={[{ marginInlineStart: theme.space(-1) }]}
+          size={theme.spacing(5)}
+          style={[{ marginInlineStart: theme.spacing(-1) }]}
         />
         <Text
           style={[
