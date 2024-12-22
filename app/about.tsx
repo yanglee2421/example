@@ -5,7 +5,7 @@ import { Linking, Pressable, ScrollView, Text } from "react-native";
 import { useThemeStore } from "@/hooks/useThemeStore";
 import { android_ripple } from "@/lib/utils";
 
-const githubUrl = "https://github.com/yanglee2421";
+const githubUrl = "https://github.com/yanglee2421/example";
 
 export default function About() {
   const theme = useThemeStore((s) => s.theme);

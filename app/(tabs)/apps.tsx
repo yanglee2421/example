@@ -163,6 +163,28 @@ export default function Account() {
       label: "Settings",
       href: "/settings",
     },
+    {
+      icon: (
+        <MaterialCommunityIcons
+          name={"flask"}
+          size={iconSize}
+          color={theme.palette.text.icon}
+        />
+      ),
+      label: "Lab",
+      href: "/lab",
+    },
+    {
+      icon: (
+        <MaterialCommunityIcons
+          name={"calendar"}
+          size={iconSize}
+          color={theme.palette.text.icon}
+        />
+      ),
+      label: "Calendar",
+      href: "/calendar",
+    },
   ].sort((c, n) => c.label.localeCompare(n.label));
 
   return (

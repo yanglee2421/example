@@ -47,6 +47,8 @@ const RootRoute = () => {
       <Stack.Screen name="randtext" options={{ title: "Rand Text" }} />
       <Stack.Screen name="settings" options={{ title: "Settings" }} />
       <Stack.Screen name="todolist" options={{ title: "To Do List" }} />
+      <Stack.Screen name="lab" options={{ title: "Lab" }} />
+      <Stack.Screen name="calendar" options={{ title: "Calendar" }} />
     </Stack>
   );
 };

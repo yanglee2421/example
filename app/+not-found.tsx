@@ -19,7 +19,14 @@ export default function Page() {
         Not Found
       </Text>
       <Link href="/" asChild>
-        <Pressable android_ripple={android_ripple(theme.palette.action.focus)}>
+        <Pressable
+          style={{
+            paddingInline: theme.spacing(3),
+            paddingBlock: theme.spacing(2),
+            borderRadius: theme.shape.borderRadius,
+          }}
+          android_ripple={android_ripple(theme.palette.action.focus)}
+        >
           <Text
             style={[
               theme.typography.body1,
