@@ -1,5 +1,5 @@
 import { android_ripple } from "@/lib/utils";
-import { useThemeStore } from "@/hooks/useThemeStore";
+import { useTheme } from "@/hooks/useTheme";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { fetch } from "expo/fetch";
 import React from "react";
@@ -21,20 +21,21 @@ type LatestAnswerProps = {
 const LatestAnswer = (props: LatestAnswerProps) => {
   const [msg, setMsg] = React.useState("");
   const timer = React.useRef<NodeJS.Timeout | number>(0);
-  const theme = useThemeStore((s) => s.theme);
+  const theme = useTheme();
 
   React.useEffect(() => {
     if (msg === props.text) {
-      clearInterval(timer.current);
       return;
     }
 
-    timer.current = setInterval(() => {
+    if (!props.text.startsWith(msg)) return;
+
+    timer.current = setTimeout(() => {
       setMsg((p) => props.text.slice(0, p.length + 1));
     }, 4);
 
     return () => {
-      clearInterval(timer.current);
+      clearTimeout(timer.current);
     };
   }, [msg, props.text]);
 
@@ -53,7 +54,7 @@ type Message = {
 };
 
 export default function Page() {
-  const theme = useThemeStore((s) => s.theme);
+  const theme = useTheme();
   const [search, setSearch] = React.useState("");
   const [msgList, setMsgList] = useImmer<Message[]>([]);
   const scrollRef = React.useRef<ScrollView>(null);

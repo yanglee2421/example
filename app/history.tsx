@@ -14,7 +14,7 @@ import { useLocaleTime } from "@/hooks/useLocaleTime";
 import { Loading } from "@/components/Loading";
 import { NeedAPIKEY } from "@/components/NeedAPIKEY";
 import { useStorageStore } from "@/hooks/useStorageStore";
-import { useThemeStore } from "@/hooks/useThemeStore";
+import { useTheme } from "@/hooks/useTheme";
 
 const fetcher = fetchHistoryGet();
 
@@ -23,7 +23,7 @@ export default function Page() {
   const time = useLocaleTime();
   const apikey = useStorageStore((s) => s.qqlykmKey);
   const history = useQuery({ ...fetcher, enabled: !!apikey });
-  const theme = useThemeStore((s) => s.theme);
+  const theme = useTheme();
 
   return (
     <ScrollView

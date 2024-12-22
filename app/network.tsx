@@ -5,7 +5,7 @@ import * as ExpoNet from "expo-network";
 import { ActivityAction, startActivityAsync } from "expo-intent-launcher";
 import React from "react";
 import { Pressable, ScrollView, Text, ToastAndroid } from "react-native";
-import { useThemeStore } from "@/hooks/useThemeStore";
+import { useTheme } from "@/hooks/useTheme";
 
 const netSelector = <TError, TWarning, TSuccess>(
   isConnected: boolean,
@@ -26,7 +26,7 @@ const netSelector = <TError, TWarning, TSuccess>(
 };
 
 export default function Network() {
-  const theme = useThemeStore((s) => s.theme);
+  const theme = useTheme();
   const ip = useQuery({
     queryKey: ["getIpAddressAsync"],
     queryFn: () => ExpoNet.getIpAddressAsync(),

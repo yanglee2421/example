@@ -1,4 +1,4 @@
-import { useThemeStore } from "@/hooks/useThemeStore";
+import { useTheme } from "@/hooks/useTheme";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import React from "react";
 import {
@@ -11,7 +11,7 @@ import {
 
 export default function Page() {
   const rotateValue = useAnimatedValue(0);
-  const theme = useThemeStore((s) => s.theme);
+  const theme = useTheme();
 
   React.useEffect(() => {
     const startRotation = () => {

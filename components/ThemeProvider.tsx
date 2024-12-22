@@ -1,25 +1,28 @@
 import React from "react";
 import { StatusBar, useColorScheme } from "react-native";
-import { useThemeStore, darkTheme, lightTheme } from "@/hooks/useThemeStore";
+import { darkTheme, lightTheme, ThemeContext } from "@/hooks/useTheme";
+import { useStorageStore, type Mode } from "@/hooks/useStorageStore";
+
+function modeToHasSelector(mode: Mode, isDark: boolean) {
+  switch (mode) {
+    case "system":
+      return isDark;
+
+    case "dark":
+      return true;
+    case "light":
+      return false;
+  }
+}
 
 export function ThemeProvider(props: React.PropsWithChildren) {
-  const theme = useThemeStore((s) => s.theme);
-  const set = useThemeStore((s) => s.set);
   const colorScheme = useColorScheme();
-
-  React.useEffect(() => {
-    set((d) => {
-      if (colorScheme === "dark") {
-        d.theme = darkTheme;
-      } else {
-        d.theme = lightTheme;
-      }
-    });
-    return;
-  }, [colorScheme, set]);
+  const mode = useStorageStore((s) => s.mode);
+  const isDark = colorScheme === "dark";
+  const theme = modeToHasSelector(mode, isDark) ? darkTheme : lightTheme;
 
   return (
-    <>
+    <ThemeContext.Provider value={theme}>
       <StatusBar
         animated
         barStyle={
@@ -28,6 +31,6 @@ export function ThemeProvider(props: React.PropsWithChildren) {
         backgroundColor={theme.palette.background.default}
       />
       {props.children}
-    </>
+    </ThemeContext.Provider>
   );
 }

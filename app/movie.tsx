@@ -12,14 +12,14 @@ import { fetchJijiangshangying } from "@/api/fetchJijiangshangying";
 import { Loading } from "@/components/Loading";
 import { NeedAPIKEY } from "@/components/NeedAPIKEY";
 import { useStorageStore } from "@/hooks/useStorageStore";
-import { useThemeStore } from "@/hooks/useThemeStore";
+import { useTheme } from "@/hooks/useTheme";
 
 const fetcher = fetchJijiangshangying();
 
 export default function Page() {
   const apikey = useStorageStore((s) => s.qqlykmKey);
   const movies = useQuery({ ...fetcher, enabled: !!apikey });
-  const theme = useThemeStore((s) => s.theme);
+  const theme = useTheme();
 
   return (
     <>

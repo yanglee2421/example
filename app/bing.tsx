@@ -14,11 +14,11 @@ import {
 import { fetchCnBingImage } from "@/api/fetchBingImage";
 import { useLocaleDate } from "@/hooks/useLocaleDate";
 import { useLocaleTime } from "@/hooks/useLocaleTime";
-import { useThemeStore } from "@/hooks/useThemeStore";
+import { useTheme } from "@/hooks/useTheme";
 
 export default function Bing() {
   const bingImgs = useQuery(fetchCnBingImage({ format: "js", idx: 0, n: 8 }));
-  const theme = useThemeStore((s) => s.theme);
+  const theme = useTheme();
   const date = useLocaleDate();
   const time = useLocaleTime();
 

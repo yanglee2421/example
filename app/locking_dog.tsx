@@ -15,7 +15,7 @@ import { NeedAPIKEY } from "@/components/NeedAPIKEY";
 import { useStorageStore } from "@/hooks/useStorageStore";
 import { setStringAsync } from "expo-clipboard";
 import { android_ripple } from "@/lib/utils";
-import { useThemeStore } from "@/hooks/useThemeStore";
+import { useTheme } from "@/hooks/useTheme";
 
 const fetcher = fetchDiary();
 
@@ -28,7 +28,7 @@ export default function Page() {
     refetchOnReconnect: false,
   });
   const queryClient = useQueryClient();
-  const theme = useThemeStore((s) => s.theme);
+  const theme = useTheme();
 
   return (
     <>

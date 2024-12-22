@@ -1,10 +1,10 @@
-import { useThemeStore } from "@/hooks/useThemeStore";
+import { useTheme } from "@/hooks/useTheme";
 import { android_ripple } from "@/lib/utils";
 import { Link } from "expo-router";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
 export default function Page() {
-  const theme = useThemeStore((s) => s.theme);
+  const theme = useTheme();
 
   return (
     <View style={styles.container}>

@@ -1,12 +1,12 @@
 import React from "react";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Pressable, Text } from "react-native";
-import { useThemeStore } from "@/hooks/useThemeStore";
+import { useTheme } from "@/hooks/useTheme";
 import { android_ripple } from "@/lib/utils";
 
 export default function Page() {
   const [open, setOpen] = React.useState(false);
-  const theme = useThemeStore((s) => s.theme);
+  const theme = useTheme();
   const [date, setDate] = React.useState(() => new Date());
 
   return (

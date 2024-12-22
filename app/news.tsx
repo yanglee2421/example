@@ -12,14 +12,14 @@ import {
   Text,
   View,
 } from "react-native";
-import { useThemeStore } from "@/hooks/useThemeStore";
+import { useTheme } from "@/hooks/useTheme";
 
 const fetcher = fetchNews();
 
 export default function News() {
   const apikey = useStorageStore((s) => s.qqlykmKey);
   const news = useQuery({ ...fetcher, enabled: !!apikey });
-  const theme = useThemeStore((s) => s.theme);
+  const theme = useTheme();
 
   const render = () => {
     if (news.isLoading) {

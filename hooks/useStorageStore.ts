@@ -5,8 +5,10 @@ import { immer } from "zustand/middleware/immer";
 import { type WritableDraft } from "immer";
 import React from "react";
 
+export type Mode = "light" | "dark" | "system";
 type StoreState = {
   qqlykmKey: string;
+  mode: Mode;
 };
 type StoreActions = {
   set(
@@ -24,6 +26,7 @@ export const useStorageStore = create<Store>()(
       return {
         set,
         qqlykmKey: "GY7rE1J3f4ovi4wGONXshLHOHv",
+        mode: "system",
       };
     }),
     {

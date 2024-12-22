@@ -1,11 +1,11 @@
-import { useThemeStore } from "@/hooks/useThemeStore";
+import { useTheme } from "@/hooks/useTheme";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Link } from "expo-router";
 import React from "react";
 import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 
 export default function Account() {
-  const theme = useThemeStore((s) => s.theme);
+  const theme = useTheme();
   const iconSize = theme.typography.body1.fontSize * 1.4;
 
   const list = [

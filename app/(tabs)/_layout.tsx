@@ -1,11 +1,11 @@
-import { useThemeStore } from "@/hooks/useThemeStore";
+import { useTheme } from "@/hooks/useTheme";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
 import React from "react";
 import { Pressable } from "react-native";
 
 export default function TabsLayout() {
-  const theme = useThemeStore((s) => s.theme);
+  const theme = useTheme();
 
   return (
     <Tabs
@@ -92,7 +92,7 @@ type TabBarButtonProps = React.PropsWithChildren<{
 }>;
 
 const TabBarButton = (props: TabBarButtonProps) => {
-  const theme = useThemeStore((s) => s.theme);
+  const theme = useTheme();
 
   return (
     <Pressable

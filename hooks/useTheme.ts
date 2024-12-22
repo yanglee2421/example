@@ -1,6 +1,4 @@
-import { create } from "zustand";
-import { immer } from "zustand/middleware/immer";
-import { type WritableDraft } from "immer";
+import React from "react";
 
 const color = (
   main: string,
@@ -211,20 +209,6 @@ export const darkTheme = {
   },
 };
 
-type StoreState = {
-  theme: typeof darkTheme;
-};
-type StoreActions = {
-  set(
-    nextStateOrUpdater:
-      | StoreState
-      | Partial<StoreState>
-      | ((state: WritableDraft<StoreState>) => void),
-  ): void;
-};
-type Store = StoreState & StoreActions;
+export const ThemeContext = React.createContext(lightTheme);
 
-export const useThemeStore = create<Store>()(immer((set) => ({
-  set,
-  theme: lightTheme,
-})));
+export const useTheme = () => React.useContext(ThemeContext);

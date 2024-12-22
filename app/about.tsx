@@ -9,7 +9,7 @@ import {
   Text,
   View,
 } from "react-native";
-import { useThemeStore } from "@/hooks/useThemeStore";
+import { useTheme } from "@/hooks/useTheme";
 import { android_ripple } from "@/lib/utils";
 import * as Application from "expo-application";
 
@@ -35,7 +35,7 @@ const infos = [
 ];
 
 export default function About() {
-  const theme = useThemeStore((s) => s.theme);
+  const theme = useTheme();
 
   return (
     <ScrollView contentContainerStyle={{ padding: theme.spacing(3) }}>

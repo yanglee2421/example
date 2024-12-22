@@ -6,13 +6,13 @@ import { Loading } from "@/components/Loading";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Pressable, Text, ToastAndroid, View } from "react-native";
 import { android_ripple } from "@/lib/utils";
-import { useThemeStore } from "@/hooks/useThemeStore";
+import { useTheme } from "@/hooks/useTheme";
 
 export default function Qrcode() {
   const [data, setData] = React.useState("");
   const [facing, setFacing] = React.useState<CameraType>("back");
   const [permission, requestPermission] = useCameraPermissions();
-  const theme = useThemeStore((s) => s.theme);
+  const theme = useTheme();
 
   const copy = useMutation<boolean, Error, string>({
     async mutationFn(data) {

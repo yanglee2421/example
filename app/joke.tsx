@@ -13,7 +13,7 @@ import { fetchJoke } from "@/api/fetchJoke";
 import { Loading } from "@/components/Loading";
 import { NeedAPIKEY } from "@/components/NeedAPIKEY";
 import { useStorageStore } from "@/hooks/useStorageStore";
-import { useThemeStore } from "@/hooks/useThemeStore";
+import { useTheme } from "@/hooks/useTheme";
 
 const fetcher = fetchJoke();
 
@@ -26,7 +26,7 @@ export default function Page() {
     refetchOnReconnect: false,
   });
   const queryClient = useQueryClient();
-  const theme = useThemeStore((s) => s.theme);
+  const theme = useTheme();
 
   return (
     <>

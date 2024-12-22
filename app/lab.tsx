@@ -1,9 +1,9 @@
 import React from "react";
 import { Animated, PanResponder, View } from "react-native";
-import { useThemeStore } from "@/hooks/useThemeStore";
+import { useTheme } from "@/hooks/useTheme";
 
 export default function Page() {
-  const theme = useThemeStore((s) => s.theme);
+  const theme = useTheme();
   const [pan] = React.useState(
     () => new Animated.ValueXY({ x: 0, y: 0 }, { useNativeDriver: true })
   );

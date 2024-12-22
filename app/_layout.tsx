@@ -8,12 +8,12 @@ import migrations from "@/drizzle/migrations.js";
 import { QueryProvider } from "@/components/QueryProvider";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { useStorageHasHydrated } from "@/hooks/useStorageStore";
-import { useThemeStore } from "@/hooks/useThemeStore";
+import { useTheme } from "@/hooks/useTheme";
 
 SplashScreen.preventAutoHideAsync();
 
 const RootRoute = () => {
-  const theme = useThemeStore((s) => s.theme);
+  const theme = useTheme();
 
   return (
     <Stack
