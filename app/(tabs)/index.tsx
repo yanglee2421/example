@@ -216,7 +216,12 @@ export default function Page() {
             },
           ]}
         >
-          <View style={{ paddingInline: theme.spacing(1.5) }}>
+          <View
+            style={{
+              paddingInline: theme.spacing(1.5),
+              paddingBlockStart: theme.spacing(1),
+            }}
+          >
             <TextInput
               value={search}
               onChangeText={setSearch}

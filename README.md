@@ -25,6 +25,8 @@ keytool -genkey -v -keystore my-upload-key.keystore -alias my-key-alias -keyalg 
 ./gradlew app:bundleRelease
 # For .apk
 ./gradlew app:assembleRelease
+# Or build with expo
+expo run:android --variant release
 
 # Install Emulator
 sdkmanager "emulator" "platforms;android-34" "system-images;android-34;google_apis;x86_64"
