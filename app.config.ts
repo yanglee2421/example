@@ -29,7 +29,7 @@ export default {
 
   // Expo SDK Config
   plugins: [
-    "expo-splite",
+    "expo-sqlite",
     "expo-font",
     "expo-router",
     [
