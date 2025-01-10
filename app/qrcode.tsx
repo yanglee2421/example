@@ -153,7 +153,7 @@ export default function Qrcode() {
   return (
     <CameraView
       facing={facing}
-      barcodeScannerSettings={{ barcodeTypes: ["qr"] }}
+      barcodeScannerSettings={{ barcodeTypes: ["qr", "ean13", "upc_a"] }}
       onBarcodeScanned={(res) => setData(res.data)}
       style={{ flex: 1, justifyContent: "flex-end", alignItems: "center" }}
     >
