@@ -1,8 +1,8 @@
 # Expo App
 
-## Set Building Environment
+## Installation
 
-[Expo Documation](https://docs.expo.dev/guides/local-app-production/)
+[Android Studio Command Line Tools](https://developer.android.google.cn/studio?hl=zh-cn)
 
 ```powershell
 # Install chocolatey
@@ -11,15 +11,25 @@ Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManage
 # Install JDK
 choco install -y microsoft-openjdk17
 
+# Add Env ANDROID_HOME %USERPROFILE%\android_sdk
+# Add Path %ANDROID_HOME%\cmdline-tools\latest\bin
 # Install Android SDK
 sdkmanager "platform-tools" "build-tools;34.0.0"
 
-# Expo build
+# Install Emulator
+sdkmanager "emulator" "platforms;android-34" "system-images;android-34;google_apis;x86_64"
+avdmanager create avd -n emulatorName -k "system-images;android-34;google_apis;x86_64" -d "pixel"
+# emulator -avd emulatorName -gpu host
+```
+
+## Build
+
+[Expo Documation](https://docs.expo.dev/guides/local-app-production/)
+
+```powershell
+# Generate native dir by Expo prebuild
 expo prebuild
 cd ./android
-
-# Prepare keystore
-keytool -genkey -v -keystore my-upload-key.keystore -alias my-key-alias -keyalg RSA -keysize 2048 -validity 10000
 
 # For .aab
 ./gradlew app:bundleRelease
@@ -27,14 +37,14 @@ keytool -genkey -v -keystore my-upload-key.keystore -alias my-key-alias -keyalg 
 ./gradlew app:assembleRelease
 # Or build with expo
 expo run:android --variant release
-
-# Install Emulator
-sdkmanager "emulator" "platforms;android-34" "system-images;android-34;google_apis;x86_64"
-avdmanager create avd -n emulatorName -k "system-images;android-34;google_apis;x86_64" -d "pixel"
-emulator -avd emulatorName -gpu host
 ```
 
-## Note
+## Sign
+
+```powershell
+# Prepare keystore
+keytool -genkey -v -keystore my-upload-key.keystore -alias my-key-alias -keyalg RSA -keysize 2048 -validity 10000
+```
 
 ```properties
 # android/gradle.properties
@@ -42,7 +52,9 @@ MYAPP_UPLOAD_STORE_FILE=my-upload-key.keystore
 MYAPP_UPLOAD_KEY_ALIAS=my-key-alias
 MYAPP_UPLOAD_STORE_PASSWORD=123456
 MYAPP_UPLOAD_KEY_PASSWORD=123456
+```
 
+```properties
 # android/app/build.gradle
 release {
             if (project.hasProperty('MYAPP_UPLOAD_STORE_FILE')) {
@@ -54,26 +66,4 @@ release {
         }
 
 signingConfig signingConfigs.release
-```
-
-## Set Development Environment
-
-1. Install WSL
-
-```powershell
-# Install Ubuntu
-wsl --install
-# Unistall Ubuntu
-wsl --list
-wsl --uninstall Ubuntu
-```
-
-2. Ubuntu Bash
-
-```bash
-# Install pnpm
-curl -fsSL https://get.pnpm.io/install.sh | sh -
-
-# Install nodejs
-pnpm env use -g lts
 ```
