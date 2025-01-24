@@ -24,10 +24,7 @@ const LatestAnswer = (props: LatestAnswerProps) => {
   const theme = useTheme();
 
   React.useEffect(() => {
-    if (msg === props.text) {
-      return;
-    }
-
+    if (msg === props.text) return;
     if (!props.text.startsWith(msg)) return;
 
     timer.current = setTimeout(() => {
@@ -41,6 +38,7 @@ const LatestAnswer = (props: LatestAnswerProps) => {
 
   return (
     <Text
+      selectable
       style={[theme.typography.body1, { color: theme.palette.text.primary }]}
     >
       {msg}
@@ -162,6 +160,7 @@ export default function Page() {
                   You:
                 </Text>
                 <Text
+                  selectable
                   style={[
                     theme.typography.body1,
                     { color: theme.palette.text.primary },
@@ -185,6 +184,7 @@ export default function Page() {
                   <LatestAnswer text={m.assistant} />
                 ) : (
                   <Text
+                    selectable
                     style={[
                       theme.typography.body1,
                       { color: theme.palette.text.primary },
