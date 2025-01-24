@@ -20,19 +20,18 @@ type LatestAnswerProps = {
 
 const LatestAnswer = (props: LatestAnswerProps) => {
   const [msg, setMsg] = React.useState("");
-  const timer = React.useRef<NodeJS.Timeout | number>(0);
   const theme = useTheme();
 
   React.useEffect(() => {
     if (msg === props.text) return;
     if (!props.text.startsWith(msg)) return;
 
-    timer.current = setTimeout(() => {
+    const timer = setTimeout(() => {
       setMsg((p) => props.text.slice(0, p.length + 1));
     }, 4);
 
     return () => {
-      clearTimeout(timer.current);
+      clearTimeout(timer);
     };
   }, [msg, props.text]);
 
