@@ -4,7 +4,7 @@ export default {
   name: "Example",
   slug: "example",
   scheme: "example",
-  version: "0.0.14",
+  version: "0.0.15",
   orientation: "portrait",
   icon: "./assets/icon.png",
   userInterfaceStyle: "automatic",
@@ -43,18 +43,18 @@ export default {
     [
       "@react-native-community/datetimepicker",
       {
-        "android": {
-          "datePicker": {
-            "colorAccent": {
-              "light": "#FF5722",
+        android: {
+          datePicker: {
+            colorAccent: {
+              light: "#FF5722",
             },
-            "textColorPrimary": {
-              "light": "#FF5722",
+            textColorPrimary: {
+              light: "#FF5722",
             },
           },
-          "timePicker": {
-            "background": { "light": "#FF5722", "dark": "#383838" },
-            "numbersBackgroundColor": { "light": "#FF5722", "dark": "#383838" },
+          timePicker: {
+            background: { light: "#FF5722", dark: "#383838" },
+            numbersBackgroundColor: { light: "#FF5722", dark: "#383838" },
           },
         },
       },
