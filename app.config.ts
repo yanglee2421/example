@@ -4,7 +4,7 @@ export default {
   name: "Example",
   slug: "example",
   scheme: "example",
-  version: "0.0.15",
+  version: "0.0.16",
   orientation: "default",
   icon: "./assets/icon.png",
   userInterfaceStyle: "automatic",

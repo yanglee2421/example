@@ -13,7 +13,9 @@ export default function Page() {
         return true;
       },
       onPanResponderMove(e, gestureState) {
-        const handler = Animated.event([null, { dx: pan.x, dy: pan.y }]);
+        const handler = Animated.event([null, { dx: pan.x, dy: pan.y }], {
+          useNativeDriver: false,
+        });
 
         handler(e, gestureState);
       },

@@ -48,7 +48,11 @@ export default function Bing() {
           },
         ]}
       >
-        <Text style={[theme.typography.h5]}>Bing</Text>
+        <Text
+          style={[theme.typography.h5, { color: theme.palette.text.primary }]}
+        >
+          Bing
+        </Text>
         <Text
           style={[
             theme.typography.subtitle1,
