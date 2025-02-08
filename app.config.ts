@@ -29,6 +29,7 @@ export default {
 
   // Expo SDK Config
   plugins: [
+    "expo-sqlite",
     "expo-font",
     "expo-router",
     [
@@ -42,18 +43,18 @@ export default {
     [
       "@react-native-community/datetimepicker",
       {
-        "android": {
-          "datePicker": {
-            "colorAccent": {
-              "light": "#FF5722",
+        android: {
+          datePicker: {
+            colorAccent: {
+              light: "#FF5722",
             },
-            "textColorPrimary": {
-              "light": "#FF5722",
+            textColorPrimary: {
+              light: "#FF5722",
             },
           },
-          "timePicker": {
-            "background": { "light": "#FF5722", "dark": "#383838" },
-            "numbersBackgroundColor": { "light": "#FF5722", "dark": "#383838" },
+          timePicker: {
+            background: { light: "#FF5722", dark: "#383838" },
+            numbersBackgroundColor: { light: "#FF5722", dark: "#383838" },
           },
         },
       },
