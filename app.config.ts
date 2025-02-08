@@ -5,7 +5,7 @@ export default {
   slug: "example",
   scheme: "example",
   version: "0.0.15",
-  orientation: "portrait",
+  orientation: "default",
   icon: "./assets/icon.png",
   userInterfaceStyle: "automatic",
   splash: {
