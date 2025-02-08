@@ -67,6 +67,14 @@ export default function Page() {
         }}
       >
         <Svg width={width} height={height}>
+          <Polyline
+            points={renderNodes
+              .map((i, idx) => `${idx},${Math.floor(height * (1 - i / 700))}`)
+              .join(" ")}
+            fill={"none"}
+            stroke={theme.palette.primary.main}
+            strokeWidth={2}
+          />
           <Line
             x1={0}
             y1={height}
@@ -83,7 +91,6 @@ export default function Page() {
             stroke={theme.palette.divider}
             strokeWidth={1}
           />
-
           <Circle
             x={0}
             y={height - 100}
@@ -94,15 +101,6 @@ export default function Page() {
           <Text x={10} y={height - 10} fill={theme.palette.text.secondary}>
             label
           </Text>
-
-          <Polyline
-            points={renderNodes
-              .map((i, idx) => `${idx},${Math.floor(height * (1 - i / 700))}`)
-              .join(" ")}
-            fill={"none"}
-            stroke={theme.palette.primary.main}
-            strokeWidth={2}
-          />
         </Svg>
       </View>
     </View>
