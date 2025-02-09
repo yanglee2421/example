@@ -1,5 +1,5 @@
 import React from "react";
-import { StatusBar, useColorScheme } from "react-native";
+import { useColorScheme } from "react-native";
 import { darkTheme, lightTheme, ThemeContext } from "@/hooks/useTheme";
 import { useStorageStore, type Mode } from "@/hooks/useStorageStore";
 
@@ -23,13 +23,6 @@ export function ThemeProvider(props: React.PropsWithChildren) {
 
   return (
     <ThemeContext.Provider value={theme}>
-      <StatusBar
-        animated
-        barStyle={
-          theme.palette.mode === "dark" ? "light-content" : "dark-content"
-        }
-        backgroundColor={theme.palette.background.default}
-      />
       {props.children}
     </ThemeContext.Provider>
   );

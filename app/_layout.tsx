@@ -1,4 +1,4 @@
-import { SplashScreen, Stack } from "expo-router";
+import { Stack } from "expo-router";
 import { useFonts } from "expo-font";
 import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
 import { View } from "react-native";
@@ -9,8 +9,15 @@ import { QueryProvider } from "@/components/QueryProvider";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { useStorageHasHydrated } from "@/hooks/useStorageStore";
 import { useTheme } from "@/hooks/useTheme";
+import * as SplashScreen from "expo-splash-screen";
+import { StatusBar } from "expo-status-bar";
 
 SplashScreen.preventAutoHideAsync();
+
+SplashScreen.setOptions({
+  fade: true,
+  duration: 1000 * 0.2,
+});
 
 const RootRoute = () => {
   const theme = useTheme();
@@ -83,6 +90,7 @@ export default function RootLayout() {
     fontLoaded &&
     dbState.success && (
       <QueryProvider>
+        <StatusBar />
         <ThemeProvider>
           <RootRoute />
         </ThemeProvider>
