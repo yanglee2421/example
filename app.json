@@ -19,11 +19,6 @@
       },
       "package": "app.vercel.yanglee2421"
     },
-    "web": {
-      "bundler": "metro",
-      "output": "static",
-      "favicon": "./assets/icon.png"
-    },
 
     "plugins": [
       "expo-router",
