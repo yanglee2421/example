@@ -13,6 +13,7 @@ import {
   View,
 } from "react-native";
 import { useImmer } from "use-immer";
+import Markdown from "react-native-markdown-display";
 
 type LatestAnswerProps = {
   text: string;
@@ -36,12 +37,24 @@ const LatestAnswer = (props: LatestAnswerProps) => {
   }, [msg, props.text]);
 
   return (
-    <Text
-      selectable
-      style={[theme.typography.body1, { color: theme.palette.text.primary }]}
+    <Markdown
+      style={{
+        body: {
+          ...theme.typography.body1,
+          color: theme.palette.text.primary,
+        },
+        fence: {
+          ...theme.typography.body1,
+          color: theme.palette.info.dark,
+        },
+        code_inline: {
+          ...theme.typography.body1,
+          color: theme.palette.info.dark,
+        },
+      }}
     >
       {msg}
-    </Text>
+    </Markdown>
   );
 };
 
@@ -179,19 +192,7 @@ export default function Page() {
                 >
                   Assistant:
                 </Text>
-                {i + 1 === msgList.length ? (
-                  <LatestAnswer text={m.assistant} />
-                ) : (
-                  <Text
-                    selectable
-                    style={[
-                      theme.typography.body1,
-                      { color: theme.palette.text.primary },
-                    ]}
-                  >
-                    {m.assistant}
-                  </Text>
-                )}
+                <LatestAnswer text={m.assistant} />
               </View>
             )}
           </View>
