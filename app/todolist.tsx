@@ -6,7 +6,6 @@ import Animated, {
   useAnimatedProps,
   useSharedValue,
   withSpring,
-  withTiming,
   runOnJS,
   useAnimatedRef,
   useFrameCallback,
@@ -41,9 +40,7 @@ export default function Page() {
       .join(" ")
   );
 
-  const polylineProps = useAnimatedProps(() => ({
-    points: points.value,
-  }));
+  const polylineProps = useAnimatedProps(() => ({ points: points.value }));
 
   const cursorXProps = useAnimatedProps(() => ({
     x1: cursorX.value,
@@ -53,9 +50,7 @@ export default function Page() {
 
   const cursorTextProps = useAnimatedProps(() => ({
     x: cursorX.value + 4,
-    fill: withTiming(
-      cursorX.value ? theme.palette.error.main : "rgba(0,0,0,0)"
-    ),
+    fill: cursorX.value ? theme.palette.error.main : "rgba(0,0,0,0)",
   }));
 
   useFrameCallback(() => {
@@ -98,13 +93,7 @@ export default function Page() {
     });
 
   return (
-    <View
-      style={[
-        {
-          paddingInline: theme.spacing(3),
-        },
-      ]}
-    >
+    <View style={{ paddingInline: theme.spacing(3) }}>
       <View
         style={{
           height: height,
