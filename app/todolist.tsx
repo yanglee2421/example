@@ -8,43 +8,71 @@ import Animated, {
   withSpring,
   withTiming,
   runOnJS,
+  useAnimatedRef,
+  useFrameCallback,
+  measure,
+  useDerivedValue,
 } from "react-native-reanimated";
 import { GestureDetector, Gesture } from "react-native-gesture-handler";
 
 const AnimatedLine = Animated.createAnimatedComponent(Line);
 const AnimatedText = Animated.createAnimatedComponent(Text);
+const AnimatedPolyline = Animated.createAnimatedComponent(Polyline);
 
 const randomDelay = () => Math.floor(Math.random() * 1000 * 1.5);
 const randomInt = (min: number, max: number) =>
   Math.random() * (max - min) + min;
 
+const height = 300;
+
 export default function Page() {
   const [width, setWidth] = React.useState(0);
-  const [renderNodes, setRenderNodes] = React.useState<number[]>([]);
-  const [cursor, setCursor] = React.useState(0);
-
-  const seedRef = React.useRef(0);
+  const [cursorText, setCursorText] = React.useState("");
 
   const theme = useTheme();
-  const x = useSharedValue(0);
+  const seed = useSharedValue(0);
+  const cursorX = useSharedValue(0);
+  const renderNodes = useSharedValue<number[]>([]);
+  const svgRef = useAnimatedRef<Svg>();
 
-  const xProps = useAnimatedProps(() => ({
-    x1: x.value,
-    x2: x.value,
-    stroke: withTiming(x.value ? theme.palette.error.main : "rgba(0,0,0,0)"),
+  const points = useDerivedValue(() =>
+    renderNodes.value
+      .map((i, idx) => `${idx},${Math.floor(height * (1 - i / 700))}`)
+      .join(" ")
+  );
+
+  const polylineProps = useAnimatedProps(() => ({
+    points: points.value,
   }));
 
-  const x2Props = useAnimatedProps(() => ({
-    x: x.value + 4,
-    fill: withTiming(x.value ? theme.palette.error.main : "rgba(0,0,0,0)"),
+  const cursorXProps = useAnimatedProps(() => ({
+    x1: cursorX.value,
+    x2: cursorX.value,
+    strokeWidth: cursorX.value ? 1 : 0,
   }));
 
-  const height = 300;
+  const cursorTextProps = useAnimatedProps(() => ({
+    x: cursorX.value + 4,
+    fill: withTiming(
+      cursorX.value ? theme.palette.error.main : "rgba(0,0,0,0)"
+    ),
+  }));
+
+  useFrameCallback(() => {
+    const xSize = measure(svgRef)?.width;
+    if (!xSize) return;
+
+    renderNodes.value = [...renderNodes.value, seed.value].slice(-xSize);
+
+    runOnJS(setCursorText)(
+      Math.floor(renderNodes.value[Math.floor(cursorX.value)]) + ""
+    );
+  });
 
   React.useEffect(() => {
     let timer: number | NodeJS.Timeout = 0;
     const update = () => {
-      seedRef.current = randomInt(0, 700);
+      seed.value = randomInt(50, 700);
       timer = setTimeout(update, randomDelay());
     };
 
@@ -55,40 +83,19 @@ export default function Page() {
     };
   }, []);
 
-  React.useEffect(() => {
-    let timer = 0;
-    const draw = () => {
-      timer = requestAnimationFrame(draw);
-
-      setRenderNodes((prev) => {
-        const val = [...prev, seedRef.current];
-        return val.slice(-width);
-      });
-    };
-    draw();
-
-    return () => {
-      cancelAnimationFrame(timer);
-    };
-  }, [width, height]);
-
-  const cursorText = Math.floor(renderNodes[Math.floor(cursor)]);
-
   const gesture = Gesture.Pan()
     .onBegin((e) => {
-      const idxV = e.x;
-      x.value = e.x;
-      runOnJS(setCursor)(idxV);
+      cursorX.value = e.x;
     })
     .onUpdate((e) => {
-      const idxV = e.x;
-      x.value = e.x;
-      runOnJS(setCursor)(idxV);
+      cursorX.value = e.x;
     })
-    .onEnd(() => {
-      x.value = withSpring(0);
+    .onEnd((e) => {
+      cursorX.value = e.x;
     })
-    .onFinalize(() => {});
+    .onFinalize(() => {
+      cursorX.value = withSpring(0);
+    });
 
   return (
     <View
@@ -108,14 +115,12 @@ export default function Page() {
         }}
       >
         <GestureDetector gesture={gesture}>
-          <Svg width={width} height={height}>
-            <Polyline
-              points={renderNodes
-                .map((i, idx) => `${idx},${Math.floor(height * (1 - i / 700))}`)
-                .join(" ")}
+          <Svg ref={svgRef} height={height} width={width}>
+            <AnimatedPolyline
               fill={"none"}
               stroke={theme.palette.primary.main}
               strokeWidth={2}
+              animatedProps={polylineProps}
             />
             <Line
               x1={0}
@@ -139,7 +144,6 @@ export default function Page() {
               r={5}
               fill={theme.palette.error.main}
             />
-
             <Text
               x={10}
               y={10}
@@ -149,16 +153,14 @@ export default function Page() {
             >
               label
             </Text>
+
             <AnimatedLine
               y2={height}
               y1={0}
-              strokeWidth={1}
-              animatedProps={xProps}
+              stroke={theme.palette.error.main}
+              animatedProps={cursorXProps}
             />
-            <AnimatedText
-              y={Math.floor((height / 55) * 21)}
-              animatedProps={x2Props}
-            >
+            <AnimatedText y={24} animatedProps={cursorTextProps}>
               {cursorText}
             </AnimatedText>
           </Svg>
