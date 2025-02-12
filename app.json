@@ -2,13 +2,12 @@
   "expo": {
     "name": "Example",
     "slug": "example",
-    "version": "0.0.16",
+    "version": "0.0.17",
     "orientation": "default",
     "icon": "./assets/icon.png",
     "scheme": "example",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
-
     "ios": {
       "supportsTablet": true
     },
@@ -19,7 +18,6 @@
       },
       "package": "app.vercel.yanglee2421"
     },
-
     "plugins": [
       "expo-router",
       [
@@ -57,7 +55,10 @@
               }
             },
             "timePicker": {
-              "background": { "light": "#FF5722", "dark": "#383838" },
+              "background": {
+                "light": "#FF5722",
+                "dark": "#383838"
+              },
               "numbersBackgroundColor": {
                 "light": "#FF5722",
                 "dark": "#383838"

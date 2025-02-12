@@ -11,6 +11,7 @@ import { useStorageHasHydrated } from "@/hooks/useStorageStore";
 import { useTheme } from "@/hooks/useTheme";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -92,7 +93,9 @@ export default function RootLayout() {
       <QueryProvider>
         <StatusBar />
         <ThemeProvider>
-          <RootRoute />
+          <GestureHandlerRootView>
+            <RootRoute />
+          </GestureHandlerRootView>
         </ThemeProvider>
       </QueryProvider>
     )
