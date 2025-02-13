@@ -1,75 +1,55 @@
-import { useTheme } from "@/hooks/useTheme";
 import React from "react";
-import { StyleSheet, View } from "react-native";
-import { GestureDetector, Gesture } from "react-native-gesture-handler";
-import Animated, {
-  useSharedValue,
+import { Text, StyleSheet } from "react-native";
+
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import ReanimatedSwipeable from "react-native-gesture-handler/ReanimatedSwipeable";
+import Reanimated, {
+  SharedValue,
   useAnimatedStyle,
-  withSpring,
-  measure,
-  useAnimatedRef,
-  withTiming,
 } from "react-native-reanimated";
 
-const styles = StyleSheet.create({
-  ball: {
-    width: 100,
-    height: 100,
-    borderRadius: 100,
-  },
-});
+function RightAction(prog: SharedValue<number>, drag: SharedValue<number>) {
+  const styleAnimation = useAnimatedStyle(() => {
+    console.log("showRightProgress:", prog.value);
+    console.log("appliedTranslation:", drag.value);
 
-export default function Page() {
-  const viewRef = useAnimatedRef<View>();
-
-  const isPressed = useSharedValue(false);
-  const offset = useSharedValue({ x: 0, y: 0 });
-  const start = useSharedValue({ x: 0, y: 0 });
-  const theme = useTheme();
-
-  const animatedStyles = useAnimatedStyle(() => {
     return {
-      transform: [
-        { translateX: offset.value.x },
-        { translateY: offset.value.y },
-        { scale: withSpring(isPressed.value ? 1.1 : 1) },
-      ],
-      backgroundColor: isPressed.value
-        ? theme.palette.action.active
-        : theme.palette.primary.main,
+      transform: [{ translateX: drag.value + 50 }],
     };
   });
 
-  const gesture = Gesture.Pan()
-    .onBegin(() => {
-      isPressed.value = true;
-    })
-    .onUpdate((e) => {
-      const minmax = (val: number, min: number, max: number) =>
-        Math.min(max, Math.max(min, val));
-
-      const size = measure(viewRef)!;
-
-      offset.value = {
-        x: minmax(e.translationX + start.value.x, 0, size.width - 100),
-        y: minmax(e.translationY + start.value.y, 0, size.height - 100),
-      };
-    })
-    .onEnd(() => {
-      offset.value = withTiming({
-        x: start.value.x,
-        y: start.value.y,
-      });
-    })
-    .onFinalize(() => {
-      isPressed.value = false;
-    });
-
   return (
-    <View ref={viewRef} style={{ flex: 1 }}>
-      <GestureDetector gesture={gesture}>
-        <Animated.View style={[styles.ball, animatedStyles]} />
-      </GestureDetector>
-    </View>
+    <Reanimated.View style={styleAnimation}>
+      <Text style={styles.rightAction}>Text</Text>
+    </Reanimated.View>
   );
 }
+
+export default function Example() {
+  return (
+    <GestureHandlerRootView>
+      <ReanimatedSwipeable
+        containerStyle={styles.swipeable}
+        friction={2}
+        enableTrackpadTwoFingerGesture
+        rightThreshold={40}
+        renderRightActions={RightAction}
+      >
+        <Text>Swipe me!</Text>
+      </ReanimatedSwipeable>
+    </GestureHandlerRootView>
+  );
+}
+
+const styles = StyleSheet.create({
+  rightAction: { width: 50, height: 50, backgroundColor: "purple" },
+  separator: {
+    width: "100%",
+    borderTopWidth: 1,
+  },
+  swipeable: {
+    height: 50,
+    backgroundColor: "papayawhip",
+    alignItems: "center",
+  },
+});
