@@ -27,17 +27,15 @@ function RightAction(prog: SharedValue<number>, drag: SharedValue<number>) {
 
 export default function Example() {
   return (
-    <GestureHandlerRootView>
-      <ReanimatedSwipeable
-        containerStyle={styles.swipeable}
-        friction={2}
-        enableTrackpadTwoFingerGesture
-        rightThreshold={40}
-        renderRightActions={RightAction}
-      >
-        <Text>Swipe me!</Text>
-      </ReanimatedSwipeable>
-    </GestureHandlerRootView>
+    <ReanimatedSwipeable
+      containerStyle={styles.swipeable}
+      friction={2}
+      enableTrackpadTwoFingerGesture
+      rightThreshold={40}
+      renderRightActions={RightAction}
+    >
+      <Text>Swipe me!</Text>
+    </ReanimatedSwipeable>
   );
 }
 
