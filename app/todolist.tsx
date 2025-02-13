@@ -31,6 +31,7 @@ export default function Page() {
 
   const theme = useTheme();
   const seed = useSharedValue(0);
+  const showCursor = useSharedValue(false);
   const cursorX = useSharedValue(0);
   const renderNodes = useSharedValue<number[]>([]);
   const svgRef = useAnimatedRef<Svg>();
@@ -51,7 +52,7 @@ export default function Page() {
 
   const cursorTextProps = useAnimatedProps(() => ({
     x: cursorX.value + 4,
-    fill: cursorX.value ? theme.palette.error.main : "rgba(0,0,0,0)",
+    fill: showCursor.value ? theme.palette.error.main : "rgba(0,0,0,0)",
   }));
 
   useFrameCallback(() => {
@@ -60,8 +61,12 @@ export default function Page() {
 
     renderNodes.value = [...renderNodes.value, seed.value].slice(-xSize);
 
-    const val = renderNodes.value[Math.floor(cursorX.value)];
-    runOnJS(setCursorText)(val ? Math.floor(val).toString() : "");
+    if (showCursor.value) {
+      const val = renderNodes.value[Math.floor(cursorX.value)];
+      runOnJS(setCursorText)(val ? Math.floor(val).toString() : "");
+    } else {
+      runOnJS(setCursorText)("");
+    }
   });
 
   React.useEffect(() => {
@@ -80,6 +85,7 @@ export default function Page() {
 
   const gesture = Gesture.Pan()
     .onBegin((e) => {
+      showCursor.value = true;
       const width = measure(svgRef)?.width || Number.POSITIVE_INFINITY;
       cursorX.value = minmax(e.x, 0, width);
     })
@@ -92,6 +98,7 @@ export default function Page() {
       cursorX.value = minmax(e.x, 0, width);
     })
     .onFinalize(() => {
+      showCursor.value = false;
       cursorX.value = withSpring(0);
     });
 

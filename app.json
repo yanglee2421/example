@@ -2,7 +2,7 @@
   "expo": {
     "name": "Example",
     "slug": "example",
-    "version": "0.0.18",
+    "version": "0.0.19",
     "orientation": "default",
     "icon": "./assets/icon.png",
     "scheme": "example",
@@ -28,6 +28,8 @@
           "image": "./assets/icon.png",
           "backgroundColor": "#6366f1",
           "dark": {
+            "imageWidth": 200,
+            "resizeMode": "contain",
             "image": "./assets/icon.png",
             "backgroundColor": "#6366f1"
           }
