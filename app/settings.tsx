@@ -66,10 +66,10 @@ export default function Page() {
     });
 
   return (
-    <GestureDetector gesture={gesture}>
-      <View ref={viewRef} style={{ flex: 1 }}>
+    <View ref={viewRef} style={{ flex: 1 }}>
+      <GestureDetector gesture={gesture}>
         <Animated.View style={[styles.ball, animatedStyles]} />
-      </View>
-    </GestureDetector>
+      </GestureDetector>
+    </View>
   );
 }

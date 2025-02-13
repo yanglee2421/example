@@ -13,6 +13,7 @@ import Animated, {
   useDerivedValue,
 } from "react-native-reanimated";
 import { GestureDetector, Gesture } from "react-native-gesture-handler";
+import { minmax } from "@/lib/worklet";
 
 const AnimatedLine = Animated.createAnimatedComponent(Line);
 const AnimatedText = Animated.createAnimatedComponent(Text);
@@ -59,9 +60,8 @@ export default function Page() {
 
     renderNodes.value = [...renderNodes.value, seed.value].slice(-xSize);
 
-    runOnJS(setCursorText)(
-      Math.floor(renderNodes.value[Math.floor(cursorX.value)]) + ""
-    );
+    const val = renderNodes.value[Math.floor(cursorX.value)];
+    runOnJS(setCursorText)(val ? Math.floor(val).toString() : "");
   });
 
   React.useEffect(() => {
@@ -80,13 +80,16 @@ export default function Page() {
 
   const gesture = Gesture.Pan()
     .onBegin((e) => {
-      cursorX.value = e.x;
+      const width = measure(svgRef)?.width || Number.POSITIVE_INFINITY;
+      cursorX.value = minmax(e.x, 0, width);
     })
     .onUpdate((e) => {
-      cursorX.value = e.x;
+      const width = measure(svgRef)?.width || Number.POSITIVE_INFINITY;
+      cursorX.value = minmax(e.x, 0, width);
     })
     .onEnd((e) => {
-      cursorX.value = e.x;
+      const width = measure(svgRef)?.width || Number.POSITIVE_INFINITY;
+      cursorX.value = minmax(e.x, 0, width);
     })
     .onFinalize(() => {
       cursorX.value = withSpring(0);
