@@ -6,6 +6,7 @@ import React from "react";
 import {
   Keyboard,
   Pressable,
+  RefreshControl,
   ScrollView,
   StyleSheet,
   Text,
@@ -15,16 +16,39 @@ import {
 import { useImmer } from "use-immer";
 import Markdown from "react-native-markdown-display";
 import { useLocalSearchParams } from "expo-router";
+import { queryOptions, useQuery, useQueryClient } from "@tanstack/react-query";
+import { db } from "@/db/db";
+import { eq } from "drizzle-orm";
+import * as schemas from "@/db/schema";
+import { Loading } from "@/components/Loading";
 
-type LatestAnswerProps = {
-  text: string;
+const getContent = (data: string) => {
+  try {
+    const json = JSON.parse(data.replace("data:", ""));
+    return json.choices[0].delta.content;
+  } catch {
+    return "";
+  }
 };
 
-const LatestAnswer = (props: LatestAnswerProps) => {
+const getMessage = (buf: string) =>
+  buf
+    .split("data:")
+    .map((i) => getContent(i))
+    .filter(Boolean)
+    .join("");
+
+type MessageUIProps = {
+  text: string;
+  enable?: boolean;
+};
+
+const MessageUI = (props: MessageUIProps) => {
   const [msg, setMsg] = React.useState("");
   const theme = useTheme();
 
   React.useEffect(() => {
+    if (!props.enable) return;
     if (msg === props.text) return;
     if (!props.text.startsWith(msg)) return;
 
@@ -35,7 +59,7 @@ const LatestAnswer = (props: LatestAnswerProps) => {
     return () => {
       clearTimeout(timer);
     };
-  }, [msg, props.text]);
+  }, [msg, props.text, props.enable]);
 
   return (
     <Markdown
@@ -54,7 +78,7 @@ const LatestAnswer = (props: LatestAnswerProps) => {
         },
       }}
     >
-      {msg}
+      {props.enable ? msg : props.text}
     </Markdown>
   );
 };
@@ -64,23 +88,36 @@ type Message = {
   user: string;
 };
 
-export default function Page() {
+type ChatUIProps = {
+  messages: Message[];
+  chatId: number;
+  refreshing: boolean;
+  onRefresh(): void;
+};
+
+const ChatUI = (props: ChatUIProps) => {
   const [search, setSearch] = React.useState("");
+  const [enable, setEnable] = React.useState(false);
 
   const scrollRef = React.useRef<ScrollView>(null);
   const timerRef = React.useRef<NodeJS.Timeout | number>(0);
 
-  const local = useLocalSearchParams<{ id: string }>();
   const theme = useTheme();
-  const [msgList, setMsgList] = useImmer<Message[]>([]);
-
-  console.log(local.id);
+  const queryClient = useQueryClient();
+  const [msgList, setMsgList] = useImmer<Message[]>(props.messages);
 
   const handleSubmit = async () => {
     Keyboard.dismiss();
+    setEnable(true);
     setSearch("");
     setMsgList((d) => {
       d.push({ user: search, assistant: "" });
+    });
+
+    await db.insert(schemas.messageTable).values({
+      chatId: props.chatId,
+      role: "user",
+      content: search,
     });
 
     const res = await fetch(
@@ -138,23 +175,40 @@ export default function Page() {
         const last = d.at(-1);
 
         if (last) {
-          last.assistant = buf
-            .split("data:")
-            .map((i) => getContent(i))
-            .filter(Boolean)
-            .join("");
+          last.assistant = getMessage(buf);
         }
       });
 
       if (readable.done) {
+        const content = getMessage(buf);
+
+        await db.insert(schemas.messageTable).values({
+          chatId: props.chatId,
+          role: "assistant",
+          content,
+        });
+        await db
+          .update(schemas.chatTable)
+          .set({ id: props.chatId, name: content });
+        await queryClient.invalidateQueries({
+          queryKey: fetchChat(props.chatId).queryKey,
+        });
         break;
       }
     }
+    setEnable(false);
   };
 
   return (
     <View style={styles.container}>
       <ScrollView
+        refreshControl={
+          <RefreshControl
+            refreshing={props.refreshing}
+            onRefresh={props.onRefresh}
+            colors={[theme.palette.primary.main]}
+          />
+        }
         ref={scrollRef}
         style={{ flex: 1 }}
         contentContainerStyle={{ padding: theme.spacing(3) }}
@@ -177,15 +231,7 @@ export default function Page() {
                 >
                   You:
                 </Text>
-                <Text
-                  selectable
-                  style={[
-                    theme.typography.body1,
-                    { color: theme.palette.text.primary },
-                  ]}
-                >
-                  {m.user}
-                </Text>
+                <MessageUI text={m.user} />
               </View>
             )}
             {!!m.assistant && (
@@ -198,7 +244,10 @@ export default function Page() {
                 >
                   Assistant:
                 </Text>
-                <LatestAnswer text={m.assistant} />
+                <MessageUI
+                  text={m.assistant}
+                  enable={i + 1 === msgList.length && enable}
+                />
               </View>
             )}
           </View>
@@ -269,16 +318,55 @@ export default function Page() {
       </View>
     </View>
   );
-}
-
-const getContent = (data: string) => {
-  try {
-    const json = JSON.parse(data.replace("data:", ""));
-    return json.choices[0].delta.content;
-  } catch {
-    return "";
-  }
 };
+
+const fetchChat = (id: number) =>
+  queryOptions({
+    queryKey: ["db.query.chatTable.findFirst", id],
+    queryFn() {
+      return db.query.chatTable.findFirst({
+        where: eq(schemas.chatTable.id, id),
+        with: {
+          messages: true,
+        },
+      });
+    },
+  });
+
+export default function Page() {
+  const local = useLocalSearchParams<{ id: string }>();
+  const chatId = +local.id;
+  const fetcher = fetchChat(chatId);
+  const chat = useQuery(fetcher);
+  const theme = useTheme();
+
+  if (chat.isPending) return <Loading />;
+
+  if (chat.isError) return null;
+
+  if (!chat.data) return null;
+
+  return (
+    <ChatUI
+      messages={chat.data.messages.map((i) => {
+        if (i.role === "user") {
+          return {
+            user: i.content || "",
+            assistant: "",
+          };
+        }
+
+        return {
+          user: "",
+          assistant: i.content || "",
+        };
+      })}
+      chatId={chatId}
+      refreshing={chat.isRefetching}
+      onRefresh={() => chat.refetch()}
+    />
+  );
+}
 
 const styles = StyleSheet.create({
   container: { flex: 1 },

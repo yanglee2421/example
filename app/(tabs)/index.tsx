@@ -10,7 +10,7 @@ import {
 } from "@tanstack/react-query";
 import { Link } from "expo-router";
 import React from "react";
-import { FlatList, Pressable, Text, View } from "react-native";
+import { FlatList, Pressable, RefreshControl, Text, View } from "react-native";
 
 const fetchChats = () =>
   infiniteQueryOptions({
@@ -82,6 +82,13 @@ export default function Home() {
 
   return (
     <FlatList
+      refreshControl={
+        <RefreshControl
+          refreshing={chats.isRefetching}
+          onRefresh={() => chats.refetch()}
+          colors={[theme.palette.primary.main]}
+        />
+      }
       data={[...data, { id: 0, name: null }]}
       renderItem={(i) => (
         <View
@@ -107,7 +114,7 @@ export default function Home() {
                       { color: theme.palette.text.primary },
                     ]}
                   >
-                    {i.item.name}
+                    {i.item.name?.substring(0, 48)}
                   </Text>
                 </View>
               </Pressable>

@@ -1,9 +1,8 @@
 import React from "react";
-import DateTimePicker from "@react-native-community/datetimepicker";
-import { Pressable, Text, View, ScrollView } from "react-native";
+import { Text, View } from "react-native";
 import { useTheme } from "@/hooks/useTheme";
-import { android_ripple } from "@/lib/utils";
 import { Grid } from "@/components/Grid";
+import PagerView from "react-native-pager-view";
 
 type CellProps = React.PropsWithChildren;
 
@@ -42,82 +41,85 @@ function timeToCalendar(time: number) {
 
 const dayInterval = 1000 * 60 * 60 * 24;
 
-const initDate = () => new Date();
+const initDate = () => {
+  const month = new Date().getMonth();
+  return [month - 1, month, month + 1];
+};
 
 export default function Page() {
-  const [open, setOpen] = React.useState(false);
-  const [date, setDate] = React.useState(initDate);
+  const [dates, setDate] = React.useState(initDate);
+
+  const page = React.useRef(1);
 
   const theme = useTheme();
 
   return (
-    <ScrollView>
-      <Pressable
-        onPress={() => {
-          setOpen(true);
-        }}
-        style={{
-          paddingInline: theme.spacing(5),
-          paddingBlock: theme.spacing(3),
-        }}
-        android_ripple={android_ripple(theme.palette.action.focus)}
-      >
-        <Text
-          style={[
-            theme.typography.body1,
-            { color: theme.palette.text.primary, textAlign: "center" },
-          ]}
-        >
-          {date.toLocaleString()}
-        </Text>
-      </Pressable>
-      {open && (
-        <DateTimePicker
-          value={date}
-          onChange={(e, val) => {
-            setOpen(false);
+    <PagerView
+      initialPage={1}
+      style={{ flex: 1 }}
+      onPageSelected={(e) => {
+        const next = e.nativeEvent.position;
+        const current = page.current;
 
-            void e;
-            if (!val) {
-              return;
-            }
-            setDate(val);
-          }}
-          mode="date"
-        />
-      )}
-      <View
-        style={{
-          borderTopWidth: 1,
-          borderStartWidth: 1,
-          borderColor: theme.palette.divider,
-        }}
-      >
-        <Grid container columns={7}>
-          {timeToCalendar(date.getTime()).map((i) => (
-            <Grid key={i}>
-              <View
-                style={{
-                  borderBottomWidth: 1,
-                  borderEndWidth: 1,
-                  borderColor: theme.palette.divider,
-                }}
-              >
-                <Cell>
-                  <Text
-                    style={[
-                      theme.typography.body1,
-                      { color: theme.palette.text.primary },
-                    ]}
-                  >
-                    {new Date(i).getDate()}
-                  </Text>
-                </Cell>
-              </View>
-            </Grid>
-          ))}
-        </Grid>
-      </View>
-    </ScrollView>
+        if (next > current) {
+          setDate((p) => [...p, Math.max(...p) + 1]);
+        }
+        if (next < current) {
+          setDate((p) => [Math.min(...p) - 1, ...p]);
+        }
+
+        page.current = next;
+      }}
+      offscreenPageLimit={1}
+    >
+      {dates.map((i) => {
+        const date = new Date(2025, i);
+
+        return (
+          <View key={i}>
+            <Text
+              style={[
+                theme.typography.h2,
+                { color: theme.palette.text.primary },
+              ]}
+            >
+              {date.toLocaleDateString()}
+            </Text>
+            <View
+              style={{
+                borderTopWidth: 1,
+                borderStartWidth: 1,
+                borderColor: theme.palette.divider,
+              }}
+            >
+              <Grid container columns={7}>
+                {timeToCalendar(date.getTime()).map((i) => (
+                  <Grid key={i}>
+                    <View
+                      style={{
+                        borderBottomWidth: 1,
+                        borderEndWidth: 1,
+                        borderColor: theme.palette.divider,
+                      }}
+                    >
+                      <Cell>
+                        <Text
+                          style={[
+                            theme.typography.body1,
+                            { color: theme.palette.text.primary },
+                          ]}
+                        >
+                          {new Date(i).getDate()}
+                        </Text>
+                      </Cell>
+                    </View>
+                  </Grid>
+                ))}
+              </Grid>
+            </View>
+          </View>
+        );
+      })}
+    </PagerView>
   );
 }

@@ -69,8 +69,7 @@ const Item = (props: ItemProps) => {
 
   const ctx = React.useContext(GridContext);
 
-  const win = useWindowDimensions();
-  console.log(win);
+  useWindowDimensions();
 
   return (
     <View
