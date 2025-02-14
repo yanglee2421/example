@@ -1,41 +1,38 @@
 import { useTheme } from "@/hooks/useTheme";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import React from "react";
-import {
-  Animated,
+import { StyleSheet, View } from "react-native";
+import Animated, {
+  useSharedValue,
+  interpolate,
+  useAnimatedStyle,
+  withRepeat,
+  withTiming,
   Easing,
-  StyleSheet,
-  useAnimatedValue,
-  View,
-} from "react-native";
+} from "react-native-reanimated";
 
 export default function Page() {
-  const rotateValue = useAnimatedValue(0);
   const theme = useTheme();
+  const rotateValue = useSharedValue(0);
+  const rotateStyle = useAnimatedStyle(() => ({
+    transform: [
+      { rotate: interpolate(rotateValue.value, [0, 1], [0, 360]) + "deg" },
+    ],
+  }));
 
   React.useEffect(() => {
-    const startRotation = () => {
-      rotateValue.setValue(0);
-      Animated.loop(
-        Animated.timing(rotateValue, {
-          toValue: 1,
-          duration: 1000 * 12,
-          easing: Easing.linear,
-          useNativeDriver: true,
-        })
-      ).start();
-    };
-    startRotation();
+    rotateValue.value = withRepeat(
+      withTiming(1, {
+        duration: 1000 * 6,
+        easing: Easing.linear,
+      }),
+      -1
+    );
   }, [rotateValue]);
-
-  const rotate = rotateValue.interpolate({
-    inputRange: [0, 1],
-    outputRange: ["0deg", "360deg"],
-  });
 
   return (
     <View style={styles.iconWrapper}>
-      <Animated.View style={[styles.icon, { transform: [{ rotate }] }]}>
+      <Animated.View style={[styles.icon, rotateStyle]}>
         <MaterialCommunityIcons
           name="react"
           size={96}
