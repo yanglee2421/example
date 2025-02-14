@@ -3,6 +3,7 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { Pressable, Text, View, ScrollView } from "react-native";
 import { useTheme } from "@/hooks/useTheme";
 import { android_ripple, gridSize } from "@/lib/utils";
+import { Grid } from "@/components/Grid";
 
 function timeToCalendar(time: number) {
   const monthStartTime = new Date(time).setDate(1);
@@ -51,7 +52,7 @@ export default function Page() {
             { color: theme.palette.text.primary, textAlign: "center" },
           ]}
         >
-          Select Date
+          {date.toLocaleString()}
         </Text>
       </Pressable>
       {open && (
@@ -70,27 +71,27 @@ export default function Page() {
         />
       )}
       <View
-        style={{ flexWrap: "wrap", gap, borderWidth: 0, flexDirection: "row" }}
-        onLayout={(e) => {
-          setWidth(e.nativeEvent.layout.width);
+        style={{
+          borderTopWidth: 1,
+          borderStartWidth: 1,
+          borderColor: theme.palette.divider,
         }}
       >
-        {timeToCalendar(date.getTime()).map((i) => (
-          <View
-            key={i}
-            style={{
-              flexShrink: 0,
-              flexGrow: 0,
-              flexBasis: "auto",
-              width: gridSize(width, colums, 1, gap),
-              borderWidth: 0,
-            }}
-          >
-            <View style={{ borderWidth: 1 }}>
-              <Text>{new Date(i).getDate()}</Text>
-            </View>
-          </View>
-        ))}
+        <Grid container columns={7}>
+          {timeToCalendar(date.getTime()).map((i) => (
+            <Grid key={i}>
+              <View
+                style={{
+                  borderBottomWidth: 1,
+                  borderEndWidth: 1,
+                  borderColor: theme.palette.divider,
+                }}
+              >
+                <Text>{new Date(i).getDate()}</Text>
+              </View>
+            </Grid>
+          ))}
+        </Grid>
       </View>
     </ScrollView>
   );
