@@ -27,3 +27,11 @@ export const hexToUtf8 = (hex: string) => {
 
   return "";
 };
+
+export const gridSize = (
+  totalWidth: number,
+  columns: number,
+  span: number,
+  columnSpacing: number
+) =>
+  (totalWidth * span) / columns - (columns - span) * (columnSpacing / columns);
