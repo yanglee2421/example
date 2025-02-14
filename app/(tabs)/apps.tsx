@@ -12,24 +12,13 @@ export default function Account() {
     {
       icon: (
         <MaterialCommunityIcons
-          name="border-none-variant"
-          size={iconSize}
-          color={theme.palette.text.icon}
-        />
-      ),
-      label: "Not Found",
-      href: "/404",
-    },
-    {
-      icon: (
-        <MaterialCommunityIcons
           name="information-variant"
           size={iconSize}
           color={theme.palette.text.icon}
         />
       ),
       label: "About",
-      href: "/about",
+      href: "/about" as const,
     },
     {
       icon: (
@@ -40,7 +29,7 @@ export default function Account() {
         />
       ),
       label: "To Do List",
-      href: "/todolist",
+      href: "/todolist" as const,
     },
     {
       icon: (
@@ -51,7 +40,7 @@ export default function Account() {
         />
       ),
       label: "QR Code Scaner",
-      href: "/qrcode",
+      href: "/qrcode" as const,
     },
     {
       icon: (
@@ -62,7 +51,7 @@ export default function Account() {
         />
       ),
       label: "Network",
-      href: "/network",
+      href: "/network" as const,
     },
     {
       icon: (
@@ -73,7 +62,7 @@ export default function Account() {
         />
       ),
       label: "Bing",
-      href: "/bing",
+      href: "/bing" as const,
     },
     {
       icon: (
@@ -84,7 +73,7 @@ export default function Account() {
         />
       ),
       label: "News",
-      href: "/news",
+      href: "/news" as const,
     },
     {
       icon: (
@@ -95,7 +84,7 @@ export default function Account() {
         />
       ),
       label: "Joke",
-      href: "/joke",
+      href: "/joke" as const,
     },
     {
       icon: (
@@ -106,7 +95,7 @@ export default function Account() {
         />
       ),
       label: "Landscape",
-      href: "/fengjing",
+      href: "/fengjing" as const,
     },
     {
       icon: (
@@ -117,7 +106,7 @@ export default function Account() {
         />
       ),
       label: "History",
-      href: "/history",
+      href: "/history" as const,
     },
     {
       icon: (
@@ -128,7 +117,7 @@ export default function Account() {
         />
       ),
       label: "Locking Dog",
-      href: "/locking_dog",
+      href: "/locking_dog" as const,
     },
     {
       icon: (
@@ -139,7 +128,7 @@ export default function Account() {
         />
       ),
       label: "Movie",
-      href: "/movie",
+      href: "/movie" as const,
     },
     {
       icon: (
@@ -150,7 +139,7 @@ export default function Account() {
         />
       ),
       label: "Rand Text",
-      href: "/randtext",
+      href: "/randtext" as const,
     },
     {
       icon: (
@@ -161,7 +150,7 @@ export default function Account() {
         />
       ),
       label: "Settings",
-      href: "/settings",
+      href: "/settings" as const,
     },
     {
       icon: (
@@ -172,7 +161,7 @@ export default function Account() {
         />
       ),
       label: "Lab",
-      href: "/lab",
+      href: "/lab" as const,
     },
     {
       icon: (
@@ -183,7 +172,7 @@ export default function Account() {
         />
       ),
       label: "Calendar",
-      href: "/calendar",
+      href: "/calendar" as const,
     },
   ].sort((c, n) => c.label.localeCompare(n.label));
 

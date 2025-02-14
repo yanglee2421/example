@@ -1,299 +1,142 @@
-import { android_ripple } from "@/lib/utils";
+import { Loading } from "@/components/Loading";
+import { db } from "@/db/db";
+import * as schemas from "@/db/schema";
 import { useTheme } from "@/hooks/useTheme";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { fetch } from "expo/fetch";
-import React from "react";
 import {
-  Keyboard,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from "react-native";
-import { useImmer } from "use-immer";
-import Markdown from "react-native-markdown-display";
+  infiniteQueryOptions,
+  useInfiniteQuery,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
+import { Link } from "expo-router";
+import React from "react";
+import { FlatList, Pressable, Text, View } from "react-native";
 
-type LatestAnswerProps = {
-  text: string;
-};
+const fetchChats = () =>
+  infiniteQueryOptions({
+    queryKey: ["db.query.chatTable.findMany"],
+    queryFn({ pageParam }) {
+      return db.query.chatTable.findMany({
+        ...pageParam,
+      });
+    },
 
-const LatestAnswer = (props: LatestAnswerProps) => {
-  const [msg, setMsg] = React.useState("");
+    initialPageParam: {
+      offset: 0,
+      limit: 20,
+    },
+
+    getNextPageParam(lastPage, allPages, lastPageParam, allPageParams) {
+      void { allPages, allPageParams };
+
+      if (lastPage.length < lastPageParam.limit) return null;
+
+      return {
+        ...lastPageParam,
+        offset: lastPageParam.offset + 1,
+      };
+    },
+  });
+
+export default function Home() {
   const theme = useTheme();
+  const queryClient = useQueryClient();
+  const fetcher = fetchChats();
+  const chats = useInfiniteQuery(fetcher);
+  const newChat = useMutation({
+    mutationFn() {
+      return db.insert(schemas.chatTable).values({ name: "new chat" });
+    },
+    onSuccess() {
+      queryClient.invalidateQueries({
+        queryKey: fetcher.queryKey,
+      });
+    },
+  });
 
-  React.useEffect(() => {
-    if (msg === props.text) return;
-    if (!props.text.startsWith(msg)) return;
+  if (chats.isPending) return <Loading />;
 
-    const timer = setTimeout(() => {
-      setMsg((p) => props.text.slice(0, p.length + 1));
-    }, 4);
+  if (chats.isError) return <Text>Error</Text>;
 
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [msg, props.text]);
+  const data = chats.data.pages.flatMap((i) => i);
 
-  return (
-    <Markdown
-      style={{
-        body: {
-          ...theme.typography.body1,
-          color: theme.palette.text.primary,
-        },
-        fence: {
-          ...theme.typography.body1,
-          color: theme.palette.info.dark,
-        },
-        code_inline: {
-          ...theme.typography.body1,
-          color: theme.palette.info.dark,
-        },
-      }}
-    >
-      {msg}
-    </Markdown>
-  );
-};
-
-type Message = {
-  assistant: string;
-  user: string;
-};
-
-export default function Page() {
-  const theme = useTheme();
-  const [search, setSearch] = React.useState("");
-  const [msgList, setMsgList] = useImmer<Message[]>([]);
-  const scrollRef = React.useRef<ScrollView>(null);
-  const timerRef = React.useRef<NodeJS.Timeout | number>(0);
-
-  const handleSubmit = async () => {
-    Keyboard.dismiss();
-    setSearch("");
-    setMsgList((d) => {
-      d.push({ user: search, assistant: "" });
-    });
-
-    const res = await fetch(
-      "https://spark-api-open.xf-yun.com/v1/chat/completions",
-      {
-        method: "POST",
-        body: JSON.stringify({
-          model: "4.0Ultra",
-          messages: [
-            ...msgList
-              .flatMap((i) => Object.entries(i))
-              .map(([key, val]) => ({
-                role: key,
-                content: val,
-              })),
-            {
-              role: "user",
-              content: search,
-            },
-          ],
-          stream: true,
-          tools: [
-            {
-              type: "web_search",
-              web_search: {
-                enable: false,
-              },
-            },
-          ],
-        }),
-        headers: {
-          Authorization: "Bearer rCJALwydCHKaiiBolPGv:gxneLXlgwLjQQcsNnnEW",
-        },
-      }
+  if (!data.length)
+    return (
+      <View>
+        <Pressable
+          onPress={() => {
+            newChat.mutate();
+          }}
+        >
+          <Text
+            style={[
+              theme.typography.body1,
+              { color: theme.palette.text.primary },
+            ]}
+          >
+            Empty
+          </Text>
+        </Pressable>
+      </View>
     );
 
-    const reader = res.body?.getReader();
-
-    if (!reader) {
-      return;
-    }
-
-    const decoder = new TextDecoder();
-    let buf = "";
-
-    while (true) {
-      const readable = await reader.read();
-      const decocded = decoder.decode(readable.value, {
-        stream: true,
-      });
-      console.log("decocded", decocded);
-      buf += decocded;
-
-      setMsgList((d) => {
-        const last = d.at(-1);
-
-        if (last) {
-          last.assistant = buf
-            .split("data:")
-            .map((i) => getContent(i))
-            .filter(Boolean)
-            .join("");
-        }
-      });
-
-      if (readable.done) {
-        break;
-      }
-    }
-  };
-
   return (
-    <View style={styles.container}>
-      <ScrollView
-        ref={scrollRef}
-        style={{ flex: 1 }}
-        contentContainerStyle={{ padding: theme.spacing(3) }}
-        onContentSizeChange={() => {
-          clearTimeout(timerRef.current);
-          timerRef.current = setTimeout(() => {
-            scrollRef.current?.scrollToEnd({ animated: true });
-          }, 16);
-        }}
-      >
-        {msgList.map((m, i) => (
-          <View key={i}>
-            {!!m.user && (
-              <View>
+    <FlatList
+      data={[...data, { id: 0, name: null }]}
+      renderItem={(i) => (
+        <View
+          style={[
+            {
+              borderBottomWidth: 1,
+              borderBottomColor: theme.palette.divider,
+              paddingInline: theme.spacing(5),
+              paddingBlock: theme.spacing(3),
+            },
+          ]}
+        >
+          {i.item.id ? (
+            <Link
+              href={{ pathname: "/chat/[id]", params: { id: i.item.id } }}
+              asChild
+            >
+              <Pressable>
+                <View>
+                  <Text
+                    style={[
+                      theme.typography.body1,
+                      { color: theme.palette.text.primary },
+                    ]}
+                  >
+                    {i.item.name}
+                  </Text>
+                </View>
+              </Pressable>
+            </Link>
+          ) : (
+            <View>
+              {chats.hasNextPage ? (
                 <Text
-                  style={[
-                    theme.typography.overline,
-                    { color: theme.palette.text.secondary },
-                  ]}
-                >
-                  You:
-                </Text>
-                <Text
-                  selectable
                   style={[
                     theme.typography.body1,
                     { color: theme.palette.text.primary },
                   ]}
                 >
-                  {m.user}
+                  Loader
                 </Text>
-              </View>
-            )}
-            {!!m.assistant && (
-              <View>
+              ) : (
                 <Text
                   style={[
-                    theme.typography.overline,
-                    { color: theme.palette.text.secondary },
+                    theme.typography.body1,
+                    { color: theme.palette.text.primary },
                   ]}
                 >
-                  Assistant:
+                  No More
                 </Text>
-                <LatestAnswer text={m.assistant} />
-              </View>
-            )}
-          </View>
-        ))}
-      </ScrollView>
-
-      <View
-        style={[
-          styles.chatFormWrapper,
-          {
-            paddingInline: theme.spacing(2.5),
-            paddingBlockEnd: theme.spacing(2.5),
-          },
-        ]}
-      >
-        <View
-          style={[
-            styles.chatForm,
-            {
-              borderColor: theme.palette.divider,
-              borderRadius: theme.shape.borderRadius,
-            },
-          ]}
-        >
-          <View
-            style={{
-              paddingInline: theme.spacing(1.5),
-              paddingBlockStart: theme.spacing(1),
-            }}
-          >
-            <TextInput
-              value={search}
-              onChangeText={setSearch}
-              multiline
-              placeholder="Search"
-              placeholderTextColor={theme.palette.text.secondary}
-              style={[
-                theme.typography.body1,
-                { color: theme.palette.text.primary },
-              ]}
-            />
-          </View>
-
-          <View style={styles.charFormBar}>
-            <View style={styles.chatFormBarSpace}></View>
-            <Pressable
-              onPress={handleSubmit}
-              android_ripple={android_ripple(theme.palette.action.focus)}
-              style={[
-                styles.chatSubmit,
-                {
-                  width: theme.spacing(10),
-                  height: theme.spacing(10),
-                },
-              ]}
-            >
-              <MaterialCommunityIcons
-                size={theme.typography.h5.fontSize}
-                color={theme.palette.primary.main}
-                name="send-outline"
-              />
-            </Pressable>
-          </View>
+              )}
+            </View>
+          )}
         </View>
-      </View>
-    </View>
+      )}
+    />
   );
 }
-
-const getContent = (data: string) => {
-  try {
-    const json = JSON.parse(data.replace("data:", ""));
-    return json.choices[0].delta.content;
-  } catch {
-    return "";
-  }
-};
-
-const styles = StyleSheet.create({
-  container: { flex: 1 },
-
-  chatFormWrapper: {},
-  chatForm: {
-    elevation: 0,
-    borderWidth: 1,
-  },
-  charFormBar: {
-    flexDirection: "row",
-  },
-  chatFormBarSpace: {
-    marginInlineStart: "auto",
-  },
-  chatSubmit: {
-    flex: 0,
-    justifyContent: "center",
-    alignItems: "center",
-
-    borderRadius: 99999,
-    borderWidth: 1,
-    borderColor: "transparent",
-
-    overflow: "hidden",
-  },
-});

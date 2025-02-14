@@ -8,6 +8,13 @@
       "when": 1718815780338,
       "tag": "0000_magical_mercury",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1739532163416,
+      "tag": "0001_parallel_proudstar",
+      "breakpoints": true
     }
   ]
 }

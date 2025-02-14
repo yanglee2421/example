@@ -53,8 +53,8 @@ export const postTableRelation = relations(postTable, (props) => {
 export const commentTable = sqliteTable("commentTable", {
   id: integer("id").primaryKey(),
   text: text("text").notNull(),
-  authorId: integer("id").notNull(),
-  postId: integer("id").notNull(),
+  authorId: integer("authorId").notNull(),
+  postId: integer("postId").notNull(),
 });
 
 export const commentTableRelation = relations(commentTable, (props) => {
@@ -77,20 +77,16 @@ export const organizationTableRelation = relations(
     return {
       users: props.many(userTable),
     };
-  },
+  }
 );
 
 export const userToOrganizationTable = sqliteTable(
   "userToOrganizationTable",
   {
-    userId: integer("id").notNull(),
-    organizationId: integer("id").notNull(),
+    userId: integer("userId").notNull(),
+    organizationId: integer("organizationId").notNull(),
   },
-  (table) => {
-    return {
-      pk: primaryKey({ columns: [table.userId, table.organizationId] }),
-    };
-  },
+  (table) => [primaryKey({ columns: [table.userId, table.organizationId] })]
 );
 
 export const userToOrganizationTableRelation = relations(
@@ -106,5 +102,28 @@ export const userToOrganizationTableRelation = relations(
         references: [organizationTable.id],
       }),
     };
-  },
+  }
 );
+
+export const chatTable = sqliteTable("chatTable", {
+  id: integer("id").primaryKey(),
+  name: text("name").default(""),
+});
+
+export const chatTableRelation = relations(chatTable, (props) => ({
+  messages: props.many(messageTable),
+}));
+
+export const messageTable = sqliteTable("messageTable", {
+  id: integer("id").primaryKey(),
+  chatId: integer("chatId").notNull(),
+  role: text("name").default(""),
+  content: text("content").default(""),
+});
+
+export const messageTableRelation = relations(messageTable, (props) => ({
+  chat: props.one(chatTable, {
+    fields: [messageTable.chatId],
+    references: [chatTable.id],
+  }),
+}));
