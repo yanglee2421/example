@@ -2,8 +2,30 @@ import React from "react";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Pressable, Text, View, ScrollView } from "react-native";
 import { useTheme } from "@/hooks/useTheme";
-import { android_ripple, gridSize } from "@/lib/utils";
+import { android_ripple } from "@/lib/utils";
 import { Grid } from "@/components/Grid";
+
+type CellProps = React.PropsWithChildren;
+
+const Cell = (props: CellProps) => {
+  const [size, setSize] = React.useState(0);
+
+  return (
+    <View
+      onLayout={(e) => {
+        setSize(e.nativeEvent.layout.width);
+      }}
+      style={{
+        height: Math.floor(size),
+
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      {props.children}
+    </View>
+  );
+};
 
 function timeToCalendar(time: number) {
   const monthStartTime = new Date(time).setDate(1);
@@ -22,17 +44,11 @@ const dayInterval = 1000 * 60 * 60 * 24;
 
 const initDate = () => new Date();
 
-const colums = 7;
-const gap = 4;
-
 export default function Page() {
-  const [width, setWidth] = React.useState(0);
   const [open, setOpen] = React.useState(false);
   const [date, setDate] = React.useState(initDate);
 
   const theme = useTheme();
-  console.log(width);
-  console.log(gridSize(width, colums, 1, gap));
 
   return (
     <ScrollView>
@@ -87,7 +103,16 @@ export default function Page() {
                   borderColor: theme.palette.divider,
                 }}
               >
-                <Text>{new Date(i).getDate()}</Text>
+                <Cell>
+                  <Text
+                    style={[
+                      theme.typography.body1,
+                      { color: theme.palette.text.primary },
+                    ]}
+                  >
+                    {new Date(i).getDate()}
+                  </Text>
+                </Cell>
               </View>
             </Grid>
           ))}

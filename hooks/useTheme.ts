@@ -4,7 +4,7 @@ const color = (
   main: string,
   light: string,
   dark: string,
-  contrastText: string,
+  contrastText: string
 ) => ({ main, light, dark, contrastText });
 
 const black = "#000";
@@ -12,6 +12,16 @@ const white = "#fff";
 const common = { black, white };
 const shape = { borderRadius: 4 };
 const spacing = (abs: number) => abs * 4;
+
+const breakpoints = {
+  values: {
+    xs: 0,
+    sm: 600,
+    md: 900,
+    lg: 1200,
+    xl: 1536,
+  },
+};
 
 const htmlFontSize = 16;
 const fontFamily = "SpaceMono";
@@ -24,7 +34,7 @@ const text = (
   size: number,
   lh: number,
   ls: number,
-  textTransform?: TextTransform,
+  textTransform?: TextTransform
 ) => ({
   fontFamily,
   fontWeight,
@@ -84,6 +94,7 @@ const zIndex = {
 };
 
 export const lightTheme = {
+  breakpoints,
   shape,
   spacing,
   typography,
@@ -132,6 +143,7 @@ export const lightTheme = {
 };
 
 export const darkTheme = {
+  breakpoints,
   shape,
   spacing,
   typography,

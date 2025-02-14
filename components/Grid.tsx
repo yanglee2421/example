@@ -1,12 +1,19 @@
 import React from "react";
-import { View, ViewProps } from "react-native";
+import { useWindowDimensions, View, ViewProps } from "react-native";
 
 export const itemSize = (
   totalWidth: number,
   columns: number,
   span: number,
   spacing: number
-) => (totalWidth * span) / columns - (columns - span) * (spacing / columns);
+) => {
+  const perColSize = totalWidth / columns;
+  const preSpacing = spacing / columns;
+  const spanSize = perColSize * span;
+  const restSpan = columns - span;
+
+  return spanSize - restSpan * preSpacing;
+};
 
 const GridContext = React.createContext({
   totalWidth: 0,
@@ -61,6 +68,9 @@ const Item = (props: ItemProps) => {
   const { xs = 1, children, viewProps = {} } = props;
 
   const ctx = React.useContext(GridContext);
+
+  const win = useWindowDimensions();
+  console.log(win);
 
   return (
     <View
