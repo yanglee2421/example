@@ -197,7 +197,15 @@ const ChatUI = (props: ChatUIProps) => {
   };
 
   return (
-    <View style={styles.container}>
+    <View
+      style={{
+        flexGrow: 1,
+        flexShrink: 1,
+        flexBasis: "auto",
+        borderWidth: 1,
+        borderColor: "rgba(0,0,0,0)",
+      }}
+    >
       <FlatList
         refreshControl={
           <RefreshControl
@@ -213,7 +221,13 @@ const ChatUI = (props: ChatUIProps) => {
             scrollRef.current?.scrollToEnd({ animated: true });
           }, 16);
         }}
-        style={{ flex: 1 }}
+        style={{
+          flexGrow: 1,
+          flexShrink: 1,
+          flexBasis: "auto",
+          borderWidth: 1,
+          borderColor: "rgba(0,0,0,0)",
+        }}
         data={msgList}
         renderItem={(i) => (
           <View key={i.index} style={{ paddingInline: theme.spacing(3) }}>
@@ -252,8 +266,9 @@ const ChatUI = (props: ChatUIProps) => {
           {
             paddingInline: theme.spacing(2),
             paddingBlock: theme.spacing(1.5),
-            borderTopColor: theme.palette.divider,
-            borderTopWidth: 1,
+            borderWidth: 1,
+            borderColor: "rgba(0,0,0,0)",
+            borderBlockStartColor: theme.palette.divider,
           },
         ]}
       >
@@ -351,10 +366,6 @@ export default function Page() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-
   chatForm: {
     elevation: 0,
   },

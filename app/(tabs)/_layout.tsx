@@ -1,87 +1,91 @@
 import { useTheme } from "@/hooks/useTheme";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { Tabs } from "expo-router";
+import { usePathname } from "expo-router";
+import { Tabs, TabList, TabTrigger, TabSlot } from "expo-router/ui";
 import React from "react";
-import { Pressable } from "react-native";
+import { Pressable, Text } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+
+type TabTextProps = React.PropsWithChildren<{
+  href: string;
+}>;
+
+const TabText = (props: TabTextProps) => {
+  const theme = useTheme();
+  const pathname = usePathname();
+
+  const isActive = pathname === props.href;
+
+  return (
+    <Text
+      style={[
+        theme.typography.body2,
+        {
+          color: isActive
+            ? theme.palette.primary.main
+            : theme.palette.text.primary,
+        },
+      ]}
+    >
+      {props.children}
+    </Text>
+  );
+};
 
 export default function TabsLayout() {
   const theme = useTheme();
 
   return (
-    <Tabs
-      screenOptions={{
-        headerShown: true,
-        headerStyle: {
+    <Tabs style={{ flex: 1 }}>
+      <SafeAreaView
+        style={{ flex: 1, backgroundColor: theme.palette.background.default }}
+      >
+        <TabSlot />
+      </SafeAreaView>
+      <TabList
+        style={{
+          height: theme.spacing(12),
           backgroundColor: theme.palette.background.paper,
-          borderBottomColor: theme.palette.divider,
-          borderBottomWidth: 1,
-        },
-        headerTitleStyle: {
-          color: theme.palette.text.primary,
-          fontFamily: theme.typography.body1.fontFamily,
-        },
+        }}
+      >
+        <TabTrigger
+          name="index"
+          href="/"
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+          android_ripple={{ color: theme.palette.action.focus }}
+        >
+          <TabText href="/">home</TabText>
+        </TabTrigger>
+        <TabTrigger
+          name="atom"
+          href="/atom"
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+          android_ripple={{ color: theme.palette.action.focus }}
+        >
+          <TabText href="/atom">atom</TabText>
+        </TabTrigger>
 
-        sceneStyle: {
-          backgroundColor: theme.palette.background.default,
-        },
-
-        tabBarActiveTintColor: theme.palette.primary.main,
-        tabBarStyle: {
-          backgroundColor: theme.palette.background.paper,
-        },
-        tabBarLabelStyle: {
-          fontFamily: theme.typography.body1.fontFamily,
-        },
-        tabBarButton(props) {
-          return <TabBarButton {...props}>{props.children}</TabBarButton>;
-        },
-      }}
-    >
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: "Home",
-          tabBarIcon(props) {
-            return (
-              <MaterialCommunityIcons
-                name="home"
-                size={props.size}
-                color={props.color}
-              />
-            );
-          },
-        }}
-      />
-      <Tabs.Screen
-        name="atom"
-        options={{
-          title: "Atom",
-          tabBarIcon(props) {
-            return (
-              <MaterialCommunityIcons
-                name="atom"
-                size={props.size}
-                color={props.color}
-              />
-            );
-          },
-        }}
-      />
-      <Tabs.Screen
-        name="apps"
-        options={{
-          title: "Apps",
-          tabBarIcon(props) {
-            return (
-              <MaterialCommunityIcons
-                name="apps"
-                size={props.size}
-                color={props.color}
-              />
-            );
-          },
-        }}
-      />
+        <TabTrigger
+          name="apps"
+          href="/apps"
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+          android_ripple={{ color: theme.palette.action.focus }}
+        >
+          <TabText href="/apps">apps</TabText>
+        </TabTrigger>
+      </TabList>
     </Tabs>
   );
 }

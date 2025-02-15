@@ -8,7 +8,6 @@ import migrations from "@/drizzle/migrations.js";
 import { QueryProvider } from "@/components/QueryProvider";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { useStorageHasHydrated } from "@/hooks/useStorageStore";
-import { useTheme } from "@/hooks/useTheme";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -21,45 +20,7 @@ SplashScreen.setOptions({
 });
 
 const RootRoute = () => {
-  const theme = useTheme();
-
-  return (
-    <Stack
-      screenOptions={{
-        headerTintColor: theme.palette.primary.main,
-        headerStyle: {
-          backgroundColor: theme.palette.background.paper,
-        },
-        headerTitleStyle: {
-          color: theme.palette.text.primary,
-          fontFamily: theme.typography.body1.fontFamily,
-        },
-
-        contentStyle: {
-          backgroundColor: theme.palette.background.default,
-        },
-      }}
-    >
-      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      <Stack.Screen name="+not-found" options={{ title: "Not Found" }} />
-      <Stack.Screen name="about" options={{ title: "About" }} />
-      <Stack.Screen name="bing" options={{ title: "Bing" }} />
-      <Stack.Screen name="fengjing" options={{ title: "Landscape" }} />
-      <Stack.Screen name="history" options={{ title: "History" }} />
-      <Stack.Screen name="joke" options={{ title: "Joke" }} />
-      <Stack.Screen name="locking_dog" options={{ title: "Locking Dog" }} />
-      <Stack.Screen name="movie" options={{ title: "Movie" }} />
-      <Stack.Screen name="network" options={{ title: "Network" }} />
-      <Stack.Screen name="news" options={{ title: "News" }} />
-      <Stack.Screen name="qrcode" options={{ title: "QR Code Scaner" }} />
-      <Stack.Screen name="randtext" options={{ title: "Rand Text" }} />
-      <Stack.Screen name="settings" options={{ title: "Settings" }} />
-      <Stack.Screen name="todolist" options={{ title: "To Do List" }} />
-      <Stack.Screen name="lab" options={{ title: "Lab" }} />
-      <Stack.Screen name="calendar" options={{ title: "Calendar" }} />
-      <Stack.Screen name="chat/[id]" options={{ title: "Chat" }} />
-    </Stack>
-  );
+  return <Stack screenOptions={{ headerShown: false }} />;
 };
 
 export default function RootLayout() {

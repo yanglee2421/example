@@ -1,7 +1,7 @@
 {
   "name": "example",
   "main": "expo-router/entry",
-  "version": "0.0.21",
+  "version": "0.0.22",
   "scripts": {
     "android": "expo run:android",
     "ios": "expo run:ios",
@@ -26,6 +26,7 @@
     "expo-camera": "~16.0.15",
     "expo-clipboard": "~7.0.1",
     "expo-constants": "~17.0.5",
+    "expo-document-picker": "~13.0.3",
     "expo-file-system": "~18.0.10",
     "expo-font": "~13.0.3",
     "expo-haptics": "~14.0.1",

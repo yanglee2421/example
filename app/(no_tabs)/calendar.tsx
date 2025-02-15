@@ -3,6 +3,7 @@ import { FlatList, Text, View } from "react-native";
 import { useTheme } from "@/hooks/useTheme";
 import PagerView from "react-native-pager-view";
 import { gridSize } from "@/lib/utils";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 type CellProps = React.PropsWithChildren;
 
@@ -48,7 +49,7 @@ const initDate = () => {
 
 const initFullYear = () => new Date().getFullYear();
 
-export default function Page() {
+const PagerUI = () => {
   const [width, setWidth] = React.useState(0);
   const [dates, setDate] = React.useState(initDate);
   const [fullYear] = React.useState(initFullYear);
@@ -133,5 +134,25 @@ export default function Page() {
     >
       {pages}
     </PagerView>
+  );
+};
+
+export default function Page() {
+  const theme = useTheme();
+
+  return (
+    <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
+      <View style={{ flex: 1 }}>
+        <View
+          style={{
+            paddingInline: theme.spacing(4),
+            paddingBlock: theme.spacing(3),
+          }}
+        >
+          <Text style={[theme.typography.h6]}>Header</Text>
+        </View>
+        <PagerUI />
+      </View>
+    </SafeAreaView>
   );
 }
