@@ -3,7 +3,6 @@ import { FlatList, Text, View } from "react-native";
 import { useTheme } from "@/hooks/useTheme";
 import PagerView from "react-native-pager-view";
 import { gridSize } from "@/lib/utils";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 type CellProps = React.PropsWithChildren;
 
@@ -122,13 +121,12 @@ const PagerUI = () => {
     <PagerView
       initialPage={1}
       style={{ flex: 1 }}
-      onPageSelected={(e) => {
-        const position = e.nativeEvent.position;
-        if (position) {
-          setDate((p) => [...p, Math.max(...p) + 1]);
-        } else {
-          setDate((p) => [Math.min(...p) - 1, ...p]);
-        }
+      onPageSelected={() => {
+        setDate((p) => {
+          const max = Math.max(...p);
+          const min = Math.min(...p);
+          return [min - 1, ...p, max + 1];
+        });
       }}
       offscreenPageLimit={1}
     >
@@ -141,18 +139,20 @@ export default function Page() {
   const theme = useTheme();
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
-      <View style={{ flex: 1 }}>
-        <View
-          style={{
-            paddingInline: theme.spacing(4),
-            paddingBlock: theme.spacing(3),
-          }}
+    <View style={{ flex: 1 }}>
+      <View
+        style={{
+          paddingInline: theme.spacing(4),
+          paddingBlock: theme.spacing(3),
+        }}
+      >
+        <Text
+          style={[theme.typography.h6, { color: theme.palette.text.primary }]}
         >
-          <Text style={[theme.typography.h6]}>Header</Text>
-        </View>
-        <PagerUI />
+          Header
+        </Text>
       </View>
-    </SafeAreaView>
+      <PagerUI />
+    </View>
   );
 }
