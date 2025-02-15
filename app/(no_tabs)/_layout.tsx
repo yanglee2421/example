@@ -7,7 +7,7 @@ export default function Layout() {
 
   return (
     <SafeAreaView
-      style={{ flex: 1, backgroundColor: theme.palette.background.default }}
+      style={{ flex: 1, backgroundColor: theme.palette.background.paper }}
     >
       <Slot />
     </SafeAreaView>

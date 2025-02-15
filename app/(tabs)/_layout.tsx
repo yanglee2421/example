@@ -49,7 +49,7 @@ export default function TabsLayout() {
   return (
     <Tabs style={{ flex: 1 }}>
       <SafeAreaView
-        style={{ flex: 1, backgroundColor: theme.palette.background.default }}
+        style={{ flex: 1, backgroundColor: theme.palette.background.paper }}
       >
         <TabSlot />
       </SafeAreaView>
@@ -59,6 +59,8 @@ export default function TabsLayout() {
           backgroundColor: theme.palette.background.paper,
           borderTopColor: theme.palette.divider,
           borderTopWidth: 1,
+
+          elevation: 12,
         }}
       >
         <TabTrigger

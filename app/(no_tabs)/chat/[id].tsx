@@ -179,18 +179,27 @@ const ChatUI = (props: ChatUIProps) => {
 
       if (readable.done) {
         const content = getMessage(buf);
-
         await db.insert(schemas.messageTable).values({
           chatId: props.chatId,
           role: "assistant",
           content,
         });
+
         await db
           .update(schemas.chatTable)
-          .set({ id: props.chatId, name: content });
+          .set({ name: content })
+          .where(eq(schemas.chatTable.id, props.chatId));
+
         await queryClient.invalidateQueries({
-          queryKey: fetchChat(props.chatId).queryKey,
+          queryKey: fetchChat(props.chatId).queryKey.slice(0, 3),
         });
+        await queryClient.invalidateQueries({
+          queryKey: fetchChat(props.chatId).queryKey.slice(0, 3),
+        });
+        await queryClient.invalidateQueries({
+          queryKey: ["db.query.chatTable.findMany"],
+        });
+
         break;
       }
     }

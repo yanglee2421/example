@@ -1,9 +1,9 @@
 import { useTheme } from "@/hooks/useTheme";
 import { Button, View } from "react-native";
-import * as safx from "react-native-saf-x";
 import * as fs from "expo-file-system/next";
 import * as consts from "@/lib/constants";
 import * as DocPicker from "expo-document-picker";
+import * as pfs from "expo-file-system";
 
 export default function Page() {
   const theme = useTheme();
@@ -17,17 +17,22 @@ export default function Page() {
             fs.Paths.document,
             `SQLite/${consts.databaseName}`
           );
-          try {
-            const dir = await safx.openDocumentTree(true);
-            if (!dir) return;
-            if (!dir.uri) return;
-            await safx.copyFile(
-              file.uri,
-              dir.uri + "/" + Date.now() + consts.databaseName
-            );
-          } catch (error) {
-            console.error(error);
-          }
+
+          const dir =
+            await pfs.StorageAccessFramework.requestDirectoryPermissionsAsync();
+
+          if (!dir.granted) return;
+          const nFile = await pfs.StorageAccessFramework.createFileAsync(
+            dir.directoryUri,
+            Date.now() + "_" + consts.databaseName,
+            "application/x-sqlite3"
+          );
+
+          await pfs.StorageAccessFramework.writeAsStringAsync(
+            nFile,
+            file.base64(),
+            { encoding: pfs.EncodingType.Base64 }
+          );
         }}
       />
       <Button
@@ -51,16 +56,12 @@ export default function Page() {
       />
       <Button
         title="delete"
-        onPress={async () => {
-          try {
-            const file = new fs.File(
-              fs.Paths.document,
-              `SQLite/${consts.databaseName}`
-            );
-            file.delete();
-          } catch (error) {
-            console.error(error);
-          }
+        onPress={() => {
+          const file = new fs.File(
+            fs.Paths.document,
+            `SQLite/${consts.databaseName}`
+          );
+          file.exists && file.delete();
         }}
       />
     </View>
