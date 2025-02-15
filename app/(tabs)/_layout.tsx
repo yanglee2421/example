@@ -8,6 +8,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 type TabTextProps = React.PropsWithChildren<{
   href: string;
+  name: React.ComponentProps<typeof MaterialCommunityIcons>["name"];
 }>;
 
 const TabText = (props: TabTextProps) => {
@@ -15,20 +16,30 @@ const TabText = (props: TabTextProps) => {
   const pathname = usePathname();
 
   const isActive = pathname === props.href;
+  const color = isActive
+    ? theme.palette.primary.main
+    : theme.palette.text.primary;
 
   return (
-    <Text
-      style={[
-        theme.typography.body2,
-        {
-          color: isActive
-            ? theme.palette.primary.main
-            : theme.palette.text.primary,
-        },
-      ]}
-    >
-      {props.children}
-    </Text>
+    <>
+      <MaterialCommunityIcons
+        name={props.name}
+        style={{
+          color,
+          fontSize: theme.typography.h5.fontSize,
+        }}
+      />
+      <Text
+        style={[
+          theme.typography.body2,
+          {
+            color,
+          },
+        ]}
+      >
+        {props.children}
+      </Text>
+    </>
   );
 };
 
@@ -44,8 +55,10 @@ export default function TabsLayout() {
       </SafeAreaView>
       <TabList
         style={{
-          height: theme.spacing(12),
+          height: theme.spacing(14),
           backgroundColor: theme.palette.background.paper,
+          borderTopColor: theme.palette.divider,
+          borderTopWidth: 1,
         }}
       >
         <TabTrigger
@@ -58,7 +71,9 @@ export default function TabsLayout() {
           }}
           android_ripple={{ color: theme.palette.action.focus }}
         >
-          <TabText href="/">home</TabText>
+          <TabText href="/" name="home">
+            home
+          </TabText>
         </TabTrigger>
         <TabTrigger
           name="atom"
@@ -70,7 +85,9 @@ export default function TabsLayout() {
           }}
           android_ripple={{ color: theme.palette.action.focus }}
         >
-          <TabText href="/atom">atom</TabText>
+          <TabText href="/atom" name="atom">
+            atom
+          </TabText>
         </TabTrigger>
 
         <TabTrigger
@@ -83,7 +100,9 @@ export default function TabsLayout() {
           }}
           android_ripple={{ color: theme.palette.action.focus }}
         >
-          <TabText href="/apps">apps</TabText>
+          <TabText href="/apps" name="apps">
+            apps
+          </TabText>
         </TabTrigger>
       </TabList>
     </Tabs>
