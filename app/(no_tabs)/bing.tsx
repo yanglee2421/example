@@ -35,7 +35,7 @@ export default function Bing() {
         gap: theme.spacing(4),
         padding: theme.spacing(3),
       }}
-      style={{ borderWidth: 1, borderColor: "red", flex: 1 }}
+      style={{ flex: 1 }}
     >
       <View
         style={[
