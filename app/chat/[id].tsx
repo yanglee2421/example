@@ -7,7 +7,7 @@ import {
   Keyboard,
   Pressable,
   RefreshControl,
-  ScrollView,
+  FlatList,
   StyleSheet,
   Text,
   TextInput,
@@ -97,9 +97,8 @@ type ChatUIProps = {
 
 const ChatUI = (props: ChatUIProps) => {
   const [search, setSearch] = React.useState("");
-  const [enable, setEnable] = React.useState(false);
 
-  const scrollRef = React.useRef<ScrollView>(null);
+  const scrollRef = React.useRef<FlatList>(null);
   const timerRef = React.useRef<NodeJS.Timeout | number>(0);
 
   const theme = useTheme();
@@ -108,7 +107,6 @@ const ChatUI = (props: ChatUIProps) => {
 
   const handleSubmit = async () => {
     Keyboard.dismiss();
-    setEnable(true);
     setSearch("");
     setMsgList((d) => {
       d.push({ user: search, assistant: "" });
@@ -196,12 +194,11 @@ const ChatUI = (props: ChatUIProps) => {
         break;
       }
     }
-    setEnable(false);
   };
 
   return (
     <View style={styles.container}>
-      <ScrollView
+      <FlatList
         refreshControl={
           <RefreshControl
             refreshing={props.refreshing}
@@ -210,18 +207,17 @@ const ChatUI = (props: ChatUIProps) => {
           />
         }
         ref={scrollRef}
-        style={{ flex: 1 }}
-        contentContainerStyle={{ padding: theme.spacing(3) }}
         onContentSizeChange={() => {
           clearTimeout(timerRef.current);
           timerRef.current = setTimeout(() => {
             scrollRef.current?.scrollToEnd({ animated: true });
           }, 16);
         }}
-      >
-        {msgList.map((m, i) => (
-          <View key={i}>
-            {!!m.user && (
+        style={{ flex: 1 }}
+        data={msgList}
+        renderItem={(i) => (
+          <View key={i.index} style={{ paddingInline: theme.spacing(3) }}>
+            {!!i.item.user && (
               <View>
                 <Text
                   style={[
@@ -231,10 +227,10 @@ const ChatUI = (props: ChatUIProps) => {
                 >
                   You:
                 </Text>
-                <MessageUI text={m.user} />
+                <MessageUI text={i.item.user} />
               </View>
             )}
-            {!!m.assistant && (
+            {!!i.item.assistant && (
               <View>
                 <Text
                   style={[
@@ -244,76 +240,62 @@ const ChatUI = (props: ChatUIProps) => {
                 >
                   Assistant:
                 </Text>
-                <MessageUI
-                  text={m.assistant}
-                  enable={i + 1 === msgList.length && enable}
-                />
+                <MessageUI text={i.item.assistant} />
               </View>
             )}
           </View>
-        ))}
-      </ScrollView>
+        )}
+      />
 
       <View
         style={[
-          styles.chatFormWrapper,
           {
-            paddingInline: theme.spacing(3),
-            paddingBlock: theme.spacing(3),
-
+            paddingInline: theme.spacing(2),
+            paddingBlock: theme.spacing(1.5),
             borderTopColor: theme.palette.divider,
+            borderTopWidth: 1,
           },
         ]}
       >
         <View
-          style={[
-            styles.chatForm,
-            {
-              borderColor: theme.palette.divider,
-              borderRadius: theme.shape.borderRadius,
-            },
-          ]}
+          style={{
+            paddingInline: theme.spacing(1.5),
+            paddingBlockStart: theme.spacing(1),
+          }}
         >
-          <View
-            style={{
-              paddingInline: theme.spacing(1.5),
-              paddingBlockStart: theme.spacing(1),
-            }}
-          >
-            <TextInput
-              value={search}
-              onChangeText={setSearch}
-              multiline
-              placeholder="Search"
-              placeholderTextColor={theme.palette.text.secondary}
-              style={[
-                theme.typography.body1,
-                { color: theme.palette.text.primary },
-              ]}
-              selectionColor={theme.palette.primary.main}
-            />
-          </View>
+          <TextInput
+            value={search}
+            onChangeText={setSearch}
+            multiline
+            placeholder="Search"
+            placeholderTextColor={theme.palette.text.secondary}
+            style={[
+              theme.typography.body1,
+              { color: theme.palette.text.primary },
+            ]}
+            selectionColor={theme.palette.primary.main}
+          />
+        </View>
 
-          <View style={styles.charFormBar}>
-            <View style={styles.chatFormBarSpace}></View>
-            <Pressable
-              onPress={handleSubmit}
-              android_ripple={android_ripple(theme.palette.action.focus)}
-              style={[
-                styles.chatSubmit,
-                {
-                  width: theme.spacing(10),
-                  height: theme.spacing(10),
-                },
-              ]}
-            >
-              <MaterialCommunityIcons
-                size={theme.typography.h5.fontSize}
-                color={theme.palette.primary.main}
-                name="send-outline"
-              />
-            </Pressable>
-          </View>
+        <View style={styles.charFormBar}>
+          <View style={styles.chatFormBarSpace}></View>
+          <Pressable
+            onPress={handleSubmit}
+            android_ripple={android_ripple(theme.palette.action.focus)}
+            style={[
+              styles.chatSubmit,
+              {
+                width: theme.spacing(10),
+                height: theme.spacing(10),
+              },
+            ]}
+          >
+            <MaterialCommunityIcons
+              size={theme.typography.h5.fontSize}
+              color={theme.palette.primary.main}
+              name="send-outline"
+            />
+          </Pressable>
         </View>
       </View>
     </View>
@@ -369,11 +351,10 @@ export default function Page() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
-
-  chatFormWrapper: {
-    borderTopWidth: 1,
+  container: {
+    flex: 1,
   },
+
   chatForm: {
     elevation: 0,
   },

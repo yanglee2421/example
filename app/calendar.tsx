@@ -1,8 +1,8 @@
 import React from "react";
-import { Text, View } from "react-native";
+import { FlatList, Text, View } from "react-native";
 import { useTheme } from "@/hooks/useTheme";
-import { Grid } from "@/components/Grid";
 import PagerView from "react-native-pager-view";
+import { gridSize } from "@/lib/utils";
 
 type CellProps = React.PropsWithChildren;
 
@@ -46,34 +46,19 @@ const initDate = () => {
   return [month - 1, month, month + 1];
 };
 
-export default function Page() {
-  const [dates, setDate] = React.useState(initDate);
+const initFullYear = () => new Date().getFullYear();
 
-  const page = React.useRef(1);
+export default function Page() {
+  const [width, setWidth] = React.useState(0);
+  const [dates, setDate] = React.useState(initDate);
+  const [fullYear] = React.useState(initFullYear);
 
   const theme = useTheme();
 
-  return (
-    <PagerView
-      initialPage={1}
-      style={{ flex: 1 }}
-      onPageSelected={(e) => {
-        const next = e.nativeEvent.position;
-        const current = page.current;
-
-        if (next > current) {
-          setDate((p) => [...p, Math.max(...p) + 1]);
-        }
-        if (next < current) {
-          setDate((p) => [Math.min(...p) - 1, ...p]);
-        }
-
-        page.current = next;
-      }}
-      offscreenPageLimit={1}
-    >
-      {dates.map((i) => {
-        const date = new Date(2025, i);
+  const pages = React.useMemo(
+    () =>
+      dates.map((i) => {
+        const date = new Date(fullYear, i);
 
         return (
           <View key={i}>
@@ -85,41 +70,68 @@ export default function Page() {
             >
               {date.toLocaleDateString()}
             </Text>
-            <View
+            <FlatList
+              data={timeToCalendar(date.getTime())}
+              keyExtractor={(i) => i + ""}
+              horizontal={false}
+              numColumns={7}
+              onContentSizeChange={(w) => {
+                setWidth(w);
+              }}
               style={{
+                borderColor: theme.palette.divider,
                 borderTopWidth: 1,
                 borderStartWidth: 1,
-                borderColor: theme.palette.divider,
               }}
-            >
-              <Grid container columns={7}>
-                {timeToCalendar(date.getTime()).map((i) => (
-                  <Grid key={i}>
-                    <View
-                      style={{
-                        borderBottomWidth: 1,
-                        borderEndWidth: 1,
-                        borderColor: theme.palette.divider,
-                      }}
-                    >
-                      <Cell>
-                        <Text
-                          style={[
-                            theme.typography.body1,
-                            { color: theme.palette.text.primary },
-                          ]}
-                        >
-                          {new Date(i).getDate()}
-                        </Text>
-                      </Cell>
-                    </View>
-                  </Grid>
-                ))}
-              </Grid>
-            </View>
+              renderItem={(i) => (
+                <View
+                  key={i.index}
+                  style={{
+                    width: gridSize(width, 7, 1, 0),
+                  }}
+                >
+                  <View
+                    style={{
+                      borderColor: theme.palette.divider,
+                      borderBottomWidth: 1,
+                      borderEndWidth: 1,
+                    }}
+                  >
+                    <Cell>
+                      <Text
+                        style={[
+                          theme.typography.body1,
+                          { color: theme.palette.text.primary },
+                        ]}
+                      >
+                        {new Date(i.item).getDate()}
+                      </Text>
+                    </Cell>
+                  </View>
+                </View>
+              )}
+            />
           </View>
         );
-      })}
+      }),
+    [dates, theme, width, fullYear]
+  );
+
+  return (
+    <PagerView
+      initialPage={1}
+      style={{ flex: 1 }}
+      onPageSelected={(e) => {
+        const position = e.nativeEvent.position;
+        if (position) {
+          setDate((p) => [...p, Math.max(...p) + 1]);
+        } else {
+          setDate((p) => [Math.min(...p) - 1, ...p]);
+        }
+      }}
+      offscreenPageLimit={1}
+    >
+      {pages}
     </PagerView>
   );
 }

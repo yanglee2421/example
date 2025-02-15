@@ -89,7 +89,7 @@ export default function Home() {
           colors={[theme.palette.primary.main]}
         />
       }
-      data={[...data, { id: 0, name: null }]}
+      data={data}
       renderItem={(i) => (
         <View
           style={[
@@ -101,49 +101,58 @@ export default function Home() {
             },
           ]}
         >
-          {i.item.id ? (
-            <Link
-              href={{ pathname: "/chat/[id]", params: { id: i.item.id } }}
-              asChild
-            >
-              <Pressable>
-                <View>
-                  <Text
-                    style={[
-                      theme.typography.body1,
-                      { color: theme.palette.text.primary },
-                    ]}
-                  >
-                    {i.item.name?.substring(0, 48)}
-                  </Text>
-                </View>
-              </Pressable>
-            </Link>
-          ) : (
-            <View>
-              {chats.hasNextPage ? (
+          <Link
+            href={{ pathname: "/chat/[id]", params: { id: i.item.id } }}
+            asChild
+          >
+            <Pressable>
+              <View>
                 <Text
                   style={[
                     theme.typography.body1,
                     { color: theme.palette.text.primary },
                   ]}
                 >
-                  Loader
+                  {i.item.name?.substring(0, 48)}
                 </Text>
-              ) : (
-                <Text
-                  style={[
-                    theme.typography.body1,
-                    { color: theme.palette.text.primary },
-                  ]}
-                >
-                  No More
-                </Text>
-              )}
-            </View>
-          )}
+              </View>
+            </Pressable>
+          </Link>
         </View>
       )}
+      ListFooterComponent={
+        <View
+          style={[
+            {
+              borderBottomWidth: 1,
+              borderBottomColor: theme.palette.divider,
+              paddingInline: theme.spacing(5),
+              paddingBlock: theme.spacing(3),
+            },
+          ]}
+        >
+          {chats.hasNextPage ? (
+            <Text
+              style={[
+                theme.typography.body1,
+                { color: theme.palette.text.primary },
+              ]}
+            >
+              Loader
+            </Text>
+          ) : (
+            <Text
+              style={[
+                theme.typography.body1,
+                { color: theme.palette.text.primary },
+              ]}
+            >
+              No More
+            </Text>
+          )}
+        </View>
+      }
+      onEndReached={() => chats.hasNextPage && chats.fetchNextPage()}
     />
   );
 }

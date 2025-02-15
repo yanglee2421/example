@@ -32,6 +32,12 @@ export const gridSize = (
   totalWidth: number,
   columns: number,
   span: number,
-  columnSpacing: number
-) =>
-  (totalWidth * span) / columns - (columns - span) * (columnSpacing / columns);
+  spacing: number
+) => {
+  const perColSize = totalWidth / columns;
+  const preSpacing = spacing / columns;
+  const spanSize = perColSize * span;
+  const restSpan = columns - span;
+
+  return spanSize - restSpan * preSpacing;
+};
