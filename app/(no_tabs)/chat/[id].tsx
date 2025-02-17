@@ -337,6 +337,7 @@ const fetchChat = (id: number) =>
         },
       });
     },
+    networkMode: "offlineFirst",
   });
 
 export default function Page() {

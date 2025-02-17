@@ -24,6 +24,7 @@ export default function Qrcode() {
 
       throw new Error("copy failed");
     },
+    networkMode: "offlineFirst",
   });
 
   if (!permission) {

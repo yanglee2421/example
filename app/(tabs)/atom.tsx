@@ -4,12 +4,29 @@ import * as fs from "expo-file-system/next";
 import * as consts from "@/lib/constants";
 import * as DocPicker from "expo-document-picker";
 import * as pfs from "expo-file-system";
+import * as safx from "react-native-saf-x";
 
 export default function Page() {
   const theme = useTheme();
 
   return (
     <View>
+      <Button
+        title="export"
+        onPress={async () => {
+          const file = new fs.File(
+            fs.Paths.document,
+            `SQLite/${consts.databaseName}`
+          );
+          const dir = await safx.openDocumentTree(true);
+          if (!dir) return;
+          await safx.copyFile(
+            file.uri,
+            dir.uri + "/" + Date.now() + consts.databaseName,
+            { replaceIfDestinationExists: true }
+          );
+        }}
+      />
       <Button
         title="export"
         onPress={async () => {

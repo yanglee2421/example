@@ -39,6 +39,7 @@ const fetchChats = () =>
         offset: lastPageParam.offset + 1,
       };
     },
+    networkMode: "offlineFirst",
   });
 
 export default function Home() {
@@ -62,6 +63,7 @@ export default function Home() {
         queryKey: fetcher.queryKey,
       });
     },
+    networkMode: "offlineFirst",
   });
 
   if (chats.isPending) return <Loading />;

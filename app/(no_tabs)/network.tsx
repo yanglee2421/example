@@ -30,6 +30,7 @@ export default function Network() {
   const ip = useQuery({
     queryKey: ["getIpAddressAsync"],
     queryFn: () => ExpoNet.getIpAddressAsync(),
+    networkMode: "offlineFirst",
   });
 
   const state = ExpoNet.useNetworkState();
@@ -55,6 +56,7 @@ export default function Network() {
 
       throw new Error("copy failed");
     },
+    networkMode: "offlineFirst",
   });
 
   return (

@@ -24,10 +24,10 @@ const queryClient = new QueryClient({
       retryDelay(attemptIndex) {
         return Math.min(1000 * 2 ** attemptIndex, 1000 * 8);
       },
-      networkMode: "always",
+      networkMode: "online",
     },
     mutations: {
-      networkMode: "always",
+      networkMode: "online",
     },
   },
 });
