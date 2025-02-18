@@ -105,104 +105,103 @@ const ChatUI = (props: ChatUIProps) => {
   const queryClient = useQueryClient();
   const [msgList, setMsgList] = useImmer<Message[]>(props.messages);
 
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     Keyboard.dismiss();
     setSearch("");
     setMsgList((d) => {
       d.push({ user: search, assistant: "" });
     });
 
-    await db.insert(schemas.messageTable).values({
-      chatId: props.chatId,
-      role: "user",
-      content: search,
-    });
+    db.transaction(async (trx) => {
+      await trx.insert(schemas.messageTable).values({
+        chatId: props.chatId,
+        role: "user",
+        content: search,
+      });
 
-    const res = await fetch(
-      "https://spark-api-open.xf-yun.com/v1/chat/completions",
-      {
-        method: "POST",
-        body: JSON.stringify({
-          model: "4.0Ultra",
-          messages: [
-            ...msgList
-              .flatMap((i) => Object.entries(i))
-              .map(([key, val]) => ({
-                role: key,
-                content: val,
-              })),
-            {
-              role: "user",
-              content: search,
-            },
-          ],
-          stream: true,
-          tools: [
-            {
-              type: "web_search",
-              web_search: {
-                enable: false,
+      const res = await fetch(
+        "https://spark-api-open.xf-yun.com/v1/chat/completions",
+        {
+          method: "POST",
+          body: JSON.stringify({
+            model: "4.0Ultra",
+            messages: [
+              ...msgList
+                .flatMap((i) => Object.entries(i))
+                .map(([key, val]) => ({
+                  role: key,
+                  content: val,
+                })),
+              {
+                role: "user",
+                content: search,
               },
-            },
-          ],
-        }),
-        headers: {
-          Authorization: "Bearer rCJALwydCHKaiiBolPGv:gxneLXlgwLjQQcsNnnEW",
-        },
-      }
-    );
-
-    const reader = res.body?.getReader();
-
-    if (!reader) {
-      return;
-    }
-
-    const decoder = new TextDecoder();
-    let buf = "";
-
-    while (true) {
-      const readable = await reader.read();
-      const decocded = decoder.decode(readable.value, {
-        stream: true,
-      });
-      console.log("decocded", decocded);
-      buf += decocded;
-
-      setMsgList((d) => {
-        const last = d.at(-1);
-
-        if (last) {
-          last.assistant = getMessage(buf);
+            ],
+            stream: true,
+            tools: [
+              {
+                type: "web_search",
+                web_search: {
+                  enable: false,
+                },
+              },
+            ],
+          }),
+          headers: {
+            Authorization: "Bearer rCJALwydCHKaiiBolPGv:gxneLXlgwLjQQcsNnnEW",
+          },
         }
-      });
+      );
 
-      if (readable.done) {
-        const content = getMessage(buf);
-        await db.insert(schemas.messageTable).values({
-          chatId: props.chatId,
-          role: "assistant",
-          content,
+      const reader = res.body?.getReader();
+      if (!reader) return;
+
+      const decoder = new TextDecoder();
+      let buf = "";
+
+      while (true) {
+        const readable = await reader.read();
+        const decocded = decoder.decode(readable.value, {
+          stream: true,
+        });
+        console.log("decocded", decocded);
+        buf += decocded;
+
+        setMsgList((d) => {
+          const last = d.at(-1);
+
+          if (last) {
+            last.assistant = getMessage(buf);
+          }
         });
 
-        await db
-          .update(schemas.chatTable)
-          .set({ name: content })
-          .where(eq(schemas.chatTable.id, props.chatId));
+        if (readable.done) {
+          const content = getMessage(buf);
+          await trx.insert(schemas.messageTable).values({
+            chatId: props.chatId,
+            role: "assistant",
+            content,
+          });
 
-        await queryClient.invalidateQueries({
-          queryKey: fetchChat(props.chatId).queryKey.slice(0, 3),
-        });
-        await queryClient.invalidateQueries({
-          queryKey: fetchChat(props.chatId).queryKey.slice(0, 3),
-        });
-        await queryClient.invalidateQueries({
-          queryKey: ["db.query.chatTable.findMany"],
-        });
+          await trx
+            .update(schemas.chatTable)
+            .set({ name: content })
+            .where(eq(schemas.chatTable.id, props.chatId));
 
-        break;
+          await queryClient.invalidateQueries({
+            queryKey: fetchChat(props.chatId).queryKey.slice(0, 3),
+          });
+          await queryClient.invalidateQueries({
+            queryKey: fetchChat(props.chatId).queryKey.slice(0, 3),
+          });
+          await queryClient.invalidateQueries({
+            queryKey: ["db.query.chatTable.findMany"],
+          });
+
+          break;
+        }
       }
-    }
+    });
   };
 
   return (
