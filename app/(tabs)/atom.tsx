@@ -1,86 +1,115 @@
 import { useTheme } from "@/hooks/useTheme";
-import { Button, View } from "react-native";
+import { queryOptions } from "@tanstack/react-query";
+import { ActivityIndicator, Pressable, Text, View } from "react-native";
 import * as fs from "expo-file-system/next";
 import * as consts from "@/lib/constants";
-import * as DocPicker from "expo-document-picker";
-import * as pfs from "expo-file-system";
-import * as safx from "react-native-saf-x";
+import { useQuery } from "@tanstack/react-query";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import Animated, {
+  Easing,
+  Extrapolation,
+  interpolate,
+  useAnimatedStyle,
+  useSharedValue,
+  withRepeat,
+  withTiming,
+} from "react-native-reanimated";
+import React from "react";
+import { android_ripple } from "@/lib/utils";
+
+const fetchDatabaseSize = () =>
+  queryOptions({
+    queryKey: ["fetchDatabaseSize", consts.databaseName],
+    async queryFn() {
+      await new Promise((resolve) => setTimeout(resolve, 1000 * 2));
+      const file = new fs.File(
+        fs.Paths.document,
+        `SQLite/${consts.databaseName}`
+      );
+
+      return file.size || 0;
+    },
+    networkMode: "offlineFirst",
+  });
 
 export default function Page() {
   const theme = useTheme();
+  const databaseSize = useQuery(fetchDatabaseSize());
+  const rotate = useSharedValue(0);
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [
+      {
+        rotate:
+          interpolate(rotate.value, [0, 1], [0, 360], Extrapolation.CLAMP) +
+          "deg",
+      },
+    ],
+  }));
+
+  React.useEffect(() => {
+    if (databaseSize.isRefetching) {
+      rotate.value = withRepeat(
+        withTiming(1, {
+          easing: Easing.linear,
+          duration: 1000 * 1,
+        }),
+        Infinity
+      );
+    } else {
+      rotate.value = 0;
+    }
+  }, [databaseSize.isRefetching]);
+
+  const renderDatabaseSize = () => {
+    if (databaseSize.isLoading) return <ActivityIndicator />;
+    if (databaseSize.isError)
+      return (
+        <Text
+          style={[theme.typography.body1, { color: theme.palette.error.main }]}
+        >
+          {databaseSize.error.message}
+        </Text>
+      );
+    return (
+      <Text
+        style={[theme.typography.h3, { color: theme.palette.text.primary }]}
+      >
+        {databaseSize.data}
+      </Text>
+    );
+  };
 
   return (
-    <View>
-      <Button
-        title="export"
-        onPress={async () => {
-          const file = new fs.File(
-            fs.Paths.document,
-            `SQLite/${consts.databaseName}`
-          );
-          const dir = await safx.openDocumentTree(true);
-          if (!dir) return;
-          await safx.copyFile(
-            file.uri,
-            dir.uri + "/" + Date.now() + consts.databaseName,
-            { replaceIfDestinationExists: true }
-          );
-        }}
-      />
-      <Button
-        title="export"
-        onPress={async () => {
-          const file = new fs.File(
-            fs.Paths.document,
-            `SQLite/${consts.databaseName}`
-          );
+    <View style={{ padding: theme.spacing(3) }}>
+      <Text
+        style={[theme.typography.h6, { color: theme.palette.text.primary }]}
+      >
+        Database File Size
+      </Text>
+      {renderDatabaseSize()}
+      <Pressable
+        onPress={() => databaseSize.refetch()}
+        style={{
+          backgroundColor: theme.palette.primary.main,
+          width: 40,
+          height: 40,
+          borderRadius: 20,
 
-          const dir =
-            await pfs.StorageAccessFramework.requestDirectoryPermissionsAsync();
+          justifyContent: "center",
+          alignItems: "center",
 
-          if (!dir.granted) return;
-          const nFile = await pfs.StorageAccessFramework.createFileAsync(
-            dir.directoryUri,
-            Date.now() + "_" + consts.databaseName,
-            "application/x-sqlite3"
-          );
-
-          await pfs.StorageAccessFramework.writeAsStringAsync(
-            nFile,
-            file.base64(),
-            { encoding: pfs.EncodingType.Base64 }
-          );
+          overflow: "hidden",
         }}
-      />
-      <Button
-        title="import"
-        onPress={async () => {
-          const doc = await DocPicker.getDocumentAsync({
-            copyToCacheDirectory: true,
-          });
-
-          if (!doc.assets) return;
-          if (doc.canceled) return;
-          const dir = doc.assets[0].uri;
-          const file = new fs.File(
-            fs.Paths.document,
-            `SQLite/${consts.databaseName}`
-          );
-          file.delete();
-          const backup = new fs.File(dir);
-          backup.copy(file);
-        }}
-      />
-      <Button
-        title="delete"
-        onPress={() => {
-          const file = new fs.File(
-            fs.Paths.document,
-            `SQLite/${consts.databaseName}`
-          );
-          file.exists && file.delete();
-        }}
-      />
+        android_ripple={android_ripple(theme.palette.action.focus)}
+      >
+        <Animated.View style={animatedStyle}>
+          <MaterialCommunityIcons
+            name="refresh"
+            color={theme.palette.primary.contrastText}
+            size={28}
+          />
+        </Animated.View>
+      </Pressable>
     </View>
   );
 }

@@ -1,136 +1,86 @@
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import React from "react";
-import { Text, StyleSheet, View } from "react-native";
-import ReanimatedSwipeable, {
-  SwipeableMethods,
-} from "react-native-gesture-handler/ReanimatedSwipeable";
-import Reanimated, {
-  SharedValue,
-  useAnimatedStyle,
-  useSharedValue,
-  withTiming,
-} from "react-native-reanimated";
+import { useTheme } from "@/hooks/useTheme";
+import { Button, View } from "react-native";
+import * as fs from "expo-file-system/next";
+import * as consts from "@/lib/constants";
+import * as DocPicker from "expo-document-picker";
+import * as pfs from "expo-file-system";
+import * as safx from "react-native-saf-x";
 
-const WidthContext = React.createContext<number>(0);
-
-const WidithProvider = WidthContext.Provider;
-
-function RightAction(prog: SharedValue<number>, drag: SharedValue<number>) {
-  const width = React.useContext(WidthContext);
-
-  const styleAnimation = useAnimatedStyle(() => {
-    return {
-      transform: [{ translateX: drag.value }],
-    };
-  });
-
-  const bgStyle = useAnimatedStyle(() => {
-    return {
-      backgroundColor: `rgba(0,255,0,${prog.value})`,
-    };
-  });
+export default function Page() {
+  const theme = useTheme();
 
   return (
-    <Reanimated.View style={styleAnimation}>
-      <Reanimated.View
-        style={[styles.rightAction, bgStyle, { width, right: -width }]}
-      >
-        <MaterialCommunityIcons
-          name="file-document-outline"
-          size={26}
-          color="white"
-        />
-      </Reanimated.View>
-    </Reanimated.View>
-  );
-}
-
-const RenderLeftActions = (
-  prog: SharedValue<number>,
-  drag: SharedValue<number>
-) => {
-  const width = React.useContext(WidthContext);
-
-  const styleAnimation = useAnimatedStyle(() => {
-    return {
-      transform: [{ translateX: drag.value }],
-    };
-  });
-
-  const bgStyle = useAnimatedStyle(() => {
-    return {
-      backgroundColor: `rgba(255,0,0,${prog.value})`,
-    };
-  });
-
-  return (
-    <Reanimated.View style={styleAnimation}>
-      <Reanimated.View
-        style={[styles.leftAction, bgStyle, { width, left: -width }]}
-      >
-        <MaterialCommunityIcons name="delete-outline" size={26} color="white" />
-      </Reanimated.View>
-    </Reanimated.View>
-  );
-};
-
-export default function Example() {
-  const [width, setWidth] = React.useState(0);
-
-  const ref = React.useRef<SwipeableMethods>(null);
-
-  const hidden = useSharedValue(50);
-
-  const style = useAnimatedStyle(() => {
-    return {
-      height: hidden.value,
-    };
-  });
-
-  return (
-    <WidithProvider value={width}>
-      <Reanimated.View
-        style={[{ overflow: "hidden" }, style]}
-        onLayout={(e) => {
-          setWidth(e.nativeEvent.layout.width);
+    <View>
+      <Button
+        title="export"
+        onPress={async () => {
+          const file = new fs.File(
+            fs.Paths.document,
+            `SQLite/${consts.databaseName}`
+          );
+          const dir = await safx.openDocumentTree(true);
+          if (!dir) return;
+          await safx.copyFile(
+            file.uri,
+            dir.uri + "/" + Date.now() + consts.databaseName,
+            { replaceIfDestinationExists: true }
+          );
         }}
-      >
-        <ReanimatedSwipeable
-          ref={ref}
-          containerStyle={styles.swipeable}
-          rightThreshold={50}
-          renderRightActions={RightAction}
-          leftThreshold={50}
-          renderLeftActions={RenderLeftActions}
-          onSwipeableOpen={(dir) => {
-            if (dir === "left") {
-              hidden.value = withTiming(0);
-            }
-          }}
-        >
-          <Text>Swipe me!</Text>
-        </ReanimatedSwipeable>
-      </Reanimated.View>
-    </WidithProvider>
+      />
+      <Button
+        title="export"
+        onPress={async () => {
+          const file = new fs.File(
+            fs.Paths.document,
+            `SQLite/${consts.databaseName}`
+          );
+
+          const dir =
+            await pfs.StorageAccessFramework.requestDirectoryPermissionsAsync();
+
+          if (!dir.granted) return;
+          const nFile = await pfs.StorageAccessFramework.createFileAsync(
+            dir.directoryUri,
+            Date.now() + "_" + consts.databaseName,
+            "application/x-sqlite3"
+          );
+
+          await pfs.StorageAccessFramework.writeAsStringAsync(
+            nFile,
+            file.base64(),
+            { encoding: pfs.EncodingType.Base64 }
+          );
+        }}
+      />
+      <Button
+        title="import"
+        onPress={async () => {
+          const doc = await DocPicker.getDocumentAsync({
+            copyToCacheDirectory: true,
+          });
+
+          if (!doc.assets) return;
+          if (doc.canceled) return;
+          const dir = doc.assets[0].uri;
+          const file = new fs.File(
+            fs.Paths.document,
+            `SQLite/${consts.databaseName}`
+          );
+          file.delete();
+          const backup = new fs.File(dir);
+          backup.copy(file);
+        }}
+      />
+      <Button
+        title="delete"
+        onPress={() => {
+          const file = new fs.File(
+            fs.Paths.document,
+            `SQLite/${consts.databaseName}`
+          );
+          file.exists && file.delete();
+        }}
+      />
+    </View>
   );
 }
-
-const styles = StyleSheet.create({
-  rightAction: {
-    height: 50,
-    padding: 10,
-    flexDirection: "row",
-    justifyContent: "flex-start",
-    alignItems: "center",
-  },
-  leftAction: {
-    height: 50,
-    padding: 10,
-    flexDirection: "row",
-    justifyContent: "flex-end",
-    alignItems: "center",
-  },
-  swipeable: {
-    height: 50,
-  },
-});

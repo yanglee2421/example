@@ -20,11 +20,7 @@ import {
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { android_ripple } from "@/lib/utils";
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withTiming,
-} from "react-native-reanimated";
+import Animated, { useAnimatedStyle } from "react-native-reanimated";
 import ReanimatedSwipeable from "react-native-gesture-handler/ReanimatedSwipeable";
 import type { SharedValue } from "react-native-reanimated";
 import type { SwipeableMethods } from "react-native-gesture-handler/ReanimatedSwipeable";
@@ -76,8 +72,14 @@ const useDeleteChat = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn(id: number) {
-      return db.delete(schemas.chatTable).where(eq(schemas.chatTable.id, id));
+    async mutationFn(id: number) {
+      await db.transaction(async (trx) => {
+        await trx.delete(schemas.chatTable).where(eq(schemas.chatTable.id, id));
+        await trx
+          .delete(schemas.messageTable)
+          .where(eq(schemas.messageTable.chatId, id));
+      });
+      return {};
     },
     onSuccess() {
       queryClient.invalidateQueries({
@@ -131,6 +133,7 @@ const SwipeToDelete = (props: SwipeToDeleteProps) => {
     <ReanimatedSwipeable
       ref={ref}
       leftThreshold={50}
+      friction={1}
       renderLeftActions={RenderLeftActions}
       onSwipeableOpen={(dir) => {
         if (dir === "left") {
