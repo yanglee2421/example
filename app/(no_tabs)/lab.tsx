@@ -1,69 +1,122 @@
+import { useTheme } from "@/hooks/useTheme";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import React from "react";
-import { StyleSheet, View } from "react-native";
-import { GestureDetector, Gesture } from "react-native-gesture-handler";
+import { Text, StyleSheet, View, Button } from "react-native";
+import ReanimatedSwipeable from "react-native-gesture-handler/ReanimatedSwipeable";
 import Animated, {
-  useSharedValue,
+  SharedValue,
   useAnimatedStyle,
-  measure,
-  useAnimatedRef,
+  useSharedValue,
   withTiming,
 } from "react-native-reanimated";
+import type { SwipeableMethods } from "react-native-gesture-handler/ReanimatedSwipeable";
 
 const styles = StyleSheet.create({
-  ball: {
-    flex: 1,
+  leftAction: {
+    left: "-100%",
+
+    width: "100%",
+
+    padding: 10,
+
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    alignItems: "center",
   },
 });
 
-export default function Page() {
-  const viewRef = useAnimatedRef<View>();
-
-  const x = useSharedValue(0);
-  const startX = useSharedValue(0);
-
-  const animatedStyles = useAnimatedStyle(() => {
+const RenderLeftActions = (
+  prog: SharedValue<number>,
+  drag: SharedValue<number>
+) => {
+  const styleAnimation = useAnimatedStyle(() => {
     return {
-      backgroundColor: "red",
-      transform: [
-        {
-          translateX: x.value,
-        },
-      ],
+      transform: [{ translateX: drag.value }],
+      backgroundColor: `rgba(255,0,0,${prog.value})`,
     };
   });
 
-  const gesture = Gesture.Pan()
-    .onBegin(() => {})
-    .onUpdate((e) => {
-      x.value = e.translationX + startX.value;
-    })
-    .onEnd(() => {})
-    .onFinalize((e) => {
-      const width = measure(viewRef)?.width!;
+  return (
+    <Animated.View style={[styleAnimation, styles.leftAction]}>
+      <MaterialCommunityIcons name="delete-outline" size={26} color="white" />
+    </Animated.View>
+  );
+};
 
-      if (Math.abs(e.translationX) * 2 < width) {
-        x.value = withTiming(startX.value);
-        return;
-      }
+type SwipeToDeleteProps = React.PropsWithChildren<{
+  onDelete?: () => void;
+}>;
 
-      // Right
-      if (e.translationX > 0 && startX.value < width) {
-        startX.value += width;
-      }
+const SwipeToDelete = (props: SwipeToDeleteProps) => {
+  const ref = React.useRef<SwipeableMethods>(null);
 
-      // Left
-      if (e.translationX < 0 && startX.value > -width) {
-        startX.value -= width;
-      }
-
-      x.value = withTiming(startX.value);
-    });
+  const height = useSharedValue(50);
+  const style = useAnimatedStyle(() => ({
+    height: withTiming(height.value),
+  }));
 
   return (
-    <GestureDetector gesture={gesture}>
-      <View ref={viewRef} style={{ flex: 1 }}>
-        <Animated.View style={[styles.ball, animatedStyles]} />
-      </View>
-    </GestureDetector>
+    <ReanimatedSwipeable
+      ref={ref}
+      leftThreshold={50}
+      renderLeftActions={RenderLeftActions}
+      onSwipeableOpen={(dir) => {
+        if (dir === "left") {
+          height.value = 0;
+          props.onDelete?.();
+        }
+      }}
+      onSwipeableWillOpen={(dir) => {
+        if (dir === "right") {
+          ref.current?.close();
+        }
+      }}
+      containerStyle={[{ overflow: "hidden" }, style]}
+    >
+      {props.children}
+    </ReanimatedSwipeable>
+  );
+};
+
+export default function Example() {
+  const theme = useTheme();
+
+  const width = useSharedValue(0);
+
+  return (
+    <>
+      <Animated.View
+        style={{ width, backgroundColor: "blue", height: 30 }}
+      ></Animated.View>
+      <Button
+        onPress={() => {
+          width.value = withTiming(width.value + 20);
+        }}
+        title="press"
+      />
+      <SwipeToDelete
+        onDelete={() => {
+          console.log("deleted");
+        }}
+      >
+        <View
+          style={{
+            padding: 10,
+            backgroundColor: theme.palette.background.paper,
+            borderColor: theme.palette.divider,
+            borderWidth: 1,
+          }}
+        >
+          <Text
+            style={[
+              theme.typography.body1,
+              { color: theme.palette.text.primary },
+            ]}
+          >
+            asdasd
+          </Text>
+        </View>
+      </SwipeToDelete>
+    </>
   );
 }

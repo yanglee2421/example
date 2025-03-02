@@ -10,10 +10,25 @@ import {
 } from "@tanstack/react-query";
 import { Link, useRouter } from "expo-router";
 import React from "react";
-import { FlatList, Pressable, RefreshControl, Text, View } from "react-native";
-import { c } from "@/lib/styles";
+import {
+  FlatList,
+  Pressable,
+  RefreshControl,
+  Text,
+  View,
+  StyleSheet,
+} from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { android_ripple } from "@/lib/utils";
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+} from "react-native-reanimated";
+import ReanimatedSwipeable from "react-native-gesture-handler/ReanimatedSwipeable";
+import type { SharedValue } from "react-native-reanimated";
+import type { SwipeableMethods } from "react-native-gesture-handler/ReanimatedSwipeable";
+import { eq } from "drizzle-orm";
 
 const fetchChats = () =>
   infiniteQueryOptions({
@@ -42,29 +57,104 @@ const fetchChats = () =>
     networkMode: "offlineFirst",
   });
 
-export default function Home() {
-  const theme = useTheme();
+const useCreateChat = () => {
   const queryClient = useQueryClient();
-  const fetcher = fetchChats();
-  const chats = useInfiniteQuery(fetcher);
-  const router = useRouter();
-  const newChat = useMutation({
+  return useMutation({
     mutationFn() {
       return db.insert(schemas.chatTable).values({ name: "new chat" });
     },
-    onSuccess(data) {
-      router.push({
-        pathname: "/chat/[id]",
-        params: {
-          id: data.lastInsertRowId,
-        },
-      });
+    onSuccess() {
       queryClient.invalidateQueries({
-        queryKey: fetcher.queryKey,
+        queryKey: fetchChats().queryKey,
       });
     },
     networkMode: "offlineFirst",
   });
+};
+
+const useDeleteChat = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn(id: number) {
+      return db.delete(schemas.chatTable).where(eq(schemas.chatTable.id, id));
+    },
+    onSuccess() {
+      queryClient.invalidateQueries({
+        queryKey: fetchChats().queryKey,
+      });
+    },
+    networkMode: "offlineFirst",
+  });
+};
+
+const styles = StyleSheet.create({
+  leftAction: {
+    left: "-100%",
+
+    width: "100%",
+
+    padding: 10,
+
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    alignItems: "center",
+  },
+});
+
+const RenderLeftActions = (
+  prog: SharedValue<number>,
+  drag: SharedValue<number>
+) => {
+  const styleAnimation = useAnimatedStyle(() => {
+    return {
+      transform: [{ translateX: drag.value }],
+      backgroundColor: `rgba(255,0,0,${prog.value})`,
+    };
+  });
+
+  return (
+    <Animated.View style={[styleAnimation, styles.leftAction]}>
+      <MaterialCommunityIcons name="delete-outline" size={26} color="white" />
+    </Animated.View>
+  );
+};
+
+type SwipeToDeleteProps = React.PropsWithChildren<{
+  onDelete?: () => void;
+}>;
+
+const SwipeToDelete = (props: SwipeToDeleteProps) => {
+  const ref = React.useRef<SwipeableMethods>(null);
+
+  return (
+    <ReanimatedSwipeable
+      ref={ref}
+      leftThreshold={50}
+      renderLeftActions={RenderLeftActions}
+      onSwipeableOpen={(dir) => {
+        if (dir === "left") {
+          props.onDelete?.();
+        }
+      }}
+      onSwipeableWillOpen={(dir) => {
+        if (dir === "right") {
+          ref.current?.close();
+        }
+      }}
+    >
+      {props.children}
+    </ReanimatedSwipeable>
+  );
+};
+
+export default function Home() {
+  const theme = useTheme();
+  const fetcher = fetchChats();
+  const chats = useInfiniteQuery(fetcher);
+  const router = useRouter();
+  const createChat = useCreateChat();
+  const deleteChat = useDeleteChat();
 
   if (chats.isPending) return <Loading />;
 
@@ -82,36 +172,43 @@ export default function Home() {
         />
       }
       data={data}
+      keyExtractor={(i) => i.id.toString()}
       renderItem={(i) => (
-        <View
-          style={[
-            {
-              borderBottomWidth: 1,
-              borderBottomColor: theme.palette.divider,
-              paddingInline: theme.spacing(5),
-              paddingBlock: theme.spacing(3),
-            },
-          ]}
+        <SwipeToDelete
+          onDelete={() => {
+            deleteChat.mutate(i.item.id);
+          }}
         >
-          <Link
-            href={{ pathname: "/chat/[id]", params: { id: i.item.id } }}
-            asChild
+          <View
+            style={[
+              {
+                borderBottomWidth: 1,
+                borderBottomColor: theme.palette.divider,
+                paddingInline: theme.spacing(5),
+                paddingBlock: theme.spacing(3),
+              },
+            ]}
           >
-            <Pressable>
-              <View>
-                <Text
-                  style={[
-                    theme.typography.body1,
-                    { color: theme.palette.text.primary },
-                  ]}
-                  numberOfLines={1}
-                >
-                  {i.item.name?.substring(0, 48)}
-                </Text>
-              </View>
-            </Pressable>
-          </Link>
-        </View>
+            <Link
+              href={{ pathname: "/chat/[id]", params: { id: i.item.id } }}
+              asChild
+            >
+              <Pressable>
+                <View>
+                  <Text
+                    style={[
+                      theme.typography.body1,
+                      { color: theme.palette.text.primary },
+                    ]}
+                    numberOfLines={1}
+                  >
+                    {i.item.name?.substring(0, 48)}
+                  </Text>
+                </View>
+              </Pressable>
+            </Link>
+          </View>
+        </SwipeToDelete>
       )}
       ListFooterComponent={
         <View
@@ -148,7 +245,16 @@ export default function Home() {
         <View>
           <Pressable
             onPress={() => {
-              newChat.mutate();
+              createChat.mutate(void 0, {
+                onSuccess(data) {
+                  router.push({
+                    pathname: "/chat/[id]",
+                    params: {
+                      id: data.lastInsertRowId,
+                    },
+                  });
+                },
+              });
             }}
           >
             <Text
@@ -165,7 +271,18 @@ export default function Home() {
       ListHeaderComponent={
         <View style={[{ paddingBlock: 0, paddingInline: 16 }]}>
           <Pressable
-            onPress={() => newChat.mutate()}
+            onPress={() =>
+              createChat.mutate(void 0, {
+                onSuccess(data) {
+                  router.push({
+                    pathname: "/chat/[id]",
+                    params: {
+                      id: data.lastInsertRowId,
+                    },
+                  });
+                },
+              })
+            }
             style={{
               width: 40,
               height: 40,
