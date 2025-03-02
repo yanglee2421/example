@@ -1,13 +1,6 @@
 import { Loading } from "@/components/Loading";
-import { db } from "@/db/db";
-import * as schemas from "@/db/schema";
 import { useTheme } from "@/hooks/useTheme";
-import {
-  infiniteQueryOptions,
-  useInfiniteQuery,
-  useMutation,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { Link, useRouter } from "expo-router";
 import React from "react";
 import {
@@ -24,71 +17,7 @@ import Animated, { useAnimatedStyle } from "react-native-reanimated";
 import ReanimatedSwipeable from "react-native-gesture-handler/ReanimatedSwipeable";
 import type { SharedValue } from "react-native-reanimated";
 import type { SwipeableMethods } from "react-native-gesture-handler/ReanimatedSwipeable";
-import { eq } from "drizzle-orm";
-
-const fetchChats = () =>
-  infiniteQueryOptions({
-    queryKey: ["db.query.chatTable.findMany"],
-    queryFn({ pageParam }) {
-      return db.query.chatTable.findMany({
-        ...pageParam,
-      });
-    },
-
-    initialPageParam: {
-      offset: 0,
-      limit: 20,
-    },
-
-    getNextPageParam(lastPage, allPages, lastPageParam, allPageParams) {
-      void { allPages, allPageParams };
-
-      if (lastPage.length < lastPageParam.limit) return null;
-
-      return {
-        ...lastPageParam,
-        offset: lastPageParam.offset + 1,
-      };
-    },
-    networkMode: "offlineFirst",
-  });
-
-const useCreateChat = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn() {
-      return db.insert(schemas.chatTable).values({ name: "new chat" });
-    },
-    onSuccess() {
-      queryClient.invalidateQueries({
-        queryKey: fetchChats().queryKey,
-      });
-    },
-    networkMode: "offlineFirst",
-  });
-};
-
-const useDeleteChat = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    async mutationFn(id: number) {
-      await db.transaction(async (trx) => {
-        await trx.delete(schemas.chatTable).where(eq(schemas.chatTable.id, id));
-        await trx
-          .delete(schemas.messageTable)
-          .where(eq(schemas.messageTable.chatId, id));
-      });
-      return {};
-    },
-    onSuccess() {
-      queryClient.invalidateQueries({
-        queryKey: fetchChats().queryKey,
-      });
-    },
-    networkMode: "offlineFirst",
-  });
-};
+import { useDeleteChat, useCreateChat, fetchChats } from "@/lib/chat";
 
 const styles = StyleSheet.create({
   leftAction: {
