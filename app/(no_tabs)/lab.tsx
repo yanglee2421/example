@@ -1,122 +1,187 @@
 import { useTheme } from "@/hooks/useTheme";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import React from "react";
-import { Text, StyleSheet, View, Button } from "react-native";
-import ReanimatedSwipeable from "react-native-gesture-handler/ReanimatedSwipeable";
+import { Text, View } from "react-native";
 import Animated, {
-  SharedValue,
+  measure,
+  useAnimatedRef,
   useAnimatedStyle,
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
-import type { SwipeableMethods } from "react-native-gesture-handler/ReanimatedSwipeable";
-
-const styles = StyleSheet.create({
-  leftAction: {
-    left: "-100%",
-
-    width: "100%",
-
-    padding: 10,
-
-    flexDirection: "row",
-    justifyContent: "flex-end",
-    alignItems: "center",
-  },
-});
-
-const RenderLeftActions = (
-  prog: SharedValue<number>,
-  drag: SharedValue<number>
-) => {
-  const styleAnimation = useAnimatedStyle(() => {
-    return {
-      transform: [{ translateX: drag.value }],
-      backgroundColor: `rgba(255,0,0,${prog.value})`,
-    };
-  });
-
-  return (
-    <Animated.View style={[styleAnimation, styles.leftAction]}>
-      <MaterialCommunityIcons name="delete-outline" size={26} color="white" />
-    </Animated.View>
-  );
-};
-
-type SwipeToDeleteProps = React.PropsWithChildren<{
-  onDelete?: () => void;
-}>;
-
-const SwipeToDelete = (props: SwipeToDeleteProps) => {
-  const ref = React.useRef<SwipeableMethods>(null);
-
-  const height = useSharedValue(50);
-  const style = useAnimatedStyle(() => ({
-    height: withTiming(height.value),
-  }));
-
-  return (
-    <ReanimatedSwipeable
-      ref={ref}
-      leftThreshold={50}
-      renderLeftActions={RenderLeftActions}
-      onSwipeableOpen={(dir) => {
-        if (dir === "left") {
-          height.value = 0;
-          props.onDelete?.();
-        }
-      }}
-      onSwipeableWillOpen={(dir) => {
-        if (dir === "right") {
-          ref.current?.close();
-        }
-      }}
-      containerStyle={[{ overflow: "hidden" }, style]}
-    >
-      {props.children}
-    </ReanimatedSwipeable>
-  );
-};
+import { GestureDetector, Gesture } from "react-native-gesture-handler";
 
 export default function Example() {
   const theme = useTheme();
 
-  const width = useSharedValue(0);
+  const ref = useAnimatedRef();
+  const hidden = useSharedValue(false);
+  const height = useSharedValue(50);
+  const translateX = useSharedValue(0);
+  const translateXstyle = useAnimatedStyle(() => ({
+    transform: [{ translateX: translateX.value }],
+    height: height.value,
+  }));
+  const overflowStyle = useAnimatedStyle(() => ({
+    overflow: hidden.value ? "hidden" : "visible",
+  }));
+
+  const panGestureHandler = Gesture.Pan()
+    .onBegin((e) => {})
+    .onStart((e) => {
+      translateX.value = e.translationX;
+    })
+    .onUpdate((e) => {
+      translateX.value = e.translationX;
+    })
+    .onEnd((e) => {
+      translateX.value = e.translationX;
+    })
+    .onFinalize((e) => {
+      if (Math.abs(e.translationX) < 50) {
+        translateX.value = withTiming(0);
+        return;
+      }
+
+      const size = measure(ref);
+
+      if (!size) return;
+
+      if (e.translationX > 50) {
+        translateX.value = withTiming(size.width, {}, () => {
+          hidden.value = true;
+          height.value = withTiming(0);
+        });
+      }
+
+      if (e.translationX < -50) {
+        translateX.value = withTiming(-size.width, {}, () => {
+          hidden.value = true;
+          height.value = withTiming(0);
+        });
+      }
+    });
 
   return (
-    <>
-      <Animated.View
-        style={{ width, backgroundColor: "blue", height: 30 }}
-      ></Animated.View>
-      <Button
-        onPress={() => {
-          width.value = withTiming(width.value + 20);
-        }}
-        title="press"
-      />
-      <SwipeToDelete
-        onDelete={() => {
-          console.log("deleted");
-        }}
-      >
-        <View
-          style={{
-            padding: 10,
-            backgroundColor: theme.palette.background.paper,
-            borderColor: theme.palette.divider,
-            borderWidth: 1,
-          }}
+    <GestureDetector gesture={panGestureHandler}>
+      <Animated.View ref={ref} style={[translateXstyle]}>
+        <Animated.View
+          style={[
+            {
+              position: "absolute",
+              top: 0,
+              left: "-100%",
+
+              width: "100%",
+              height: "100%",
+            },
+            overflowStyle,
+          ]}
         >
-          <Text
-            style={[
-              theme.typography.body1,
-              { color: theme.palette.text.primary },
-            ]}
+          <View
+            style={{
+              padding: theme.spacing(3),
+
+              flexDirection: "row",
+              justifyContent: "flex-end",
+              alignItems: "center",
+              gap: theme.spacing(3),
+
+              backgroundColor: theme.palette.success.main,
+              borderWidth: 1,
+              borderColor: "transparent",
+            }}
           >
-            asdasd
-          </Text>
+            <Text
+              style={[
+                theme.typography.body1,
+                { color: theme.palette.success.contrastText },
+              ]}
+            >
+              Left
+            </Text>
+            <MaterialCommunityIcons
+              name="archive-outline"
+              size={28}
+              color={theme.palette.success.contrastText}
+            />
+          </View>
+        </Animated.View>
+        <View
+          style={[
+            {
+              width: "100%",
+              height: "100%",
+            },
+          ]}
+        >
+          <View
+            style={{
+              padding: theme.spacing(3),
+              flexDirection: "row",
+              justifyContent: "center",
+              alignItems: "center",
+
+              backgroundColor: theme.palette.info.main,
+              borderWidth: 1,
+              borderColor: "transparent",
+            }}
+          >
+            <Text
+              style={[
+                theme.typography.body1,
+                { color: theme.palette.info.contrastText },
+              ]}
+            >
+              Center
+            </Text>
+          </View>
         </View>
-      </SwipeToDelete>
-    </>
+        <Animated.View
+          style={[
+            {
+              position: "absolute",
+              top: 0,
+              left: "100%",
+
+              width: "100%",
+              height: "100%",
+
+              overflow: "hidden",
+            },
+            overflowStyle,
+          ]}
+        >
+          <View
+            style={{
+              padding: theme.spacing(3),
+
+              flexDirection: "row",
+              justifyContent: "flex-start",
+              alignItems: "center",
+              gap: theme.spacing(3),
+
+              backgroundColor: theme.palette.error.main,
+              borderWidth: 1,
+              borderColor: "transparent",
+            }}
+          >
+            <MaterialCommunityIcons
+              name="delete-outline"
+              size={28}
+              color={theme.palette.error.contrastText}
+            />
+            <Text
+              style={[
+                theme.typography.body1,
+                { color: theme.palette.error.contrastText },
+              ]}
+            >
+              Right
+            </Text>
+          </View>
+        </Animated.View>
+      </Animated.View>
+    </GestureDetector>
   );
 }
