@@ -44,8 +44,8 @@ const Swiper = () => {
   const translateXstyle = useAnimatedStyle(() => ({
     transform: [{ translateX: translateX.value }],
   }));
-  const bgColorStyle = useAnimatedStyle(() => ({
-    backgroundColor: `rgba(255,0,0,${alpha.value})`,
+  const opacityStyle = useAnimatedStyle(() => ({
+    opacity: alpha.value + 0.3,
   }));
 
   const panGestureHandler = Gesture.Pan()
@@ -54,15 +54,15 @@ const Swiper = () => {
     })
     .onStart((e) => {
       translateX.value = startX.value + e.translationX;
-      alpha.value = minmax(Math.abs(e.translationX) / 100, 0, 1);
+      alpha.value = minmax(Math.abs(e.translationX) / 150 - 0.3, 0, 1);
     })
     .onUpdate((e) => {
       translateX.value = startX.value + e.translationX;
-      alpha.value = minmax(Math.abs(e.translationX) / 100, 0, 1);
+      alpha.value = minmax(Math.abs(e.translationX) / 150 - 0.3, 0, 1);
     })
     .onEnd((e) => {
       translateX.value = startX.value + e.translationX;
-      alpha.value = minmax(Math.abs(e.translationX) / 100, 0, 1);
+      alpha.value = minmax(Math.abs(e.translationX) / 150 - 0.3, 0, 1);
     })
     .onFinalize((e) => {
       // To Right
@@ -113,6 +113,7 @@ const Swiper = () => {
 
               backgroundColor: theme.palette.success.main,
             },
+            opacityStyle,
           ]}
         >
           <Text
@@ -169,8 +170,10 @@ const Swiper = () => {
               justifyContent: "flex-start",
               alignItems: "center",
               gap: theme.spacing(3),
+
+              backgroundColor: theme.palette.error.main,
             },
-            bgColorStyle,
+            opacityStyle,
           ]}
         >
           <MaterialCommunityIcons
