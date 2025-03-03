@@ -1,85 +1,109 @@
 import { useTheme } from "@/hooks/useTheme";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import React from "react";
-import { Text, View } from "react-native";
+import { Button, Text, View } from "react-native";
 import Animated, {
-  measure,
-  useAnimatedRef,
   useAnimatedStyle,
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
 import { GestureDetector, Gesture } from "react-native-gesture-handler";
+import { minmax } from "@/lib/worklet";
 
-export default function Example() {
+type CollapseProps = React.PropsWithChildren<{
+  open: boolean;
+}>;
+
+const Collapse = (props: CollapseProps) => {
+  const height = useSharedValue(0);
+  const style = useAnimatedStyle(() => ({
+    height: withTiming(height.value * Number(props.open)),
+  }));
+
+  return (
+    <Animated.View style={[{ overflow: "hidden" }, style]}>
+      <View
+        onLayout={(e) => {
+          height.value = e.nativeEvent.layout.height;
+        }}
+        style={{ position: "absolute", width: "100%" }}
+      >
+        {props.children}
+      </View>
+    </Animated.View>
+  );
+};
+
+const Swiper = () => {
   const theme = useTheme();
-
-  const ref = useAnimatedRef();
-  const hidden = useSharedValue(false);
-  const height = useSharedValue(50);
+  const width = useSharedValue(0);
+  const activeIndex = useSharedValue(1);
+  const startX = useSharedValue(0);
   const translateX = useSharedValue(0);
+  const alpha = useSharedValue(0);
   const translateXstyle = useAnimatedStyle(() => ({
     transform: [{ translateX: translateX.value }],
-    height: height.value,
   }));
-  const overflowStyle = useAnimatedStyle(() => ({
-    overflow: hidden.value ? "hidden" : "visible",
+  const bgColorStyle = useAnimatedStyle(() => ({
+    backgroundColor: `rgba(255,0,0,${alpha.value})`,
   }));
 
   const panGestureHandler = Gesture.Pan()
-    .onBegin((e) => {})
+    .onBegin(() => {
+      startX.value = translateX.value;
+    })
     .onStart((e) => {
-      translateX.value = e.translationX;
+      translateX.value = startX.value + e.translationX;
+      alpha.value = minmax(Math.abs(e.translationX) / 100, 0, 1);
     })
     .onUpdate((e) => {
-      translateX.value = e.translationX;
+      translateX.value = startX.value + e.translationX;
+      alpha.value = minmax(Math.abs(e.translationX) / 100, 0, 1);
     })
     .onEnd((e) => {
-      translateX.value = e.translationX;
+      translateX.value = startX.value + e.translationX;
+      alpha.value = minmax(Math.abs(e.translationX) / 100, 0, 1);
     })
     .onFinalize((e) => {
-      if (Math.abs(e.translationX) < 50) {
-        translateX.value = withTiming(0);
-        return;
-      }
-
-      const size = measure(ref);
-
-      if (!size) return;
-
+      // To Right
       if (e.translationX > 50) {
-        translateX.value = withTiming(size.width, {}, () => {
-          hidden.value = true;
-          height.value = withTiming(0);
-        });
+        activeIndex.value = minmax(activeIndex.value - 1, 0, 2);
       }
 
+      // To Left
       if (e.translationX < -50) {
-        translateX.value = withTiming(-size.width, {}, () => {
-          hidden.value = true;
-          height.value = withTiming(0);
-        });
+        activeIndex.value = minmax(activeIndex.value + 1, 0, 2);
       }
+
+      translateX.value = withTiming(-activeIndex.value * width.value);
     });
 
   return (
     <GestureDetector gesture={panGestureHandler}>
-      <Animated.View ref={ref} style={[translateXstyle]}>
+      <Animated.View
+        style={[
+          {
+            flexDirection: "row",
+            alignItems: "stretch",
+
+            width: "100%",
+          },
+          translateXstyle,
+        ]}
+        onLayout={(e) => {
+          const containerWidth = e.nativeEvent.layout.width;
+          width.value = containerWidth;
+          translateX.value = -activeIndex.value * containerWidth;
+        }}
+      >
         <Animated.View
           style={[
             {
-              position: "absolute",
-              top: 0,
-              left: "-100%",
-
               width: "100%",
-              height: "100%",
-            },
-            overflowStyle,
-          ]}
-        >
-          <View
-            style={{
+              flexGrow: 0,
+              flexShrink: 0,
+              flexBasis: "auto",
+
               padding: theme.spacing(3),
 
               flexDirection: "row",
@@ -88,100 +112,105 @@ export default function Example() {
               gap: theme.spacing(3),
 
               backgroundColor: theme.palette.success.main,
-              borderWidth: 1,
-              borderColor: "transparent",
-            }}
+            },
+          ]}
+        >
+          <Text
+            style={[
+              theme.typography.body1,
+              { color: theme.palette.success.contrastText },
+            ]}
           >
-            <Text
-              style={[
-                theme.typography.body1,
-                { color: theme.palette.success.contrastText },
-              ]}
-            >
-              Left
-            </Text>
-            <MaterialCommunityIcons
-              name="archive-outline"
-              size={28}
-              color={theme.palette.success.contrastText}
-            />
-          </View>
+            Left
+          </Text>
+          <MaterialCommunityIcons
+            name="archive-outline"
+            size={28}
+            color={theme.palette.success.contrastText}
+          />
         </Animated.View>
         <View
           style={[
             {
               width: "100%",
-              height: "100%",
-            },
-          ]}
-        >
-          <View
-            style={{
+              flexGrow: 0,
+              flexShrink: 0,
+              flexBasis: "auto",
+
               padding: theme.spacing(3),
               flexDirection: "row",
               justifyContent: "center",
               alignItems: "center",
 
               backgroundColor: theme.palette.info.main,
-              borderWidth: 1,
-              borderColor: "transparent",
-            }}
+            },
+          ]}
+        >
+          <Text
+            style={[
+              theme.typography.body1,
+              { color: theme.palette.info.contrastText },
+            ]}
           >
-            <Text
-              style={[
-                theme.typography.body1,
-                { color: theme.palette.info.contrastText },
-              ]}
-            >
-              Center
-            </Text>
-          </View>
+            Center
+          </Text>
         </View>
         <Animated.View
           style={[
             {
-              position: "absolute",
-              top: 0,
-              left: "100%",
-
               width: "100%",
-              height: "100%",
+              flexGrow: 0,
+              flexShrink: 0,
+              flexBasis: "auto",
 
-              overflow: "hidden",
-            },
-            overflowStyle,
-          ]}
-        >
-          <View
-            style={{
               padding: theme.spacing(3),
 
               flexDirection: "row",
               justifyContent: "flex-start",
               alignItems: "center",
               gap: theme.spacing(3),
-
-              backgroundColor: theme.palette.error.main,
-              borderWidth: 1,
-              borderColor: "transparent",
-            }}
+            },
+            bgColorStyle,
+          ]}
+        >
+          <MaterialCommunityIcons
+            name="delete-outline"
+            size={28}
+            color={theme.palette.error.contrastText}
+          />
+          <Text
+            style={[
+              theme.typography.body1,
+              { color: theme.palette.error.contrastText },
+            ]}
           >
-            <MaterialCommunityIcons
-              name="delete-outline"
-              size={28}
-              color={theme.palette.error.contrastText}
-            />
-            <Text
-              style={[
-                theme.typography.body1,
-                { color: theme.palette.error.contrastText },
-              ]}
-            >
-              Right
-            </Text>
-          </View>
+            Right
+          </Text>
         </Animated.View>
       </Animated.View>
     </GestureDetector>
+  );
+};
+
+export default function Example() {
+  const [open, setOpen] = React.useState(true);
+  const theme = useTheme();
+
+  return (
+    <View style={{ flex: 1 }}>
+      <View style={[]}>
+        <Collapse open={open}>
+          <Swiper />
+        </Collapse>
+      </View>
+      <View style={{ marginTop: theme.spacing(3) }}>
+        <Button
+          onPress={() => {
+            setOpen((prev) => !prev);
+          }}
+          title="Show/Hidden"
+        />
+      </View>
+    </View>
   );
 }

@@ -4,7 +4,6 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { Link, useRouter } from "expo-router";
 import React from "react";
 import {
-  FlatList,
   Pressable,
   RefreshControl,
   Text,
@@ -13,7 +12,10 @@ import {
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { android_ripple } from "@/lib/utils";
-import Animated, { useAnimatedStyle } from "react-native-reanimated";
+import Animated, {
+  useAnimatedStyle,
+  LinearTransition,
+} from "react-native-reanimated";
 import ReanimatedSwipeable from "react-native-gesture-handler/ReanimatedSwipeable";
 import type { SharedValue } from "react-native-reanimated";
 import type { SwipeableMethods } from "react-native-gesture-handler/ReanimatedSwipeable";
@@ -95,7 +97,7 @@ export default function Home() {
   const data = chats.data.pages.flatMap((i) => i);
 
   return (
-    <FlatList
+    <Animated.FlatList
       refreshControl={
         <RefreshControl
           refreshing={chats.isRefetching}
@@ -105,6 +107,7 @@ export default function Home() {
       }
       data={data}
       keyExtractor={(i) => i.id.toString()}
+      itemLayoutAnimation={LinearTransition}
       renderItem={(i) => (
         <SwipeToDelete
           onDelete={() => {
