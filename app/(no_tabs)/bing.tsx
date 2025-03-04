@@ -8,7 +8,6 @@ import {
   RefreshControl,
   ScrollView,
   Share,
-  Text,
   View,
 } from "react-native";
 import { fetchCnBingImage } from "@/api/bing_com";
@@ -16,17 +15,14 @@ import { useLocaleDate } from "@/hooks/useLocaleDate";
 import { useLocaleTime } from "@/hooks/useLocaleTime";
 import { useTheme } from "@/hooks/useTheme";
 import { OffLine } from "@/components/OffLine";
+import { Text } from "@/components/Text";
 
 const OfflineScreen = () => {
   const theme = useTheme();
 
   return (
     <View>
-      <Text
-        style={[theme.typography.body1, { color: theme.palette.text.primary }]}
-      >
-        Not connected to the internet
-      </Text>
+      <Text variant="body1">Not connected to the internet</Text>
     </View>
   );
 };
