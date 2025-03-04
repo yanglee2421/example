@@ -16,6 +16,8 @@ import { useLocaleTime } from "@/hooks/useLocaleTime";
 import { useTheme } from "@/hooks/useTheme";
 import { OffLine } from "@/components/OffLine";
 import { Text } from "@/components/Text";
+import Animated from "react-native-reanimated";
+import { Loading } from "@/components/Loading";
 
 const OfflineScreen = () => {
   const theme = useTheme();
@@ -34,138 +36,148 @@ export default function Bing() {
   const time = useLocaleTime();
 
   const renderBingImage = () => {
-    if (!bingImgs.isSuccess) return null;
+    if (bingImgs.isPending) return <Loading />;
 
-    return bingImgs.data.data.images.map((i) => (
-      <Pressable
-        key={i.urlbase}
-        onPress={async () => {
-          try {
-            await openBrowserAsync(i.copyrightlink, {
-              toolbarColor: theme.palette.background.default,
-              enableBarCollapsing: true,
-              enableDefaultShareMenuItem: true,
+    if (bingImgs.isError) return <></>;
 
-              createTask: false,
-            });
-          } catch {
-            Linking.openURL(i.copyrightlink);
-          }
-        }}
-        onLongPress={async () =>
-          Share.share({ message: `https://cn.bing.com${i.url}` })
-        }
-        android_ripple={{
-          borderless: false,
-          foreground: true,
-          color: `rgba(255,255,255,${theme.palette.action.focusOpacity})`,
-        }}
-        style={[theme.shape, { overflow: "hidden" }]}
-      >
-        <ImageBackground
-          source={{ uri: `https://cn.bing.com${i.url}` }}
-          style={[
-            {
-              paddingInline: theme.spacing(4),
-              paddingBlock: theme.spacing(3),
+    return (
+      <Animated.FlatList
+        data={bingImgs.data.data.images}
+        keyExtractor={(i) => i.urlbase}
+        renderItem={({ item: i }) => (
+          <Pressable
+            key={i.urlbase}
+            onPress={async () => {
+              try {
+                await openBrowserAsync(i.copyrightlink, {
+                  toolbarColor: theme.palette.background.default,
+                  enableBarCollapsing: true,
+                  enableDefaultShareMenuItem: true,
 
-              aspectRatio: 16 / 9,
-            },
-          ]}
-        >
-          <View
-            style={{
-              position: "absolute",
-              inset: 0,
-
-              alignItems: "center",
-              justifyContent: "center",
-
-              backgroundColor: `rgba(0,0,0,${theme.palette.action.disabledOpacity})`,
+                  createTask: false,
+                });
+              } catch {
+                Linking.openURL(i.copyrightlink);
+              }
             }}
+            onLongPress={async () =>
+              Share.share({ message: `https://cn.bing.com${i.url}` })
+            }
+            android_ripple={{
+              borderless: false,
+              foreground: true,
+              color: `rgba(255,255,255,${theme.palette.action.focusOpacity})`,
+            }}
+            style={[theme.shape, { overflow: "hidden" }]}
+          >
+            <ImageBackground
+              source={{ uri: `https://cn.bing.com${i.url}` }}
+              style={[
+                {
+                  paddingInline: theme.spacing(4),
+                  paddingBlock: theme.spacing(3),
+
+                  aspectRatio: 16 / 9,
+                },
+              ]}
+            >
+              <View
+                style={{
+                  position: "absolute",
+                  inset: 0,
+
+                  alignItems: "center",
+                  justifyContent: "center",
+
+                  backgroundColor: `rgba(0,0,0,${theme.palette.action.disabledOpacity})`,
+                }}
+              >
+                <Text
+                  style={[
+                    theme.typography.h6,
+                    {
+                      color: theme.palette.common.white,
+                      textAlign: "center",
+                    },
+                  ]}
+                >
+                  {i.title}
+                </Text>
+                <Text
+                  style={[
+                    theme.typography.body2,
+                    {
+                      color: theme.palette.common.white,
+                      textAlign: "center",
+                    },
+                  ]}
+                >
+                  {i.copyright}
+                </Text>
+              </View>
+            </ImageBackground>
+          </Pressable>
+        )}
+        ListEmptyComponent={<></>}
+        ListHeaderComponent={
+          <View
+            style={[
+              theme.shape,
+              {
+                borderColor: theme.palette.divider,
+                borderWidth: 1,
+
+                paddingInline: theme.spacing(4),
+                paddingBlock: theme.spacing(3),
+              },
+            ]}
           >
             <Text
               style={[
-                theme.typography.h6,
-                {
-                  color: theme.palette.common.white,
-                  textAlign: "center",
-                },
+                theme.typography.h5,
+                { color: theme.palette.text.primary },
               ]}
             >
-              {i.title}
+              Bing
             </Text>
             <Text
               style={[
-                theme.typography.body2,
+                theme.typography.subtitle1,
                 {
-                  color: theme.palette.common.white,
-                  textAlign: "center",
+                  color: theme.palette.text.primary,
                 },
               ]}
             >
-              {i.copyright}
+              {time}
+            </Text>
+            <Text
+              style={[
+                theme.typography.subtitle2,
+                {
+                  color: theme.palette.text.secondary,
+                },
+              ]}
+            >
+              {date}
             </Text>
           </View>
-        </ImageBackground>
-      </Pressable>
-    ));
+        }
+        ListFooterComponent={<></>}
+        refreshControl={
+          <RefreshControl
+            refreshing={bingImgs.isRefetching}
+            onRefresh={() => bingImgs.refetch()}
+            colors={[theme.palette.primary.main]}
+          />
+        }
+        contentContainerStyle={{
+          gap: theme.spacing(4),
+          padding: theme.spacing(3),
+        }}
+        style={{ flex: 1 }}
+      />
+    );
   };
 
-  return (
-    <ScrollView
-      refreshControl={
-        <RefreshControl
-          refreshing={bingImgs.isRefetching}
-          onRefresh={() => bingImgs.refetch()}
-          colors={[theme.palette.primary.main]}
-        />
-      }
-      contentContainerStyle={{
-        gap: theme.spacing(4),
-        padding: theme.spacing(3),
-      }}
-      style={{ flex: 1 }}
-    >
-      <View
-        style={[
-          theme.shape,
-          {
-            borderColor: theme.palette.divider,
-            borderWidth: 1,
-
-            paddingInline: theme.spacing(4),
-            paddingBlock: theme.spacing(3),
-          },
-        ]}
-      >
-        <Text
-          style={[theme.typography.h5, { color: theme.palette.text.primary }]}
-        >
-          Bing
-        </Text>
-        <Text
-          style={[
-            theme.typography.subtitle1,
-            {
-              color: theme.palette.text.primary,
-            },
-          ]}
-        >
-          {time}
-        </Text>
-        <Text
-          style={[
-            theme.typography.subtitle2,
-            {
-              color: theme.palette.text.secondary,
-            },
-          ]}
-        >
-          {date}
-        </Text>
-      </View>
-      <OffLine fallback={<OfflineScreen />}>{renderBingImage()}</OffLine>
-    </ScrollView>
-  );
+  return <OffLine fallback={<OfflineScreen />}>{renderBingImage()}</OffLine>;
 }
