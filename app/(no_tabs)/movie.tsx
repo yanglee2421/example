@@ -8,7 +8,7 @@ import {
   Text,
   View,
 } from "react-native";
-import { fetchJijiangshangying } from "@/api/fetchJijiangshangying";
+import { fetchJijiangshangying } from "@/api/qqlykm_cn";
 import { Loading } from "@/components/Loading";
 import { NeedAPIKEY } from "@/components/NeedAPIKEY";
 import { useStorageStore } from "@/hooks/useStorageStore";

@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import { useQuery } from "@tanstack/react-query";
 import { openBrowserAsync } from "expo-web-browser";
-import { fetchHistoryGet } from "@/api/fetchHistoryGet";
+import { fetchHistoryGet } from "@/api/qqlykm_cn";
 import { useLocaleDate } from "@/hooks/useLocaleDate";
 import { useLocaleTime } from "@/hooks/useLocaleTime";
 import { Loading } from "@/components/Loading";

@@ -54,15 +54,27 @@ const Swiper = () => {
     })
     .onStart((e) => {
       translateX.value = startX.value + e.translationX;
-      alpha.value = minmax(Math.abs(e.translationX) / 150 - 0.3, 0, 1);
+      alpha.value = minmax(
+        Math.abs(translateX.value - width.value) / 150 - 0.3,
+        0,
+        1
+      );
     })
     .onUpdate((e) => {
       translateX.value = startX.value + e.translationX;
-      alpha.value = minmax(Math.abs(e.translationX) / 150 - 0.3, 0, 1);
+      alpha.value = minmax(
+        Math.abs(translateX.value + width.value) / 150 - 0.3,
+        0,
+        1
+      );
     })
     .onEnd((e) => {
       translateX.value = startX.value + e.translationX;
-      alpha.value = minmax(Math.abs(e.translationX) / 150 - 0.3, 0, 1);
+      alpha.value = minmax(
+        Math.abs(translateX.value + width.value) / 150 - 0.3,
+        0,
+        1
+      );
     })
     .onFinalize((e) => {
       // To Right

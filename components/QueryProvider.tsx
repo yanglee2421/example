@@ -7,7 +7,7 @@ import {
   QueryClient,
   QueryClientProvider,
 } from "@tanstack/react-query";
-import { qqlykm } from "@/api/qqlykm";
+import { qqlykm } from "@/api/qqlykm_cn";
 import { useStorageStore } from "@/hooks/useStorageStore";
 
 const queryClient = new QueryClient({

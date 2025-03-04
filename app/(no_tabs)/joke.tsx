@@ -9,7 +9,7 @@ import {
   Text,
   View,
 } from "react-native";
-import { fetchJoke } from "@/api/fetchJoke";
+import { fetchJoke } from "@/api/qqlykm_cn";
 import { Loading } from "@/components/Loading";
 import { NeedAPIKEY } from "@/components/NeedAPIKEY";
 import { useStorageStore } from "@/hooks/useStorageStore";

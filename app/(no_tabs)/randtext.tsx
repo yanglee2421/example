@@ -9,7 +9,7 @@ import {
   View,
 } from "react-native";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
-import { fetchRandtext } from "@/api/fetchRandtext";
+import { fetchRandtext } from "@/api/qqlykm_cn";
 import { Loading } from "@/components/Loading";
 import { NeedAPIKEY } from "@/components/NeedAPIKEY";
 import { useStorageStore } from "@/hooks/useStorageStore";

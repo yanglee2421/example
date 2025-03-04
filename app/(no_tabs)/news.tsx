@@ -1,4 +1,4 @@
-import { fetchNews } from "@/api/fetchNews";
+import { fetchNews } from "@/api/qqlykm_cn";
 import { Loading } from "@/components/Loading";
 import { NeedAPIKEY } from "@/components/NeedAPIKEY";
 import { useStorageStore } from "@/hooks/useStorageStore";
