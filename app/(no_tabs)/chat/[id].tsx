@@ -82,10 +82,17 @@ const ChatUI = (props: ChatUIProps) => {
   const [answer, setAnswer] = React.useState("");
 
   const scrollRef = React.useRef<FlatList>(null);
-  const timerRef = React.useRef<NodeJS.Timeout | number>(0);
+  const timerRef = React.useRef<number>(0);
 
   const theme = useTheme();
   const createMessage = useCreateMessage();
+
+  const scrollToBottom = () => {
+    cancelAnimationFrame(timerRef.current);
+    timerRef.current = requestAnimationFrame(() => {
+      scrollRef.current?.scrollToEnd({ animated: true });
+    });
+  };
 
   const handleSubmit = async () => {
     Keyboard.dismiss();
@@ -129,33 +136,28 @@ const ChatUI = (props: ChatUIProps) => {
     );
 
     const reader = res.body?.getReader();
-    if (!reader) return;
+    if (!reader) throw new Error("No reader");
 
     const decoder = new TextDecoder();
     let buf = "";
 
     while (true) {
       const readable = await reader.read();
-      const decocded = decoder.decode(readable.value, {
-        stream: true,
-      });
-      console.log("decocded", decocded);
-      buf += decocded;
+      if (readable.done) break;
 
+      buf += decoder.decode(readable.value, { stream: true });
       setAnswer(getMessage(buf));
-
-      if (readable.done) {
-        setAnswer("");
-        const content = getMessage(buf);
-        await createMessage.mutateAsync({
-          chatId: props.chatId,
-          role: "assistant",
-          content,
-        });
-
-        break;
-      }
+      scrollToBottom();
     }
+
+    setAnswer("");
+    buf += decoder.decode();
+    const content = getMessage(buf);
+    await createMessage.mutateAsync({
+      chatId: props.chatId,
+      role: "assistant",
+      content,
+    });
   };
 
   return (
@@ -177,12 +179,6 @@ const ChatUI = (props: ChatUIProps) => {
           />
         }
         ref={scrollRef}
-        onContentSizeChange={() => {
-          clearTimeout(timerRef.current);
-          timerRef.current = setTimeout(() => {
-            scrollRef.current?.scrollToEnd({ animated: true });
-          }, 16);
-        }}
         style={{
           flexGrow: 1,
           flexShrink: 1,
@@ -248,6 +244,7 @@ const ChatUI = (props: ChatUIProps) => {
           <TextInput
             value={question}
             onChangeText={setQuestion}
+            onFocus={scrollToBottom}
             multiline
             placeholder="Search"
             placeholderTextColor={theme.palette.text.secondary}
