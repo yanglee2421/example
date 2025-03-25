@@ -10,6 +10,7 @@ import { useTheme } from "@/hooks/useTheme";
 
 export default function Qrcode() {
   const [data, setData] = React.useState("");
+  const [codeType, setCodeType] = React.useState("");
   const [facing, setFacing] = React.useState<CameraType>("back");
   const [permission, requestPermission] = useCameraPermissions();
   const theme = useTheme();
@@ -136,11 +137,21 @@ export default function Qrcode() {
             style={[
               theme.typography.body1,
               {
-                color: theme.palette.text.secondary,
+                color: theme.palette.text.primary,
               },
             ]}
           >
             {data}
+          </Text>
+          <Text
+            style={[
+              theme.typography.body2,
+              {
+                color: theme.palette.text.secondary,
+              },
+            ]}
+          >
+            {codeType}
           </Text>
         </Pressable>
       </View>
@@ -154,8 +165,27 @@ export default function Qrcode() {
   return (
     <CameraView
       facing={facing}
-      barcodeScannerSettings={{ barcodeTypes: ["qr", "ean13", "upc_a"] }}
-      onBarcodeScanned={(res) => setData(res.data)}
+      barcodeScannerSettings={{
+        barcodeTypes: [
+          "aztec",
+          "ean13",
+          "ean8",
+          "qr",
+          "pdf417",
+          "upc_e",
+          "datamatrix",
+          "code39",
+          "code93",
+          "itf14",
+          "codabar",
+          "code128",
+          "upc_a",
+        ],
+      }}
+      onBarcodeScanned={(res) => {
+        setData(res.data);
+        setCodeType(res.type);
+      }}
       style={{ flex: 1, justifyContent: "flex-end", alignItems: "center" }}
     >
       <Pressable
