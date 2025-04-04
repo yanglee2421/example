@@ -9,6 +9,25 @@ import Animated, {
 } from "react-native-reanimated";
 import { GestureDetector, Gesture } from "react-native-gesture-handler";
 import { minmax } from "@/lib/worklet";
+import * as Crypto from "expo-crypto";
+import { queryOptions, useQuery } from "@tanstack/react-query";
+
+const data = "522A49SMP00037EP000G";
+
+const fetchHash = () =>
+  queryOptions({
+    queryKey: ["hash"],
+    queryFn: async () => {
+      const hash = await Crypto.digestStringAsync(
+        Crypto.CryptoDigestAlgorithm.MD5,
+        data,
+        {
+          encoding: Crypto.CryptoEncoding.HEX,
+        }
+      );
+      return hash;
+    },
+  });
 
 type CollapseProps = React.PropsWithChildren<{
   open: boolean;
@@ -47,6 +66,7 @@ const Swiper = () => {
   const opacityStyle = useAnimatedStyle(() => ({
     opacity: alpha.value + 0.3,
   }));
+  const hash = useQuery(fetchHash());
 
   const panGestureHandler = Gesture.Pan()
     .onBegin(() => {
@@ -165,7 +185,7 @@ const Swiper = () => {
               { color: theme.palette.info.contrastText },
             ]}
           >
-            Center
+            {hash.data}
           </Text>
         </View>
         <Animated.View
