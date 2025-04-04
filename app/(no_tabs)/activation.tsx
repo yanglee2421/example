@@ -10,6 +10,17 @@ import { useTheme } from "@/hooks/useTheme";
 import Crypto from "react-native-quick-crypto";
 import { PUBLIC_KEY } from "@/lib/constants";
 import QRCode from "react-native-qrcode-svg";
+import {
+  digestStringAsync,
+  CryptoDigestAlgorithm,
+  CryptoEncoding,
+} from "expo-crypto";
+
+digestStringAsync(CryptoDigestAlgorithm.MD5, "test", {
+  encoding: CryptoEncoding.HEX,
+}).then((hash) => {
+  console.log(hash); // Prints the hash of the string "test"
+});
 
 const useCopy = () => {
   return useMutation({
