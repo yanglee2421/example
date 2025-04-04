@@ -35,6 +35,12 @@ export default function Qrcode() {
   const theme = useTheme();
   const [permission, requestPermission] = useCameraPermissions();
 
+  // Cache the encrypted data to avoid re-encrypting it on every render.
+  const encryptedData = React.useMemo(() => {
+    if (!data) return "";
+    return Crypto.publicEncrypt(PUBLIC_KEY, data).toString("base64");
+  }, [data]);
+
   if (!permission) {
     // Camera permissions are still loading.
     return <Loading />;
@@ -106,11 +112,7 @@ export default function Qrcode() {
     );
   }
 
-  if (data) {
-    const encryptedData = Crypto.publicEncrypt(PUBLIC_KEY, data).toString(
-      "base64"
-    );
-
+  if (encryptedData) {
     return (
       <View
         style={[
@@ -130,7 +132,9 @@ export default function Qrcode() {
         >
           QR Code
         </Text>
-        <QRCode value={encryptedData} size={200} />
+        <View style={{ padding: theme.spacing(3), backgroundColor: "white" }}>
+          <QRCode value={encryptedData} size={200} />
+        </View>
         <Pressable
           onPress={() =>
             copy.mutate(encryptedData, {
