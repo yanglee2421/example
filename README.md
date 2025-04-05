@@ -4,7 +4,7 @@
 
 [Android Studio Command Line Tools](https://developer.android.google.cn/studio?hl=zh-cn)
 
-```powershell
+```bash
 # Install chocolatey
 Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
 
@@ -26,7 +26,9 @@ avdmanager create avd -n emulatorName -k "system-images;android-34;google_apis;x
 
 [Expo Documation](https://docs.expo.dev/guides/local-app-production/)
 
-```powershell
+```bash
+# Generate database migrate sql files
+drizzle-kit generate
 # Generate native dir by Expo prebuild
 expo prebuild
 cd ./android
@@ -41,7 +43,7 @@ expo run:android --variant release
 
 ## Sign
 
-```powershell
+```bash
 # Prepare keystore
 keytool -genkey -v -keystore my-upload-key.keystore -alias my-key-alias -keyalg RSA -keysize 2048 -validity 10000
 ```

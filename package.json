@@ -63,6 +63,7 @@
     "babel-plugin-inline-import": "^3.0.0",
     "drizzle-kit": "^0.30.4",
     "eas-cli": "^15.0.6",
+    "prettier": "^3.5.3",
     "typescript": "^5.3.3"
   },
   "private": true,
