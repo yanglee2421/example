@@ -1,26 +1,19 @@
 import React from "react";
 import { setStringAsync } from "expo-clipboard";
 import { type CameraType, CameraView, useCameraPermissions } from "expo-camera";
-import { useMutation } from "@tanstack/react-query";
+import { queryOptions, useMutation, useQuery } from "@tanstack/react-query";
 import { Loading } from "@/components/Loading";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Pressable, Text, ToastAndroid, View } from "react-native";
 import { android_ripple } from "@/lib/utils";
 import { useTheme } from "@/hooks/useTheme";
-import Crypto from "react-native-quick-crypto";
-import { PUBLIC_KEY } from "@/lib/constants";
+import { DATE_FORMAT_DATABASE } from "@/lib/constants";
 import QRCode from "react-native-qrcode-svg";
 import {
   digestStringAsync,
   CryptoDigestAlgorithm,
   CryptoEncoding,
 } from "expo-crypto";
-
-digestStringAsync(CryptoDigestAlgorithm.MD5, "test", {
-  encoding: CryptoEncoding.HEX,
-}).then((hash) => {
-  console.log(hash); // Prints the hash of the string "test"
-});
 
 const useCopy = () => {
   return useMutation({
@@ -37,6 +30,22 @@ const useCopy = () => {
   });
 };
 
+const fetchActivation = (code: string) =>
+  queryOptions({
+    queryKey: ["activation", code],
+    queryFn: async () => {
+      const hash = await digestStringAsync(
+        CryptoDigestAlgorithm.MD5,
+        [code, DATE_FORMAT_DATABASE].join(""),
+        {
+          encoding: CryptoEncoding.HEX,
+        }
+      );
+
+      return hash;
+    },
+  });
+
 export default function Qrcode() {
   const [data, setData] = React.useState("");
   const [facing, setFacing] = React.useState<CameraType>("back");
@@ -45,12 +54,88 @@ export default function Qrcode() {
   const copy = useCopy();
   const theme = useTheme();
   const [permission, requestPermission] = useCameraPermissions();
+  const hash = useQuery({
+    ...fetchActivation(data),
+    enabled: !!data,
+  });
 
-  // Cache the encrypted data to avoid re-encrypting it on every render.
-  const encryptedData = React.useMemo(() => {
-    if (!data) return "";
-    return Crypto.publicEncrypt(PUBLIC_KEY, data).toString("base64");
-  }, [data]);
+  const renderQRCode = () => {
+    if (hash.isPending) {
+      return <Loading />;
+    }
+
+    if (hash.isError) {
+      return (
+        <Text
+          style={[theme.typography.body1, { color: theme.palette.error.main }]}
+        >
+          {hash.error.message}
+        </Text>
+      );
+    }
+
+    const encryptedData = hash.data;
+
+    return (
+      <View
+        style={[
+          theme.shape,
+          {
+            margin: theme.spacing(3),
+            paddingInline: theme.spacing(5),
+            paddingBlock: theme.spacing(3),
+
+            borderColor: theme.palette.divider,
+            borderWidth: 1,
+          },
+        ]}
+      >
+        <Text
+          style={[theme.typography.h5, { color: theme.palette.text.primary }]}
+        >
+          QR Code
+        </Text>
+        <View style={{ padding: theme.spacing(3), backgroundColor: "white" }}>
+          <QRCode value={encryptedData} size={200} />
+        </View>
+        <Pressable
+          onPress={() =>
+            copy.mutate(encryptedData, {
+              onError(error) {
+                ToastAndroid.show(error.message, 1000 * 2);
+              },
+              onSuccess() {
+                ToastAndroid.show("Copied!", 1000 * 2);
+              },
+            })
+          }
+          disabled={copy.isPending}
+          android_ripple={android_ripple(theme.palette.action.focus)}
+        >
+          <Text
+            style={[
+              theme.typography.body1,
+              {
+                color: theme.palette.text.primary,
+              },
+            ]}
+          >
+            {encryptedData}
+          </Text>
+          <Text
+            style={[
+              theme.typography.body2,
+              {
+                color: theme.palette.text.secondary,
+              },
+            ]}
+          >
+            {codeType}
+          </Text>
+        </Pressable>
+      </View>
+    );
+  };
 
   if (!permission) {
     // Camera permissions are still loading.
@@ -123,66 +208,8 @@ export default function Qrcode() {
     );
   }
 
-  if (encryptedData) {
-    return (
-      <View
-        style={[
-          theme.shape,
-          {
-            margin: theme.spacing(3),
-            paddingInline: theme.spacing(5),
-            paddingBlock: theme.spacing(3),
-
-            borderColor: theme.palette.divider,
-            borderWidth: 1,
-          },
-        ]}
-      >
-        <Text
-          style={[theme.typography.h5, { color: theme.palette.text.primary }]}
-        >
-          QR Code
-        </Text>
-        <View style={{ padding: theme.spacing(3), backgroundColor: "white" }}>
-          <QRCode value={encryptedData} size={200} />
-        </View>
-        <Pressable
-          onPress={() =>
-            copy.mutate(encryptedData, {
-              onError(error) {
-                ToastAndroid.show(error.message, 1000 * 2);
-              },
-              onSuccess() {
-                ToastAndroid.show("Copied!", 1000 * 2);
-              },
-            })
-          }
-          disabled={copy.isPending}
-          android_ripple={android_ripple(theme.palette.action.focus)}
-        >
-          <Text
-            style={[
-              theme.typography.body1,
-              {
-                color: theme.palette.text.primary,
-              },
-            ]}
-          >
-            {encryptedData}
-          </Text>
-          <Text
-            style={[
-              theme.typography.body2,
-              {
-                color: theme.palette.text.secondary,
-              },
-            ]}
-          >
-            {codeType}
-          </Text>
-        </Pressable>
-      </View>
-    );
+  if (data) {
+    return renderQRCode();
   }
 
   const toggleCameraFacing = () => {
