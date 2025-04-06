@@ -39,7 +39,7 @@ const fetchActivation = (code: string) =>
         [code, DATE_FORMAT_DATABASE].join(""),
         {
           encoding: CryptoEncoding.HEX,
-        }
+        },
       );
 
       return hash;
@@ -74,7 +74,7 @@ export default function Qrcode() {
       );
     }
 
-    const encryptedData = hash.data;
+    const encryptedData = hash.data.toUpperCase();
 
     return (
       <View
