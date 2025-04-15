@@ -73,11 +73,9 @@ export const organizationTable = sqliteTable("organizationTable", {
 
 export const organizationTableRelation = relations(
   organizationTable,
-  (props) => {
-    return {
-      users: props.many(userTable),
-    };
-  }
+  (props) => ({
+    users: props.many(userTable),
+  }),
 );
 
 export const userToOrganizationTable = sqliteTable(
@@ -86,44 +84,54 @@ export const userToOrganizationTable = sqliteTable(
     userId: integer("userId").notNull(),
     organizationId: integer("organizationId").notNull(),
   },
-  (table) => [primaryKey({ columns: [table.userId, table.organizationId] })]
+  (table) => [primaryKey({ columns: [table.userId, table.organizationId] })],
 );
 
 export const userToOrganizationTableRelation = relations(
   userToOrganizationTable,
-  (props) => {
-    return {
-      user: props.one(userTable, {
-        fields: [userToOrganizationTable.userId],
-        references: [userTable.id],
-      }),
-      organization: props.one(organizationTable, {
-        fields: [userToOrganizationTable.organizationId],
-        references: [organizationTable.id],
-      }),
-    };
-  }
+  (props) => ({
+    user: props.one(userTable, {
+      fields: [userToOrganizationTable.userId],
+      references: [userTable.id],
+    }),
+    organization: props.one(organizationTable, {
+      fields: [userToOrganizationTable.organizationId],
+      references: [organizationTable.id],
+    }),
+  }),
 );
 
-export const chatTable = sqliteTable("chatTable", {
+export const completionTable = sqliteTable("chatTable", {
   id: integer("id").primaryKey(),
-  name: text("name").default(""),
+  name: text("name"),
 });
 
-export const chatTableRelation = relations(chatTable, (props) => ({
+export const completionRelation = relations(completionTable, (props) => ({
   messages: props.many(messageTable),
 }));
 
+export type MessageInAPI = {
+  role: "user" | "assistant" | "system";
+  content: string;
+};
+
 export const messageTable = sqliteTable("messageTable", {
   id: integer("id").primaryKey(),
-  chatId: integer("chatId").notNull(),
-  role: text("name").default(""),
-  content: text("content").default(""),
+  completionId: integer("completionId").notNull(),
+  question: text("question"),
+  questionDate: integer("questionDate", { mode: "timestamp" }),
+  messages: text("messages", { mode: "json" }).$type<MessageInAPI[]>(),
+  answer: text("answer"),
+  answerDate: integer("answerDate", { mode: "timestamp" }),
+  status: text("status"),
+  thumb: text("thumb"),
 });
 
+export type Message = typeof messageTable.$inferSelect;
+
 export const messageTableRelation = relations(messageTable, (props) => ({
-  chat: props.one(chatTable, {
-    fields: [messageTable.chatId],
-    references: [chatTable.id],
+  completion: props.one(completionTable, {
+    fields: [messageTable.completionId],
+    references: [completionTable.id],
   }),
 }));

@@ -6,7 +6,6 @@ import React from "react";
 import {
   Keyboard,
   Pressable,
-  RefreshControl,
   FlatList,
   StyleSheet,
   Text,
@@ -15,9 +14,11 @@ import {
 } from "react-native";
 import Markdown from "react-native-markdown-display";
 import { useLocalSearchParams } from "expo-router";
-import { useQuery } from "@tanstack/react-query";
-import { Loading } from "@/components/Loading";
-import { fetchChat, useCreateMessage } from "@/lib/chat";
+import { db } from "@/db/db";
+import * as schemas from "@/db/schema";
+import { eq } from "drizzle-orm";
+import { useLiveQuery } from "drizzle-orm/expo-sqlite";
+import type { Message, MessageInAPI } from "@/db/schema";
 
 const getContent = (data: string) => {
   try {
@@ -64,28 +65,30 @@ const MessageUI = (props: MessageUIProps) => {
   );
 };
 
-type Message = {
-  id: number;
-  role: string | null;
-  content: string | null;
-};
-
-type ChatUIProps = {
-  messages: Message[];
-  chatId: number;
-  refreshing: boolean;
-  onRefresh(): void;
-};
-
-const ChatUI = (props: ChatUIProps) => {
+const ChatUI = () => {
   const [question, setQuestion] = React.useState("");
-  const [answer, setAnswer] = React.useState("");
+  const [sendButtonStatus, setSendButtonStatus] = React.useState<
+    "idle" | "loading" | "streaming"
+  >("idle");
 
   const scrollRef = React.useRef<FlatList>(null);
-  const timerRef = React.useRef<number>(0);
+  const timerRef = React.useRef(0);
+  const controllerRef = React.useRef<AbortController | null>(null);
 
   const theme = useTheme();
-  const createMessage = useCreateMessage();
+  const local = useLocalSearchParams<{ id: string }>();
+
+  const completionId = +local.id;
+
+  const completion = useLiveQuery(
+    db.query.completionTable.findFirst({
+      where: eq(schemas.completionTable.id, completionId),
+      with: {
+        messages: true,
+      },
+    }),
+    [completionId],
+  );
 
   const scrollToBottom = () => {
     cancelAnimationFrame(timerRef.current);
@@ -94,24 +97,8 @@ const ChatUI = (props: ChatUIProps) => {
     });
   };
 
-  const handleSubmit = async () => {
-    Keyboard.dismiss();
-    setQuestion("");
-
-    await createMessage.mutateAsync({
-      chatId: props.chatId,
-      role: "user",
-      content: question,
-    });
-
-    const messages = [
-      ...props.messages,
-      {
-        role: "user",
-        content: question,
-      },
-    ];
-
+  const runFetch = async (id: number, messages: MessageInAPI[]) => {
+    controllerRef.current = new AbortController();
     const res = await fetch(
       "https://spark-api-open.xf-yun.com/v1/chat/completions",
       {
@@ -132,7 +119,8 @@ const ChatUI = (props: ChatUIProps) => {
         headers: {
           Authorization: "Bearer rCJALwydCHKaiiBolPGv:gxneLXlgwLjQQcsNnnEW",
         },
-      }
+        signal: controllerRef.current.signal,
+      },
     );
 
     const reader = res.body?.getReader();
@@ -146,18 +134,115 @@ const ChatUI = (props: ChatUIProps) => {
       if (readable.done) break;
 
       buf += decoder.decode(readable.value, { stream: true });
-      setAnswer(getMessage(buf));
-      scrollToBottom();
+      await db
+        .update(schemas.messageTable)
+        .set({
+          answer: getMessage(buf),
+          status: "pending",
+        })
+        .where(eq(schemas.messageTable.id, id));
     }
 
-    setAnswer("");
+    // Clear stream cache in decoder
     buf += decoder.decode();
-    const content = getMessage(buf);
-    await createMessage.mutateAsync({
-      chatId: props.chatId,
-      role: "assistant",
-      content,
+    await db
+      .update(schemas.messageTable)
+      .set({
+        answer: getMessage(buf),
+        status: "success",
+      })
+      .where(eq(schemas.messageTable.id, id));
+  };
+
+  const runChat = async (id: number, messages: MessageInAPI[]) => {
+    setSendButtonStatus("loading");
+    await runFetch(id, messages).catch(async (e) => {
+      await db
+        .update(schemas.messageTable)
+        .set({
+          answer: e.message,
+          status: "error",
+        })
+        .where(eq(schemas.messageTable.id, id));
     });
+    setSendButtonStatus("idle");
+  };
+
+  const runRetry = async (id: number, messages: MessageInAPI[]) => {
+    await db
+      .update(schemas.messageTable)
+      .set({ status: "loading" })
+      .where(eq(schemas.messageTable.id, id));
+    await runChat(id, messages);
+  };
+
+  const handleSubmit = async () => {
+    Keyboard.dismiss();
+    setQuestion("");
+
+    await db.transaction(async (tx) => {
+      if (!completion.data) throw new Error("No completion data");
+
+      const messages = completion.data.messages
+        .flatMap((i) => [
+          { role: "user" as const, content: i.question || "" },
+          { role: "assistant" as const, content: i.answer || "" },
+        ])
+        .concat({ role: "user", content: question });
+
+      const [{ id }] = await tx
+        .insert(schemas.messageTable)
+        .values({
+          question,
+          questionDate: new Date(),
+          status: "loading",
+          completionId: completion.data.id,
+          messages,
+        })
+        .returning({ id: schemas.messageTable.id });
+
+      await runChat(id, messages);
+    });
+  };
+
+  const renderMessages = () => {
+    if (completion.error) {
+      return <Text>{completion.error.message}</Text>;
+    }
+
+    if (!completion.data) {
+      return <Text>No Data</Text>;
+    }
+
+    return (
+      <FlatList<Message>
+        ref={scrollRef}
+        style={{
+          flexGrow: 1,
+          flexShrink: 1,
+          flexBasis: "auto",
+          borderWidth: 1,
+          borderColor: "rgba(0,0,0,0)",
+        }}
+        data={completion.data.messages}
+        keyExtractor={(i) => i.id.toString()}
+        renderItem={(i) => (
+          <View key={i.item.id} style={{ paddingInline: theme.spacing(3) }}>
+            <View>
+              <Text
+                style={[
+                  theme.typography.overline,
+                  { color: theme.palette.text.secondary },
+                ]}
+              >
+                {i.item.question}:
+              </Text>
+              <MessageUI text={i.item.answer || ""} />
+            </View>
+          </View>
+        )}
+      />
+    );
   };
 
   return (
@@ -170,60 +255,7 @@ const ChatUI = (props: ChatUIProps) => {
         borderColor: "rgba(0,0,0,0)",
       }}
     >
-      <FlatList
-        refreshControl={
-          <RefreshControl
-            refreshing={props.refreshing}
-            onRefresh={props.onRefresh}
-            colors={[theme.palette.primary.main]}
-          />
-        }
-        ref={scrollRef}
-        style={{
-          flexGrow: 1,
-          flexShrink: 1,
-          flexBasis: "auto",
-          borderWidth: 1,
-          borderColor: "rgba(0,0,0,0)",
-        }}
-        data={props.messages}
-        keyExtractor={(i) => i.id.toString()}
-        renderItem={(i) => (
-          <View key={i.item.id} style={{ paddingInline: theme.spacing(3) }}>
-            <View>
-              <Text
-                style={[
-                  theme.typography.overline,
-                  { color: theme.palette.text.secondary },
-                ]}
-              >
-                {i.item.role}:
-              </Text>
-              <MessageUI text={i.item.content} />
-            </View>
-          </View>
-        )}
-        ListFooterComponent={
-          <>
-            {!!answer && (
-              <View style={{ paddingInline: theme.spacing(3) }}>
-                <View>
-                  <Text
-                    style={[
-                      theme.typography.overline,
-                      { color: theme.palette.text.secondary },
-                    ]}
-                  >
-                    Assistant:
-                  </Text>
-                  <MessageUI text={answer} />
-                </View>
-              </View>
-            )}
-          </>
-        }
-      />
-
+      {renderMessages()}
       <View
         style={[
           {
@@ -260,6 +292,7 @@ const ChatUI = (props: ChatUIProps) => {
           <View style={styles.chatFormBarSpace}></View>
           <Pressable
             onPress={handleSubmit}
+            disabled={sendButtonStatus !== "idle"}
             android_ripple={android_ripple(theme.palette.action.focus)}
             style={[
               styles.chatSubmit,
@@ -282,26 +315,7 @@ const ChatUI = (props: ChatUIProps) => {
 };
 
 export default function Page() {
-  const local = useLocalSearchParams<{ id: string }>();
-  const chatId = +local.id;
-  const fetcher = fetchChat(chatId);
-  const chat = useQuery(fetcher);
-  const theme = useTheme();
-
-  if (chat.isPending) return <Loading />;
-
-  if (chat.isError) return null;
-
-  if (!chat.data) return null;
-
-  return (
-    <ChatUI
-      messages={chat.data.messages}
-      chatId={chatId}
-      refreshing={chat.isRefetching}
-      onRefresh={() => chat.refetch()}
-    />
-  );
+  return <ChatUI />;
 }
 
 const styles = StyleSheet.create({

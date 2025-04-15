@@ -1,15 +1,7 @@
-import { Loading } from "@/components/Loading";
 import { useTheme } from "@/hooks/useTheme";
-import { useInfiniteQuery } from "@tanstack/react-query";
 import { Link, useRouter } from "expo-router";
 import React from "react";
-import {
-  Pressable,
-  RefreshControl,
-  Text,
-  View,
-  StyleSheet,
-} from "react-native";
+import { Pressable, Text, View, StyleSheet } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { android_ripple } from "@/lib/utils";
 import Animated, {
@@ -19,7 +11,10 @@ import Animated, {
 import ReanimatedSwipeable from "react-native-gesture-handler/ReanimatedSwipeable";
 import type { SharedValue } from "react-native-reanimated";
 import type { SwipeableMethods } from "react-native-gesture-handler/ReanimatedSwipeable";
-import { useDeleteChat, useCreateChat, fetchChats } from "@/lib/chat";
+import { useLiveQuery } from "drizzle-orm/expo-sqlite";
+import { db } from "@/db/db";
+import { count, eq } from "drizzle-orm";
+import * as schemas from "@/db/schema";
 
 const styles = StyleSheet.create({
   leftAction: {
@@ -37,7 +32,7 @@ const styles = StyleSheet.create({
 
 const RenderLeftActions = (
   prog: SharedValue<number>,
-  drag: SharedValue<number>
+  drag: SharedValue<number>,
 ) => {
   const styleAnimation = useAnimatedStyle(() => {
     return {
@@ -83,35 +78,34 @@ const SwipeToDelete = (props: SwipeToDeleteProps) => {
 };
 
 export default function Home() {
+  const [pageIndex, setPageIndex] = React.useState(0);
+  const [pageSize, setPageSize] = React.useState(20);
+
   const theme = useTheme();
-  const fetcher = fetchChats();
-  const chats = useInfiniteQuery(fetcher);
   const router = useRouter();
-  const createChat = useCreateChat();
-  const deleteChat = useDeleteChat();
-
-  if (chats.isPending) return <Loading />;
-
-  if (chats.isError) return <Text>Error</Text>;
-
-  const data = chats.data.pages.flatMap((i) => i);
+  const chats = useLiveQuery(
+    db.select().from(schemas.completionTable).limit(pageSize).offset(pageIndex),
+    [pageIndex, pageSize],
+  );
+  const chatCount = useLiveQuery(
+    db.select({ count: count() }).from(schemas.completionTable),
+    [],
+  );
 
   return (
     <Animated.FlatList
-      refreshControl={
-        <RefreshControl
-          refreshing={chats.isRefetching}
-          onRefresh={() => chats.refetch()}
-          colors={[theme.palette.primary.main]}
-        />
-      }
-      data={data}
+      data={chats.data}
       keyExtractor={(i) => i.id.toString()}
       itemLayoutAnimation={LinearTransition}
       renderItem={(i) => (
         <SwipeToDelete
           onDelete={() => {
-            deleteChat.mutate(i.item.id);
+            db.delete(schemas.completionTable).where(
+              eq(schemas.completionTable.id, i.item.id),
+            );
+            db.delete(schemas.messageTable).where(
+              eq(schemas.messageTable.completionId, i.item.id),
+            );
           }}
         >
           <View
@@ -154,40 +148,20 @@ export default function Home() {
             },
           ]}
         >
-          {chats.hasNextPage ? (
-            <Text
-              style={[
-                theme.typography.body1,
-                { color: theme.palette.text.primary, textAlign: "center" },
-              ]}
-            >
-              Loader
-            </Text>
-          ) : (
-            <Text
-              style={[
-                theme.typography.body1,
-                { color: theme.palette.text.primary, textAlign: "center" },
-              ]}
-            >
-              No More
-            </Text>
-          )}
+          <Text style={{}}>{chatCount.data[0]?.count}</Text>
         </View>
       }
-      onEndReached={() => chats.hasNextPage && chats.fetchNextPage()}
       ListEmptyComponent={
         <View>
           <Pressable
-            onPress={() => {
-              createChat.mutate(void 0, {
-                onSuccess(data) {
-                  router.push({
-                    pathname: "/chat/[id]",
-                    params: {
-                      id: data.lastInsertRowId,
-                    },
-                  });
+            onPress={async () => {
+              const data = await db
+                .insert(schemas.completionTable)
+                .values({ name: "new chat" });
+              router.push({
+                pathname: "/chat/[id]",
+                params: {
+                  id: data.lastInsertRowId,
                 },
               });
             }}
@@ -206,18 +180,18 @@ export default function Home() {
       ListHeaderComponent={
         <View style={[{ paddingBlock: 0, paddingInline: 16 }]}>
           <Pressable
-            onPress={() =>
-              createChat.mutate(void 0, {
-                onSuccess(data) {
-                  router.push({
-                    pathname: "/chat/[id]",
-                    params: {
-                      id: data.lastInsertRowId,
-                    },
-                  });
+            onPress={async () => {
+              const data = await db
+                .insert(schemas.completionTable)
+                .values({ name: "new chat" });
+
+              router.push({
+                pathname: "/chat/[id]",
+                params: {
+                  id: data.lastInsertRowId,
                 },
-              })
-            }
+              });
+            }}
             style={{
               width: 40,
               height: 40,

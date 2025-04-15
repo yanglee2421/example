@@ -1,8 +1,3 @@
-CREATE TABLE `chatTable` (
-	`id` integer PRIMARY KEY NOT NULL,
-	`name` text DEFAULT ''
-);
---> statement-breakpoint
 CREATE TABLE `commentTable` (
 	`id` integer PRIMARY KEY NOT NULL,
 	`text` text NOT NULL,
@@ -10,11 +5,32 @@ CREATE TABLE `commentTable` (
 	`postId` integer NOT NULL
 );
 --> statement-breakpoint
+CREATE TABLE `chatTable` (
+	`id` integer PRIMARY KEY NOT NULL,
+	`name` text
+);
+--> statement-breakpoint
+CREATE TABLE `messageInAPI` (
+	`id` integer PRIMARY KEY NOT NULL,
+	`role` text,
+	`content` text
+);
+--> statement-breakpoint
+CREATE TABLE `messageInAPIToMessageTable` (
+	`messageInAPIId` integer NOT NULL,
+	`messageId` integer NOT NULL,
+	PRIMARY KEY(`messageInAPIId`, `messageId`)
+);
+--> statement-breakpoint
 CREATE TABLE `messageTable` (
 	`id` integer PRIMARY KEY NOT NULL,
-	`chatId` integer NOT NULL,
-	`name` text DEFAULT '',
-	`content` text DEFAULT ''
+	`completionId` integer NOT NULL,
+	`question` text,
+	`questionDate` integer,
+	`answer` text,
+	`answerDate` integer,
+	`status` text,
+	`thumb` text
 );
 --> statement-breakpoint
 CREATE TABLE `organizationTable` (
