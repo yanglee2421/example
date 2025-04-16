@@ -212,6 +212,12 @@ const ChatUI = () => {
     });
   };
 
+  const handleRetry = async (id: number, messages: MessageInAPI[]) => {
+    await db.transaction(async (tx) => {
+      await runRetry(id, messages);
+    });
+  };
+
   const renderMessages = () => {
     if (completion.error) {
       return <Text>{completion.error.message}</Text>;

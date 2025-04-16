@@ -103,12 +103,15 @@ export default function Home() {
       renderItem={(i) => (
         <SwipeToDelete
           onDelete={() => {
-            db.delete(schema.completionTable).where(
-              eq(schema.completionTable.id, i.item.id),
-            );
-            db.delete(schema.messageTable).where(
-              eq(schema.messageTable.completionId, i.item.id),
-            );
+            db.transaction(async (tx) => {
+              // If not await this, this re-render will be cancelled
+              await tx
+                .delete(schema.completionTable)
+                .where(eq(schema.completionTable.id, i.item.id));
+              await tx
+                .delete(schema.messageTable)
+                .where(eq(schema.messageTable.completionId, i.item.id));
+            });
           }}
         >
           <View
