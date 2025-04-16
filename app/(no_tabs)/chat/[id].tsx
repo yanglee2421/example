@@ -83,9 +83,16 @@ const ChatUI = () => {
   const completion = useLiveQuery(
     db.query.completionTable.findFirst({
       where: eq(schemas.completionTable.id, completionId),
-      with: {
-        messages: true,
-      },
+      // Will not trigger re-render when messages change
+      // with: { messages: true },
+    }),
+    [completionId],
+  );
+
+  // Use this instead of completion.data?.messages to get the latest messages
+  const completionMessages = useLiveQuery(
+    db.query.messageTable.findMany({
+      where: eq(schemas.messageTable.completionId, completionId),
     }),
     [completionId],
   );
@@ -183,7 +190,7 @@ const ChatUI = () => {
     await db.transaction(async (tx) => {
       if (!completion.data) throw new Error("No completion data");
 
-      const messages = completion.data.messages
+      const messages = completionMessages.data
         .flatMap((i) => [
           { role: "user" as const, content: i.question || "" },
           { role: "assistant" as const, content: i.answer || "" },
@@ -224,7 +231,7 @@ const ChatUI = () => {
           borderWidth: 1,
           borderColor: "rgba(0,0,0,0)",
         }}
-        data={completion.data.messages}
+        data={completionMessages.data}
         keyExtractor={(i) => i.id.toString()}
         renderItem={(i) => (
           <View key={i.item.id} style={{ paddingInline: theme.spacing(3) }}>

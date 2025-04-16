@@ -14,7 +14,7 @@ import type { SwipeableMethods } from "react-native-gesture-handler/ReanimatedSw
 import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 import { db } from "@/db/db";
 import { count, eq } from "drizzle-orm";
-import * as schemas from "@/db/schema";
+import * as schema from "@/db/schema";
 
 const styles = StyleSheet.create({
   leftAction: {
@@ -84,11 +84,14 @@ export default function Home() {
   const theme = useTheme();
   const router = useRouter();
   const chats = useLiveQuery(
-    db.select().from(schemas.completionTable).limit(pageSize).offset(pageIndex),
+    db.query.completionTable.findMany({
+      offset: pageIndex * pageSize,
+      limit: pageSize,
+    }),
     [pageIndex, pageSize],
   );
   const chatCount = useLiveQuery(
-    db.select({ count: count() }).from(schemas.completionTable),
+    db.select({ count: count() }).from(schema.completionTable).limit(1),
     [],
   );
 
@@ -100,11 +103,11 @@ export default function Home() {
       renderItem={(i) => (
         <SwipeToDelete
           onDelete={() => {
-            db.delete(schemas.completionTable).where(
-              eq(schemas.completionTable.id, i.item.id),
+            db.delete(schema.completionTable).where(
+              eq(schema.completionTable.id, i.item.id),
             );
-            db.delete(schemas.messageTable).where(
-              eq(schemas.messageTable.completionId, i.item.id),
+            db.delete(schema.messageTable).where(
+              eq(schema.messageTable.completionId, i.item.id),
             );
           }}
         >
@@ -156,7 +159,7 @@ export default function Home() {
           <Pressable
             onPress={async () => {
               const data = await db
-                .insert(schemas.completionTable)
+                .insert(schema.completionTable)
                 .values({ name: "new chat" });
               router.push({
                 pathname: "/chat/[id]",
@@ -182,7 +185,7 @@ export default function Home() {
           <Pressable
             onPress={async () => {
               const data = await db
-                .insert(schemas.completionTable)
+                .insert(schema.completionTable)
                 .values({ name: "new chat" });
 
               router.push({

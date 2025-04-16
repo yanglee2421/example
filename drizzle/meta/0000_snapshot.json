@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "eec674c4-4166-4094-90bd-3f21ab821e2c",
+  "id": "03ac6eef-2568-49f8-b7c5-9e756b1d65f4",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "commentTable": {
@@ -66,69 +66,6 @@
       "uniqueConstraints": {},
       "checkConstraints": {}
     },
-    "messageInAPI": {
-      "name": "messageInAPI",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "integer",
-          "primaryKey": true,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "role": {
-          "name": "role",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "content": {
-          "name": "content",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "checkConstraints": {}
-    },
-    "messageInAPIToMessageTable": {
-      "name": "messageInAPIToMessageTable",
-      "columns": {
-        "messageInAPIId": {
-          "name": "messageInAPIId",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "messageId": {
-          "name": "messageId",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {
-        "messageInAPIToMessageTable_messageInAPIId_messageId_pk": {
-          "columns": [
-            "messageInAPIId",
-            "messageId"
-          ],
-          "name": "messageInAPIToMessageTable_messageInAPIId_messageId_pk"
-        }
-      },
-      "uniqueConstraints": {},
-      "checkConstraints": {}
-    },
     "messageTable": {
       "name": "messageTable",
       "columns": {
@@ -156,6 +93,13 @@
         "questionDate": {
           "name": "questionDate",
           "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "messages": {
+          "name": "messages",
+          "type": "text",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false

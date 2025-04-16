@@ -10,23 +10,12 @@ CREATE TABLE `chatTable` (
 	`name` text
 );
 --> statement-breakpoint
-CREATE TABLE `messageInAPI` (
-	`id` integer PRIMARY KEY NOT NULL,
-	`role` text,
-	`content` text
-);
---> statement-breakpoint
-CREATE TABLE `messageInAPIToMessageTable` (
-	`messageInAPIId` integer NOT NULL,
-	`messageId` integer NOT NULL,
-	PRIMARY KEY(`messageInAPIId`, `messageId`)
-);
---> statement-breakpoint
 CREATE TABLE `messageTable` (
 	`id` integer PRIMARY KEY NOT NULL,
 	`completionId` integer NOT NULL,
 	`question` text,
 	`questionDate` integer,
+	`messages` text,
 	`answer` text,
 	`answerDate` integer,
 	`status` text,
