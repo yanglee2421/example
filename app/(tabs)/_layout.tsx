@@ -3,8 +3,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { usePathname } from "expo-router";
 import { Tabs, TabList, TabTrigger, TabSlot } from "expo-router/ui";
 import React from "react";
-import { Pressable, Text } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { Text } from "react-native";
 
 type TabTextProps = React.PropsWithChildren<{
   href: string;
@@ -106,26 +105,3 @@ export default function TabsLayout() {
     </Tabs>
   );
 }
-
-type TabBarButtonProps = React.PropsWithChildren<{
-  onPress?(e: NonNullable<unknown>): void;
-  style?: NonNullable<unknown> | null;
-}>;
-
-const TabBarButton = (props: TabBarButtonProps) => {
-  const theme = useTheme();
-
-  return (
-    <Pressable
-      onPress={props.onPress}
-      style={props.style}
-      android_ripple={{
-        borderless: false,
-        foreground: true,
-        color: theme.palette.action.focus,
-      }}
-    >
-      {props.children}
-    </Pressable>
-  );
-};

@@ -1,7 +1,7 @@
 {
   "name": "example",
   "main": "expo-router/entry",
-  "version": "0.0.37",
+  "version": "0.0.38",
   "scripts": {
     "android": "expo run:android",
     "ios": "expo run:ios",
@@ -16,7 +16,7 @@
     "@react-native-picker/picker": "2.11.0",
     "@tanstack/react-query": "^5.66.3",
     "axios": "^1.7.9",
-    "drizzle-orm": "^0.39.2",
+    "drizzle-orm": "^0.43.1",
     "expo": "~53.0.4",
     "expo-application": "~6.1.4",
     "expo-blur": "~14.1.4",
@@ -57,7 +57,7 @@
     "@babel/core": "^7.25.2",
     "@types/react": "~19.0.14",
     "babel-plugin-inline-import": "^3.0.0",
-    "drizzle-kit": "^0.30.4",
+    "drizzle-kit": "^0.31.0",
     "eas-cli": "^15.0.6",
     "prettier": "^3.5.3",
     "typescript": "^5.8.3"
