@@ -1,6 +1,6 @@
 import React from "react";
 import { AppState, Platform } from "react-native";
-import NetInfo from "@react-native-community/netinfo";
+import * as ExpoNet from "expo-network";
 import {
   focusManager,
   onlineManager,
@@ -45,15 +45,13 @@ export const QueryProvider = (props: React.PropsWithChildren) => {
 };
 
 const useSyncOnline = () => {
+  const state = ExpoNet.useNetworkState();
   React.useEffect(() => {
     if (Platform.OS === "web") return;
 
-    return NetInfo.addEventListener((state) =>
-      onlineManager.setOnline(
-        Boolean(state.isConnected && state.isInternetReachable)
-      )
-    );
-  }, []);
+    const isOnline = Boolean(state.isConnected && state.isInternetReachable);
+    onlineManager.setOnline(isOnline);
+  }, [state.isConnected, state.isInternetReachable]);
 };
 
 const useSyncFocus = () => {
@@ -61,7 +59,7 @@ const useSyncFocus = () => {
     if (Platform.OS === "web") return;
 
     const subscription = AppState.addEventListener("change", (status) =>
-      focusManager.setFocused(status === "active")
+      focusManager.setFocused(status === "active"),
     );
 
     return () => subscription.remove();

@@ -48,11 +48,7 @@ export default function TabsLayout() {
 
   return (
     <Tabs style={{ flex: 1 }}>
-      <SafeAreaView
-        style={{ flex: 1, backgroundColor: theme.palette.background.paper }}
-      >
-        <TabSlot />
-      </SafeAreaView>
+      <TabSlot />
       <TabList
         style={{
           height: theme.spacing(14),

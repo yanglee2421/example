@@ -12,7 +12,7 @@ const netSelector = <TError, TWarning, TSuccess>(
   isInternetReachable: boolean,
   error: TError,
   warning: TWarning,
-  success: TSuccess
+  success: TSuccess,
 ) => {
   if (!isConnected) {
     return error;
@@ -98,7 +98,7 @@ export default function Network() {
                 !!state.isInternetReachable,
                 theme.palette.error.main,
                 theme.palette.warning.main,
-                theme.palette.success.main
+                theme.palette.success.main,
               ),
             },
           ]}
@@ -108,7 +108,7 @@ export default function Network() {
             !!state.isInternetReachable,
             "No Connected",
             "Connected but no internet",
-            "Ready"
+            "Ready",
           )}
         </Text>
       </Pressable>
@@ -124,7 +124,7 @@ export default function Network() {
                 ToastAndroid.showWithGravity(
                   "Copied",
                   1000 * 2,
-                  ToastAndroid.BOTTOM
+                  ToastAndroid.BOTTOM,
                 );
               },
             })
