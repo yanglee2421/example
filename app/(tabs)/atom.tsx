@@ -16,12 +16,13 @@ import Animated, {
 } from "react-native-reanimated";
 import React from "react";
 import { android_ripple } from "@/lib/utils";
+import { Divider } from "@/components/ui";
 
 const fetchDatabaseSize = () =>
   queryOptions({
     queryKey: ["fetchDatabaseSize", consts.databaseName],
     async queryFn() {
-      await new Promise((resolve) => setTimeout(resolve, 1000 * 2));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       const file = new fs.File(
         fs.Paths.document,
         `SQLite/${consts.databaseName}`,
@@ -80,36 +81,55 @@ export default function Page() {
   };
 
   return (
-    <View style={{ padding: theme.spacing(3) }}>
-      <Text
-        style={[theme.typography.h6, { color: theme.palette.text.primary }]}
+    <View style={{ flex: 1 }}>
+      <View
+        style={[
+          { paddingInline: theme.spacing(3), paddingBlock: theme.spacing(2) },
+        ]}
       >
-        Database File Size
-      </Text>
-      {renderDatabaseSize()}
-      <Pressable
-        onPress={() => databaseSize.refetch()}
-        style={{
-          backgroundColor: theme.palette.primary.main,
-          width: 40,
-          height: 40,
-          borderRadius: 20,
+        <Text
+          style={[
+            theme.typography.h5,
+            {
+              color: theme.palette.text.primary,
+            },
+          ]}
+        >
+          Atom
+        </Text>
+      </View>
+      <Divider />
+      <View style={[{ padding: theme.spacing(3) }]}>
+        <Text
+          style={[theme.typography.h6, { color: theme.palette.text.primary }]}
+        >
+          Database File Size
+        </Text>
+        {renderDatabaseSize()}
+        <Pressable
+          onPress={() => databaseSize.refetch()}
+          style={{
+            backgroundColor: theme.palette.primary.main,
+            width: 40,
+            height: 40,
+            borderRadius: 20,
 
-          justifyContent: "center",
-          alignItems: "center",
+            justifyContent: "center",
+            alignItems: "center",
 
-          overflow: "hidden",
-        }}
-        android_ripple={android_ripple(theme.palette.action.focus)}
-      >
-        <Animated.View style={animatedStyle}>
-          <MaterialCommunityIcons
-            name="refresh"
-            color={theme.palette.primary.contrastText}
-            size={28}
-          />
-        </Animated.View>
-      </Pressable>
+            overflow: "hidden",
+          }}
+          android_ripple={android_ripple(theme.palette.action.focus)}
+        >
+          <Animated.View style={animatedStyle}>
+            <MaterialCommunityIcons
+              name="refresh"
+              color={theme.palette.primary.contrastText}
+              size={28}
+            />
+          </Animated.View>
+        </Pressable>
+      </View>
     </View>
   );
 }

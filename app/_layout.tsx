@@ -12,6 +12,7 @@ import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useTheme } from "@/hooks/useTheme";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -21,11 +22,19 @@ SplashScreen.setOptions({
 });
 
 const RootUI = () => {
+  const theme = useTheme();
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView
+      style={{ flex: 1, backgroundColor: theme.palette.background.default }}
+    >
       <GestureHandlerRootView style={{ flex: 1 }}>
         <StatusBar />
-        <Stack screenOptions={{ headerShown: false }} />
+        <Stack
+          screenOptions={{
+            headerShown: false,
+            contentStyle: { backgroundColor: theme.palette.background.default },
+          }}
+        />
       </GestureHandlerRootView>
     </SafeAreaView>
   );

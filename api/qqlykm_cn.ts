@@ -1,5 +1,6 @@
 import { infiniteQueryOptions, queryOptions } from "@tanstack/react-query";
 import axios from "axios";
+import type { AxiosRequestConfig } from "axios";
 
 const baseURL = "https://qqlykm.cn/api";
 
@@ -86,7 +87,7 @@ type HistoryGetRes = {
       year: string;
       title: string;
       url: string;
-    }
+    },
   ];
 };
 
@@ -204,5 +205,34 @@ export const fetchRandtext = () =>
     getNextPageParam(lastData, AllData, lastParams, AllParams) {
       void { lastData, AllData, AllParams };
       return { idx: lastParams.idx + 1 };
+    },
+  });
+
+type IPParams = {
+  ip?: string;
+};
+
+type IPConf = AxiosRequestConfig & {
+  params: IPParams;
+};
+
+type IPRes = {
+  success: true;
+  data: {
+    ip: "117.151.14.189";
+    location: "中国–湖北 移动/数据上网公共出口";
+    country: "中国–湖北";
+    net: "移动/数据上网公共出口";
+  };
+  msg: "查询成功";
+};
+
+const IP_PATH = "/free/ip/get";
+
+export const fetchIp = (conf: IPConf) =>
+  queryOptions({
+    queryKey: [baseURL, IP_PATH, "GET", conf],
+    queryFn({ signal }) {
+      return qqlykm<IPRes>({ signal, url: IP_PATH, ...conf });
     },
   });

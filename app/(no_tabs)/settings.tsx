@@ -12,27 +12,27 @@ export default function Page() {
   return (
     <View>
       <Button
-        title="export"
+        title="export safx"
         onPress={async () => {
           const file = new fs.File(
             fs.Paths.document,
-            `SQLite/${consts.databaseName}`
+            `SQLite/${consts.databaseName}`,
           );
           const dir = await safx.openDocumentTree(true);
           if (!dir) return;
           await safx.copyFile(
             file.uri,
             dir.uri + "/" + Date.now() + consts.databaseName,
-            { replaceIfDestinationExists: true }
+            { replaceIfDestinationExists: true },
           );
         }}
       />
       <Button
-        title="export"
+        title="export expo"
         onPress={async () => {
           const file = new fs.File(
             fs.Paths.document,
-            `SQLite/${consts.databaseName}`
+            `SQLite/${consts.databaseName}`,
           );
 
           const dir =
@@ -42,13 +42,13 @@ export default function Page() {
           const nFile = await pfs.StorageAccessFramework.createFileAsync(
             dir.directoryUri,
             Date.now() + "_" + consts.databaseName,
-            "application/x-sqlite3"
+            "application/x-sqlite3",
           );
 
           await pfs.StorageAccessFramework.writeAsStringAsync(
             nFile,
             file.base64(),
-            { encoding: pfs.EncodingType.Base64 }
+            { encoding: pfs.EncodingType.Base64 },
           );
         }}
       />
@@ -64,7 +64,7 @@ export default function Page() {
           const dir = doc.assets[0].uri;
           const file = new fs.File(
             fs.Paths.document,
-            `SQLite/${consts.databaseName}`
+            `SQLite/${consts.databaseName}`,
           );
           file.delete();
           const backup = new fs.File(dir);
@@ -76,7 +76,7 @@ export default function Page() {
         onPress={() => {
           const file = new fs.File(
             fs.Paths.document,
-            `SQLite/${consts.databaseName}`
+            `SQLite/${consts.databaseName}`,
           );
           file.exists && file.delete();
         }}

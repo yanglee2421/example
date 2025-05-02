@@ -1,3 +1,4 @@
+import { Divider } from "@/components/ui";
 import { useTheme } from "@/hooks/useTheme";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Link } from "expo-router";
@@ -202,67 +203,143 @@ export default function Account() {
   ].sort((c, n) => c.label.localeCompare(n.label));
 
   return (
-    <FlatList
-      data={list}
-      keyExtractor={(i) => i.href}
-      renderItem={(i) => (
-        <Link
-          href={i.item.href}
-          key={i.item.label}
-          asChild
+    <View style={{ flex: 1 }}>
+      <View
+        style={[
+          { paddingInline: theme.spacing(3), paddingBlock: theme.spacing(2) },
+        ]}
+      >
+        <Text
           style={[
-            styles.itemLink,
+            theme.typography.h5,
             {
-              borderBlockEndColor: theme.palette.divider,
+              color: theme.palette.text.primary,
             },
           ]}
         >
-          <Pressable
-            android_ripple={{
-              borderless: false,
-              foreground: true,
-              color: theme.palette.action.focus,
-            }}
+          Apps
+        </Text>
+      </View>
+      <Divider />
+      <FlatList
+        data={list}
+        keyExtractor={(i) => i.href}
+        renderItem={(i) => (
+          <Link
+            href={i.item.href}
+            key={i.item.label}
+            asChild
+            style={[
+              styles.itemLink,
+              {
+                borderBlockEndColor: theme.palette.divider,
+              },
+            ]}
           >
-            <View
-              style={[
-                styles.itemView,
-                {
-                  paddingInline: theme.spacing(4),
-                  paddingBlock: theme.spacing(3),
-                },
-              ]}
+            <Pressable
+              android_ripple={{
+                borderless: false,
+                foreground: true,
+                color: theme.palette.action.focus,
+              }}
             >
               <View
                 style={[
+                  styles.itemView,
                   {
-                    backgroundColor: colors[i.index % colors.length],
-                    padding: theme.spacing(1),
-                    borderRadius: theme.spacing(2),
+                    paddingInline: theme.spacing(3),
+                    paddingBlock: theme.spacing(2),
                   },
                 ]}
               >
-                {i.item.icon}
+                <View
+                  style={[
+                    {
+                      backgroundColor: colors[i.index % colors.length],
+                      padding: theme.spacing(1.5),
+                      borderRadius: theme.spacing(2),
+                    },
+                  ]}
+                >
+                  {i.item.icon}
+                </View>
+                <Text
+                  style={[
+                    styles.itemText,
+                    {
+                      color: theme.palette.text.primary,
+                      fontSize: theme.typography.body1.fontSize,
+                      fontFamily: theme.typography.body1.fontFamily,
+                      fontWeight: theme.typography.body1.fontWeight,
+                      letterSpacing: theme.typography.body1.letterSpacing,
+                    },
+                  ]}
+                >
+                  {i.item.label}
+                </Text>
               </View>
-              <Text
-                style={[
-                  styles.itemText,
-                  {
-                    color: theme.palette.text.primary,
-                    fontSize: theme.typography.body1.fontSize,
-                    fontFamily: theme.typography.body1.fontFamily,
-                    fontWeight: theme.typography.body1.fontWeight,
-                    letterSpacing: theme.typography.body1.letterSpacing,
-                  },
-                ]}
-              >
-                {i.item.label}
-              </Text>
-            </View>
-          </Pressable>
-        </Link>
-      )}
-    />
+            </Pressable>
+          </Link>
+        )}
+        ListHeaderComponent={
+          <View
+            style={{
+              paddingInline: theme.spacing(3),
+              paddingBlock: theme.spacing(2),
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Text
+              style={[
+                theme.typography.body1,
+                { color: theme.palette.text.primary },
+              ]}
+            >
+              Header
+            </Text>
+          </View>
+        }
+        ListEmptyComponent={
+          <View
+            style={{
+              paddingInline: theme.spacing(3),
+              paddingBlock: theme.spacing(2),
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Text
+              style={[
+                theme.typography.body1,
+                { color: theme.palette.text.primary },
+              ]}
+            >
+              Empty
+            </Text>
+          </View>
+        }
+        ListFooterComponent={
+          <View
+            style={{
+              paddingInline: theme.spacing(3),
+              paddingBlock: theme.spacing(2),
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Text
+              style={[
+                theme.typography.body1,
+                { color: theme.palette.text.primary },
+              ]}
+            >
+              Footer
+            </Text>
+          </View>
+        }
+      />
+    </View>
   );
 }
 

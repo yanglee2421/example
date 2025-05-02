@@ -1,28 +1,32 @@
 import { useTheme } from "@/hooks/useTheme";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { usePathname } from "expo-router";
-import { Tabs, TabList, TabTrigger, TabSlot } from "expo-router/ui";
+import {
+  Tabs,
+  TabList,
+  TabTrigger,
+  TabSlot,
+  useTabTrigger,
+} from "expo-router/ui";
 import React from "react";
 import { Text } from "react-native";
 
 type TabTextProps = React.PropsWithChildren<{
-  href: string;
-  name: React.ComponentProps<typeof MaterialCommunityIcons>["name"];
+  name: string;
+  icon: React.ComponentProps<typeof MaterialCommunityIcons>["name"];
 }>;
 
 const TabText = (props: TabTextProps) => {
   const theme = useTheme();
-  const pathname = usePathname();
+  const trigger = useTabTrigger({ name: props.name });
 
-  const isActive = pathname === props.href;
-  const color = isActive
+  const color = trigger.trigger?.isFocused
     ? theme.palette.primary.main
     : theme.palette.text.primary;
 
   return (
     <>
       <MaterialCommunityIcons
-        name={props.name}
+        name={props.icon}
         style={{
           color,
           fontSize: theme.typography.h5.fontSize,
@@ -68,7 +72,7 @@ export default function TabsLayout() {
           }}
           android_ripple={{ color: theme.palette.action.focus }}
         >
-          <TabText href="/" name="home">
+          <TabText icon="home" name="index">
             home
           </TabText>
         </TabTrigger>
@@ -82,7 +86,7 @@ export default function TabsLayout() {
           }}
           android_ripple={{ color: theme.palette.action.focus }}
         >
-          <TabText href="/atom" name="atom">
+          <TabText icon="atom" name="atom">
             atom
           </TabText>
         </TabTrigger>
@@ -96,7 +100,7 @@ export default function TabsLayout() {
           }}
           android_ripple={{ color: theme.palette.action.focus }}
         >
-          <TabText href="/apps" name="apps">
+          <TabText icon="apps" name="apps">
             apps
           </TabText>
         </TabTrigger>
