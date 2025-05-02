@@ -4,6 +4,20 @@ import { Link } from "expo-router";
 import React from "react";
 import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 
+const colors = [
+  "#f44336",
+  "#e91e63",
+  "#9c27b0",
+  "#673ab7",
+  "#3f51b5",
+  "#2196f3",
+  "#03a9f4",
+  "#00bcd4",
+  "#009688",
+  "#4caf50",
+  "#ff5722",
+];
+
 export default function Account() {
   const theme = useTheme();
   const iconSize = theme.typography.body1.fontSize * 1.4;
@@ -14,7 +28,7 @@ export default function Account() {
         <MaterialCommunityIcons
           name="information-variant"
           size={iconSize}
-          color={theme.palette.text.icon}
+          color={theme.palette.common.white}
         />
       ),
       label: "About",
@@ -25,7 +39,7 @@ export default function Account() {
         <MaterialCommunityIcons
           name="format-list-numbered"
           size={iconSize}
-          color={theme.palette.text.icon}
+          color={theme.palette.common.white}
         />
       ),
       label: "To Do List",
@@ -36,7 +50,7 @@ export default function Account() {
         <MaterialCommunityIcons
           name="qrcode-scan"
           size={iconSize}
-          color={theme.palette.text.icon}
+          color={theme.palette.common.white}
         />
       ),
       label: "QR Code Scaner",
@@ -47,7 +61,7 @@ export default function Account() {
         <MaterialCommunityIcons
           name="qrcode-scan"
           size={iconSize}
-          color={theme.palette.text.icon}
+          color={theme.palette.common.white}
         />
       ),
       label: "Activation",
@@ -58,7 +72,7 @@ export default function Account() {
         <MaterialCommunityIcons
           name="lan"
           size={iconSize}
-          color={theme.palette.text.icon}
+          color={theme.palette.common.white}
         />
       ),
       label: "Network",
@@ -69,7 +83,7 @@ export default function Account() {
         <MaterialCommunityIcons
           name="microsoft-bing"
           size={iconSize}
-          color={theme.palette.text.icon}
+          color={theme.palette.common.white}
         />
       ),
       label: "Bing",
@@ -80,7 +94,7 @@ export default function Account() {
         <MaterialCommunityIcons
           name="newspaper-variant-outline"
           size={iconSize}
-          color={theme.palette.text.icon}
+          color={theme.palette.common.white}
         />
       ),
       label: "News",
@@ -91,7 +105,7 @@ export default function Account() {
         <MaterialCommunityIcons
           name="robot-happy-outline"
           size={iconSize}
-          color={theme.palette.text.icon}
+          color={theme.palette.common.white}
         />
       ),
       label: "Joke",
@@ -102,7 +116,7 @@ export default function Account() {
         <MaterialCommunityIcons
           name="image-filter-hdr"
           size={iconSize}
-          color={theme.palette.text.icon}
+          color={theme.palette.common.white}
         />
       ),
       label: "Landscape",
@@ -113,7 +127,7 @@ export default function Account() {
         <MaterialCommunityIcons
           name="book-open-page-variant-outline"
           size={iconSize}
-          color={theme.palette.text.icon}
+          color={theme.palette.common.white}
         />
       ),
       label: "History",
@@ -124,7 +138,7 @@ export default function Account() {
         <MaterialCommunityIcons
           name="dog"
           size={iconSize}
-          color={theme.palette.text.icon}
+          color={theme.palette.common.white}
         />
       ),
       label: "Locking Dog",
@@ -135,7 +149,7 @@ export default function Account() {
         <MaterialCommunityIcons
           name="movie-outline"
           size={iconSize}
-          color={theme.palette.text.icon}
+          color={theme.palette.common.white}
         />
       ),
       label: "Movie",
@@ -146,7 +160,7 @@ export default function Account() {
         <MaterialCommunityIcons
           name="format-quote-close-outline"
           size={iconSize}
-          color={theme.palette.text.icon}
+          color={theme.palette.common.white}
         />
       ),
       label: "Rand Text",
@@ -157,7 +171,7 @@ export default function Account() {
         <MaterialCommunityIcons
           name="cogs"
           size={iconSize}
-          color={theme.palette.text.icon}
+          color={theme.palette.common.white}
         />
       ),
       label: "Settings",
@@ -168,7 +182,7 @@ export default function Account() {
         <MaterialCommunityIcons
           name={"flask"}
           size={iconSize}
-          color={theme.palette.text.icon}
+          color={theme.palette.common.white}
         />
       ),
       label: "Lab",
@@ -179,7 +193,7 @@ export default function Account() {
         <MaterialCommunityIcons
           name={"calendar"}
           size={iconSize}
-          color={theme.palette.text.icon}
+          color={theme.palette.common.white}
         />
       ),
       label: "Calendar",
@@ -219,7 +233,17 @@ export default function Account() {
                 },
               ]}
             >
-              {i.item.icon}
+              <View
+                style={[
+                  {
+                    backgroundColor: colors[i.index % colors.length],
+                    padding: theme.spacing(1),
+                    borderRadius: theme.spacing(2),
+                  },
+                ]}
+              >
+                {i.item.icon}
+              </View>
               <Text
                 style={[
                   styles.itemText,

@@ -24,7 +24,7 @@ const fetchDatabaseSize = () =>
       await new Promise((resolve) => setTimeout(resolve, 1000 * 2));
       const file = new fs.File(
         fs.Paths.document,
-        `SQLite/${consts.databaseName}`
+        `SQLite/${consts.databaseName}`,
       );
 
       return file.size || 0;
@@ -53,7 +53,7 @@ export default function Page() {
           easing: Easing.linear,
           duration: 1000 * 1,
         }),
-        Infinity
+        Infinity,
       );
     } else {
       rotate.value = 0;
@@ -74,7 +74,7 @@ export default function Page() {
       <Text
         style={[theme.typography.h3, { color: theme.palette.text.primary }]}
       >
-        {databaseSize.data}
+        {(databaseSize.data || 0) / 1024} KB
       </Text>
     );
   };

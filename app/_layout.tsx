@@ -11,6 +11,7 @@ import { useStorageHasHydrated } from "@/hooks/useStorageStore";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -19,11 +20,18 @@ SplashScreen.setOptions({
   duration: 1000 * 0.2,
 });
 
-const RootRoute = () => {
-  return <Stack screenOptions={{ headerShown: false }} />;
+const RootUI = () => {
+  return (
+    <SafeAreaView style={{ flex: 1 }}>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <StatusBar />
+        <Stack screenOptions={{ headerShown: false }} />
+      </GestureHandlerRootView>
+    </SafeAreaView>
+  );
 };
 
-export default function RootLayout() {
+const RootLayout = () => {
   const hasHydrated = useStorageHasHydrated();
   const dbState = useMigrations(db, migrations);
   const [fontLoaded, error] = useFonts({
@@ -53,13 +61,14 @@ export default function RootLayout() {
     fontLoaded &&
     dbState.success && (
       <QueryProvider>
-        <StatusBar />
         <ThemeProvider>
-          <GestureHandlerRootView>
-            <RootRoute />
-          </GestureHandlerRootView>
+          <RootUI />
         </ThemeProvider>
       </QueryProvider>
     )
   );
+};
+
+export default function Layout() {
+  return <RootLayout />;
 }

@@ -65,6 +65,64 @@ const MessageUI = (props: MessageUIProps) => {
   );
 };
 
+/**
+ * KeyboardAvoidingView has very many issues and not enough flexibility,
+ * so we use this custom hook to get the keyboard height
+ */
+const useKeyboard = () => {
+  const keyboardVisible = React.useSyncExternalStore(
+    (onStateChange) => {
+      const subscribeShow = Keyboard.addListener(
+        "keyboardDidShow",
+        onStateChange,
+      );
+      const subscribeHide = Keyboard.addListener(
+        "keyboardDidHide",
+        onStateChange,
+      );
+      return () => {
+        subscribeShow.remove();
+        subscribeHide.remove();
+      };
+    },
+    () => Keyboard.isVisible(),
+  );
+
+  const keyboardHeight = React.useSyncExternalStore(
+    (onStateChange) => {
+      const subscribeShow = Keyboard.addListener(
+        "keyboardDidShow",
+        onStateChange,
+      );
+      const subscribeHide = Keyboard.addListener(
+        "keyboardDidHide",
+        onStateChange,
+      );
+      return () => {
+        subscribeShow.remove();
+        subscribeHide.remove();
+      };
+    },
+    () => Keyboard.metrics()?.height || 0,
+  );
+
+  return [keyboardVisible, keyboardHeight] as const;
+};
+
+const Divider = () => {
+  const theme = useTheme();
+  return (
+    <View
+      style={[
+        {
+          height: 1,
+          backgroundColor: theme.palette.divider,
+        },
+      ]}
+    />
+  );
+};
+
 const ChatUI = () => {
   const [question, setQuestion] = React.useState("");
   const [sendButtonStatus, setSendButtonStatus] = React.useState<
@@ -77,6 +135,7 @@ const ChatUI = () => {
 
   const theme = useTheme();
   const local = useLocalSearchParams<{ id: string }>();
+  const [, keyboardHeight] = useKeyboard();
 
   const completionId = +local.id;
 
@@ -159,6 +218,10 @@ const ChatUI = () => {
         status: "success",
       })
       .where(eq(schemas.messageTable.id, id));
+    await db
+      .update(schemas.completionTable)
+      .set({ name: question })
+      .where(eq(schemas.completionTable.id, completionId));
   };
 
   const runChat = async (id: number, messages: MessageInAPI[]) => {
@@ -239,6 +302,7 @@ const ChatUI = () => {
         }}
         data={completionMessages.data}
         keyExtractor={(i) => i.id.toString()}
+        keyboardShouldPersistTaps="handled"
         renderItem={(i) => (
           <View key={i.item.id} style={{ paddingInline: theme.spacing(3) }}>
             <View>
@@ -259,24 +323,34 @@ const ChatUI = () => {
   };
 
   return (
-    <View
-      style={{
-        flexGrow: 1,
-        flexShrink: 1,
-        flexBasis: "auto",
-        borderWidth: 1,
-        borderColor: "rgba(0,0,0,0)",
-      }}
-    >
+    <View style={{ flex: 1 }}>
+      <View
+        style={[
+          {
+            paddingInline: theme.spacing(3),
+            paddingBlock: theme.spacing(2),
+          },
+        ]}
+      >
+        <Text
+          style={[
+            theme.typography.h5,
+            {
+              color: theme.palette.primary.main,
+            },
+          ]}
+        >
+          #{completionId}
+        </Text>
+      </View>
+      <Divider />
       {renderMessages()}
+      <Divider />
       <View
         style={[
           {
             paddingInline: theme.spacing(2),
             paddingBlock: theme.spacing(1.5),
-            borderWidth: 1,
-            borderColor: "rgba(0,0,0,0)",
-            borderBlockStartColor: theme.palette.divider,
           },
         ]}
       >
@@ -323,6 +397,8 @@ const ChatUI = () => {
           </Pressable>
         </View>
       </View>
+      <Divider />
+      <View style={{ height: keyboardHeight }}></View>
     </View>
   );
 };

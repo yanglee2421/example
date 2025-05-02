@@ -96,131 +96,169 @@ export default function Home() {
   );
 
   return (
-    <Animated.FlatList
-      data={chats.data}
-      keyExtractor={(i) => i.id.toString()}
-      itemLayoutAnimation={LinearTransition}
-      renderItem={(i) => (
-        <SwipeToDelete
-          onDelete={() => {
-            db.transaction(async (tx) => {
-              // If not await this, this re-render will be cancelled
-              await tx
-                .delete(schema.completionTable)
-                .where(eq(schema.completionTable.id, i.item.id));
-              await tx
-                .delete(schema.messageTable)
-                .where(eq(schema.messageTable.completionId, i.item.id));
-            });
-          }}
+    <>
+      <View
+        style={[
+          { paddingInline: theme.spacing(3), paddingBlock: theme.spacing(1.5) },
+        ]}
+      >
+        <Text
+          style={[theme.typography.h5, { color: theme.palette.text.primary }]}
         >
+          Chat
+        </Text>
+      </View>
+      <View
+        style={[{ height: 1, backgroundColor: theme.palette.divider }]}
+      ></View>
+      <Animated.FlatList
+        data={chats.data}
+        keyExtractor={(i) => i.id.toString()}
+        itemLayoutAnimation={LinearTransition}
+        renderItem={(i) => (
+          <SwipeToDelete
+            onDelete={() => {
+              db.transaction(async (tx) => {
+                // If not await this, this re-render will be cancelled
+                await tx
+                  .delete(schema.completionTable)
+                  .where(eq(schema.completionTable.id, i.item.id));
+                await tx
+                  .delete(schema.messageTable)
+                  .where(eq(schema.messageTable.completionId, i.item.id));
+              });
+            }}
+          >
+            <View
+              style={[
+                {
+                  borderBottomWidth: 1,
+                  borderBottomColor: theme.palette.divider,
+                  paddingInline: theme.spacing(5),
+                  paddingBlock: theme.spacing(3),
+                },
+              ]}
+            >
+              <Link
+                href={{ pathname: "/chat/[id]", params: { id: i.item.id } }}
+                asChild
+              >
+                <Pressable>
+                  <View>
+                    <Text
+                      style={[
+                        theme.typography.body1,
+                        { color: theme.palette.text.primary },
+                      ]}
+                      numberOfLines={1}
+                    >
+                      {i.item.name?.substring(0, 48)}
+                    </Text>
+                  </View>
+                </Pressable>
+              </Link>
+            </View>
+          </SwipeToDelete>
+        )}
+        ListFooterComponent={
           <View
             style={[
               {
-                borderBottomWidth: 1,
-                borderBottomColor: theme.palette.divider,
-                paddingInline: theme.spacing(5),
-                paddingBlock: theme.spacing(3),
+                paddingInline: theme.spacing(3),
+                paddingBlock: theme.spacing(2),
               },
             ]}
           >
-            <Link
-              href={{ pathname: "/chat/[id]", params: { id: i.item.id } }}
-              asChild
-            >
-              <Pressable>
-                <View>
-                  <Text
-                    style={[
-                      theme.typography.body1,
-                      { color: theme.palette.text.primary },
-                    ]}
-                    numberOfLines={1}
-                  >
-                    {i.item.name?.substring(0, 48)}
-                  </Text>
-                </View>
-              </Pressable>
-            </Link>
-          </View>
-        </SwipeToDelete>
-      )}
-      ListFooterComponent={
-        <View
-          style={[
-            {
-              paddingInline: theme.spacing(5),
-              paddingBlock: theme.spacing(3),
-            },
-          ]}
-        >
-          <Text style={{}}>{chatCount.data[0]?.count}</Text>
-        </View>
-      }
-      ListEmptyComponent={
-        <View>
-          <Pressable
-            onPress={async () => {
-              const data = await db
-                .insert(schema.completionTable)
-                .values({ name: "new chat" });
-              router.push({
-                pathname: "/chat/[id]",
-                params: {
-                  id: data.lastInsertRowId,
-                },
-              });
-            }}
-          >
             <Text
               style={[
-                theme.typography.body1,
-                { color: theme.palette.text.primary },
+                { color: theme.palette.text.secondary },
+                theme.typography.overline,
               ]}
             >
-              Empty
+              Total count: {chatCount.data[0]?.count}
             </Text>
-          </Pressable>
-        </View>
-      }
-      ListHeaderComponent={
-        <View style={[{ paddingBlock: 0, paddingInline: 16 }]}>
-          <Pressable
-            onPress={async () => {
-              const data = await db
-                .insert(schema.completionTable)
-                .values({ name: "new chat" });
-
-              router.push({
-                pathname: "/chat/[id]",
-                params: {
-                  id: data.lastInsertRowId,
-                },
-              });
-            }}
-            style={{
-              width: 40,
-              height: 40,
-              backgroundColor: theme.palette.primary.main,
-
-              justifyContent: "center",
-              alignItems: "center",
-              borderRadius: 9999,
-
-              marginStart: "auto",
-            }}
-            android_ripple={android_ripple(theme.palette.action.focus)}
-          >
-            <MaterialCommunityIcons
-              name="plus"
-              style={{
-                color: theme.palette.primary.contrastText,
-                fontSize: theme.typography.h4.fontSize,
+          </View>
+        }
+        ListEmptyComponent={
+          <View>
+            <Pressable
+              onPress={async () => {
+                const data = await db
+                  .insert(schema.completionTable)
+                  .values({ name: "new chat" });
+                router.push({
+                  pathname: "/chat/[id]",
+                  params: {
+                    id: data.lastInsertRowId,
+                  },
+                });
               }}
-            />
-          </Pressable>
-        </View>
-      }
-    />
+              style={[
+                {
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                },
+              ]}
+            >
+              <Text
+                style={[
+                  theme.typography.body1,
+                  { color: theme.palette.text.primary },
+                ]}
+              >
+                No avaliable chats
+              </Text>
+            </Pressable>
+          </View>
+        }
+        ListHeaderComponent={
+          <View
+            style={[
+              {
+                paddingBlock: theme.spacing(1.5),
+                paddingInline: theme.spacing(3),
+              },
+            ]}
+          >
+            <Pressable
+              onPress={async () => {
+                const data = await db
+                  .insert(schema.completionTable)
+                  .values({ name: "new chat" });
+
+                router.push({
+                  pathname: "/chat/[id]",
+                  params: {
+                    id: data.lastInsertRowId,
+                  },
+                });
+              }}
+              style={{
+                width: 40,
+                height: 40,
+                backgroundColor: theme.palette.primary.main,
+
+                justifyContent: "center",
+                alignItems: "center",
+                borderRadius: 9999,
+
+                marginStart: "auto",
+                overflow: "hidden",
+              }}
+              android_ripple={android_ripple(theme.palette.action.focus)}
+            >
+              <MaterialCommunityIcons
+                name="plus"
+                style={{
+                  color: theme.palette.primary.contrastText,
+                  fontSize: theme.typography.h4.fontSize,
+                }}
+              />
+            </Pressable>
+          </View>
+        }
+      />
+    </>
   );
 }

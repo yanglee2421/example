@@ -86,7 +86,6 @@ export default function TabsLayout() {
             atom
           </TabText>
         </TabTrigger>
-
         <TabTrigger
           name="apps"
           href="/apps"
