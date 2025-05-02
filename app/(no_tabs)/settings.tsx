@@ -1,4 +1,3 @@
-import { useTheme } from "@/hooks/useTheme";
 import { Button, View } from "react-native";
 import * as fs from "expo-file-system/next";
 import * as consts from "@/lib/constants";
@@ -7,8 +6,6 @@ import * as pfs from "expo-file-system";
 import * as safx from "react-native-saf-x";
 
 export default function Page() {
-  const theme = useTheme();
-
   return (
     <View>
       <Button

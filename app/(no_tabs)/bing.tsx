@@ -6,7 +6,6 @@ import {
   Linking,
   Pressable,
   RefreshControl,
-  ScrollView,
   Share,
   View,
 } from "react-native";
@@ -20,8 +19,6 @@ import Animated from "react-native-reanimated";
 import { Loading } from "@/components/Loading";
 
 const OfflineScreen = () => {
-  const theme = useTheme();
-
   return (
     <View>
       <Text variant="body1">Not connected to the internet</Text>

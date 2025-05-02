@@ -9,7 +9,8 @@
     "prebuild": "expo prebuild",
     "check": "expo install --check",
     "build": "eas build",
-    "generate": "drizzle-kit generate"
+    "generate": "drizzle-kit generate",
+    "lint": "expo lint"
   },
   "dependencies": {
     "@expo/vector-icons": "^14.1.0",
@@ -59,6 +60,8 @@
     "babel-plugin-inline-import": "^3.0.0",
     "drizzle-kit": "^0.31.0",
     "eas-cli": "^15.0.6",
+    "eslint": "^9.0.0",
+    "eslint-config-expo": "~9.2.0",
     "prettier": "^3.5.3",
     "typescript": "^5.8.3"
   },

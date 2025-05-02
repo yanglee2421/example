@@ -18,21 +18,21 @@ export const android_ripple = (color: string) => ({
 });
 
 export const hexToUtf8 = (hex: string) => {
-  let str = "";
+  let result = "";
 
   for (let i = 0; i < hex.length; i++) {
     const code = hex.substring(i, i + 2);
-    str += String.fromCharCode(Number.parseInt(code, 16));
+    result += String.fromCharCode(Number.parseInt(code, 16));
   }
 
-  return "";
+  return result;
 };
 
 export const gridSize = (
   totalWidth: number,
   columns: number,
   span: number,
-  spacing: number
+  spacing: number,
 ) => {
   const perColSize = totalWidth / columns;
   const preSpacing = spacing / columns;

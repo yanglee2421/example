@@ -103,14 +103,14 @@ export const fetchHistoryGet = () =>
 
 type JijiangshangyingRes = {
   success: boolean;
-  data: Array<{
+  data: {
     title: string;
     picUrl: string;
     type: string;
     director: string;
     actors: string;
     releaseDateStr: string;
-  }>;
+  }[];
 };
 
 const JIJIANGSHANGYING_PATH = "/jijiangshangying/get";

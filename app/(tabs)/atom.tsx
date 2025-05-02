@@ -1,9 +1,8 @@
 import { useTheme } from "@/hooks/useTheme";
-import { queryOptions } from "@tanstack/react-query";
+import { queryOptions, useQuery } from "@tanstack/react-query";
 import { ActivityIndicator, Pressable, Text, View } from "react-native";
 import * as fs from "expo-file-system/next";
 import * as consts from "@/lib/constants";
-import { useQuery } from "@tanstack/react-query";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Animated, {
   Easing,
@@ -59,7 +58,7 @@ export default function Page() {
     } else {
       rotate.value = 0;
     }
-  }, [databaseSize.isRefetching]);
+  }, [databaseSize.isRefetching, rotate]);
 
   const renderDatabaseSize = () => {
     if (databaseSize.isLoading) return <ActivityIndicator />;

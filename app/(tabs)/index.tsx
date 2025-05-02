@@ -78,8 +78,8 @@ const SwipeToDelete = (props: SwipeToDeleteProps) => {
 };
 
 export default function Home() {
-  const [pageIndex, setPageIndex] = React.useState(0);
-  const [pageSize, setPageSize] = React.useState(20);
+  const pageIndex = 0;
+  const pageSize = 20;
 
   const theme = useTheme();
   const router = useRouter();

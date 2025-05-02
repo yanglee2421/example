@@ -238,14 +238,6 @@ const ChatUI = () => {
     setSendButtonStatus("idle");
   };
 
-  const runRetry = async (id: number, messages: MessageInAPI[]) => {
-    await db
-      .update(schemas.messageTable)
-      .set({ status: "loading" })
-      .where(eq(schemas.messageTable.id, id));
-    await runChat(id, messages);
-  };
-
   const handleSubmit = async () => {
     Keyboard.dismiss();
     setQuestion("");
@@ -272,12 +264,6 @@ const ChatUI = () => {
         .returning({ id: schemas.messageTable.id });
 
       await runChat(id, messages);
-    });
-  };
-
-  const handleRetry = async (id: number, messages: MessageInAPI[]) => {
-    await db.transaction(async (tx) => {
-      await runRetry(id, messages);
     });
   };
 

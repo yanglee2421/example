@@ -39,7 +39,7 @@ export default function Page() {
   const points = useDerivedValue(() =>
     renderNodes.value
       .map((i, idx) => `${idx},${Math.floor(height * (1 - i / 700))}`)
-      .join(" ")
+      .join(" "),
   );
 
   const polylineProps = useAnimatedProps(() => ({ points: points.value }));
@@ -81,7 +81,7 @@ export default function Page() {
     return () => {
       clearTimeout(timer);
     };
-  }, []);
+  }, [seed]);
 
   const gesture = Gesture.Pan()
     .onBegin((e) => {
