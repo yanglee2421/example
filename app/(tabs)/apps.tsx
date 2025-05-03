@@ -282,23 +282,26 @@ export default function Account() {
           </Link>
         )}
         ListHeaderComponent={
-          <View
-            style={{
-              paddingInline: theme.spacing(3),
-              paddingBlock: theme.spacing(2),
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <Text
-              style={[
-                theme.typography.body1,
-                { color: theme.palette.text.primary },
-              ]}
+          <>
+            <View
+              style={{
+                paddingInline: theme.spacing(3),
+                paddingBlock: theme.spacing(2),
+                justifyContent: "center",
+                alignItems: "center",
+              }}
             >
-              Header
-            </Text>
-          </View>
+              <Text
+                style={[
+                  theme.typography.body1,
+                  { color: theme.palette.text.primary },
+                ]}
+              >
+                Header
+              </Text>
+            </View>
+            <Divider />
+          </>
         }
         ListEmptyComponent={
           <View
