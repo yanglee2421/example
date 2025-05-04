@@ -3,7 +3,8 @@ import { useTheme } from "@/hooks/useTheme";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Link } from "expo-router";
 import React from "react";
-import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
+import { FlatList, Pressable, StyleSheet, View } from "react-native";
+import { Text } from "@/components/Text";
 
 const colors = [
   "#f44336",
@@ -204,23 +205,6 @@ export default function Account() {
 
   return (
     <View style={{ flex: 1 }}>
-      <View
-        style={[
-          { paddingInline: theme.spacing(3), paddingBlock: theme.spacing(2) },
-        ]}
-      >
-        <Text
-          style={[
-            theme.typography.h5,
-            {
-              color: theme.palette.text.primary,
-            },
-          ]}
-        >
-          Apps
-        </Text>
-      </View>
-      <Divider />
       <FlatList
         data={list}
         keyExtractor={(i) => i.href}
@@ -284,20 +268,23 @@ export default function Account() {
         ListHeaderComponent={
           <>
             <View
-              style={{
-                paddingInline: theme.spacing(3),
-                paddingBlock: theme.spacing(2),
-                justifyContent: "center",
-                alignItems: "center",
-              }}
+              style={[
+                {
+                  paddingInline: theme.spacing(3),
+                  paddingBlock: theme.spacing(2),
+                  backgroundColor: theme.palette.background.paper,
+                },
+              ]}
             >
               <Text
                 style={[
-                  theme.typography.body1,
-                  { color: theme.palette.text.primary },
+                  theme.typography.h5,
+                  {
+                    color: theme.palette.text.primary,
+                  },
                 ]}
               >
-                Header
+                Apps
               </Text>
             </View>
             <Divider />
@@ -341,6 +328,8 @@ export default function Account() {
             </Text>
           </View>
         }
+        // StickyHeaderComponent={StickyHeader}
+        stickyHeaderIndices={[0]}
       />
     </View>
   );
