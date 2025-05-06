@@ -13,7 +13,7 @@ import {
   View,
 } from "react-native";
 import Markdown from "react-native-markdown-display";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { db } from "@/db/db";
 import * as schemas from "@/db/schema";
 import { eq } from "drizzle-orm";
@@ -124,6 +124,7 @@ const Divider = () => {
 };
 
 const ChatUI = () => {
+  const [placeholderHeight, setPlaceholderHeight] = React.useState(0);
   const [question, setQuestion] = React.useState("");
   const [sendButtonStatus, setSendButtonStatus] = React.useState<
     "idle" | "loading" | "streaming"
@@ -134,6 +135,7 @@ const ChatUI = () => {
   const controllerRef = React.useRef<AbortController | null>(null);
 
   const theme = useTheme();
+  const router = useRouter();
   const local = useLocalSearchParams<{ id: string }>();
   const [, keyboardHeight] = useKeyboard();
 
@@ -155,6 +157,16 @@ const ChatUI = () => {
     }),
     [completionId],
   );
+
+  React.useEffect(() => {
+    const raf = requestAnimationFrame(() => {
+      setPlaceholderHeight(keyboardHeight);
+    });
+
+    return () => {
+      cancelAnimationFrame(raf);
+    };
+  }, [keyboardHeight]);
 
   const scrollToBottom = () => {
     cancelAnimationFrame(timerRef.current);
@@ -304,32 +316,38 @@ const ChatUI = () => {
             </View>
           </View>
         )}
+        ListHeaderComponent={
+          <View>
+            <View
+              style={[
+                {
+                  paddingInline: theme.spacing(3),
+                  paddingBlock: theme.spacing(2),
+                },
+              ]}
+            >
+              <Pressable onPress={() => router.back()}>
+                <Text
+                  style={[
+                    theme.typography.h5,
+                    {
+                      color: theme.palette.primary.main,
+                    },
+                  ]}
+                >
+                  #{completionId}
+                </Text>
+              </Pressable>
+            </View>
+            <Divider />
+          </View>
+        }
       />
     );
   };
 
   return (
     <View style={{ flex: 1 }}>
-      <View
-        style={[
-          {
-            paddingInline: theme.spacing(3),
-            paddingBlock: theme.spacing(2),
-          },
-        ]}
-      >
-        <Text
-          style={[
-            theme.typography.h5,
-            {
-              color: theme.palette.primary.main,
-            },
-          ]}
-        >
-          #{completionId}
-        </Text>
-      </View>
-      <Divider />
       {renderMessages()}
       <Divider />
       <View
@@ -384,7 +402,7 @@ const ChatUI = () => {
         </View>
       </View>
       <Divider />
-      <View style={{ height: keyboardHeight }}></View>
+      <View style={{ height: placeholderHeight }}></View>
     </View>
   );
 };

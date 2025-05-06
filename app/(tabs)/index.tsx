@@ -1,7 +1,7 @@
 import { useTheme } from "@/hooks/useTheme";
 import { Link, useRouter } from "expo-router";
 import React from "react";
-import { Pressable, Text, View, StyleSheet } from "react-native";
+import { Pressable, View, StyleSheet } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { android_ripple } from "@/lib/utils";
 import Animated, {
@@ -15,6 +15,8 @@ import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 import { db } from "@/db/db";
 import { count, eq } from "drizzle-orm";
 import * as schema from "@/db/schema";
+import { Text } from "@/components/Text";
+import { Divider } from "@/components/ui";
 
 const styles = StyleSheet.create({
   leftAction: {
@@ -62,13 +64,8 @@ const SwipeToDelete = (props: SwipeToDeleteProps) => {
       friction={1}
       renderLeftActions={RenderLeftActions}
       onSwipeableOpen={(dir) => {
-        if (dir === "left") {
-          props.onDelete?.();
-        }
-      }}
-      onSwipeableWillOpen={(dir) => {
         if (dir === "right") {
-          ref.current?.close();
+          props.onDelete?.();
         }
       }}
     >
@@ -96,26 +93,13 @@ export default function Home() {
   );
 
   return (
-    <>
-      <View
-        style={[
-          { paddingInline: theme.spacing(3), paddingBlock: theme.spacing(1.5) },
-        ]}
-      >
-        <Text
-          style={[theme.typography.h5, { color: theme.palette.text.primary }]}
-        >
-          Chat
-        </Text>
-      </View>
-      <View
-        style={[{ height: 1, backgroundColor: theme.palette.divider }]}
-      ></View>
-      <Animated.FlatList
-        data={chats.data}
-        keyExtractor={(i) => i.id.toString()}
-        itemLayoutAnimation={LinearTransition}
-        renderItem={(i) => (
+    <Animated.FlatList
+      data={chats.data}
+      keyExtractor={(i) => i.id.toString()}
+      itemLayoutAnimation={LinearTransition}
+      stickyHeaderIndices={[0]}
+      renderItem={(i) => (
+        <View>
           <SwipeToDelete
             onDelete={() => {
               db.transaction(async (tx) => {
@@ -132,8 +116,6 @@ export default function Home() {
             <View
               style={[
                 {
-                  borderBottomWidth: 1,
-                  borderBottomColor: theme.palette.divider,
                   paddingInline: theme.spacing(5),
                   paddingBlock: theme.spacing(3),
                 },
@@ -159,16 +141,98 @@ export default function Home() {
               </Link>
             </View>
           </SwipeToDelete>
-        )}
-        ListFooterComponent={
-          <View
+          <Divider />
+        </View>
+      )}
+      ListEmptyComponent={
+        <View>
+          <Pressable
+            onPress={async () => {
+              const data = await db
+                .insert(schema.completionTable)
+                .values({ name: "new chat" });
+              router.push({
+                pathname: "/chat/[id]",
+                params: {
+                  id: data.lastInsertRowId,
+                },
+              });
+            }}
             style={[
               {
-                paddingInline: theme.spacing(3),
-                paddingBlock: theme.spacing(2),
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
               },
             ]}
           >
+            <Text
+              style={[
+                theme.typography.body1,
+                { color: theme.palette.text.primary },
+              ]}
+            >
+              No avaliable chats
+            </Text>
+          </Pressable>
+        </View>
+      }
+      ListHeaderComponent={
+        <View style={{ backgroundColor: theme.palette.background.default }}>
+          <View
+            style={[
+              {
+                paddingBlock: theme.spacing(1.5),
+                paddingInline: theme.spacing(3),
+              },
+            ]}
+          >
+            <View
+              style={[
+                {
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                },
+              ]}
+            >
+              <Text variant="h5">Chat App</Text>
+              <Pressable
+                onPress={async () => {
+                  const data = await db
+                    .insert(schema.completionTable)
+                    .values({ name: "new chat" });
+
+                  router.push({
+                    pathname: "/chat/[id]",
+                    params: {
+                      id: data.lastInsertRowId,
+                    },
+                  });
+                }}
+                style={{
+                  width: 40,
+                  height: 40,
+                  backgroundColor: theme.palette.primary.main,
+
+                  justifyContent: "center",
+                  alignItems: "center",
+                  borderRadius: 9999,
+
+                  marginStart: "auto",
+                  overflow: "hidden",
+                }}
+                android_ripple={android_ripple(theme.palette.action.focus)}
+              >
+                <MaterialCommunityIcons
+                  name="plus"
+                  style={{
+                    color: theme.palette.primary.contrastText,
+                    fontSize: theme.typography.h4.fontSize,
+                  }}
+                />
+              </Pressable>
+            </View>
             <Text
               style={[
                 { color: theme.palette.text.secondary },
@@ -178,87 +242,9 @@ export default function Home() {
               Total count: {chatCount.data[0]?.count}
             </Text>
           </View>
-        }
-        ListEmptyComponent={
-          <View>
-            <Pressable
-              onPress={async () => {
-                const data = await db
-                  .insert(schema.completionTable)
-                  .values({ name: "new chat" });
-                router.push({
-                  pathname: "/chat/[id]",
-                  params: {
-                    id: data.lastInsertRowId,
-                  },
-                });
-              }}
-              style={[
-                {
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                },
-              ]}
-            >
-              <Text
-                style={[
-                  theme.typography.body1,
-                  { color: theme.palette.text.primary },
-                ]}
-              >
-                No avaliable chats
-              </Text>
-            </Pressable>
-          </View>
-        }
-        ListHeaderComponent={
-          <View
-            style={[
-              {
-                paddingBlock: theme.spacing(1.5),
-                paddingInline: theme.spacing(3),
-              },
-            ]}
-          >
-            <Pressable
-              onPress={async () => {
-                const data = await db
-                  .insert(schema.completionTable)
-                  .values({ name: "new chat" });
-
-                router.push({
-                  pathname: "/chat/[id]",
-                  params: {
-                    id: data.lastInsertRowId,
-                  },
-                });
-              }}
-              style={{
-                width: 40,
-                height: 40,
-                backgroundColor: theme.palette.primary.main,
-
-                justifyContent: "center",
-                alignItems: "center",
-                borderRadius: 9999,
-
-                marginStart: "auto",
-                overflow: "hidden",
-              }}
-              android_ripple={android_ripple(theme.palette.action.focus)}
-            >
-              <MaterialCommunityIcons
-                name="plus"
-                style={{
-                  color: theme.palette.primary.contrastText,
-                  fontSize: theme.typography.h4.fontSize,
-                }}
-              />
-            </Pressable>
-          </View>
-        }
-      />
-    </>
+          <Divider />
+        </View>
+      }
+    />
   );
 }

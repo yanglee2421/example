@@ -3,14 +3,20 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import React from "react";
 import { Button, Text, View } from "react-native";
 import Animated, {
+  LinearTransition,
   useAnimatedStyle,
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
-import { GestureDetector, Gesture } from "react-native-gesture-handler";
+import {
+  GestureDetector,
+  Gesture,
+  Pressable,
+} from "react-native-gesture-handler";
 import { minmax } from "@/lib/worklet";
 import * as Crypto from "expo-crypto";
 import { queryOptions, useQuery } from "@tanstack/react-query";
+import { useRouter } from "expo-router";
 
 const data = "522A49SMP00037EP000G";
 
@@ -23,7 +29,7 @@ const fetchHash = () =>
         data,
         {
           encoding: Crypto.CryptoEncoding.HEX,
-        }
+        },
       );
       return hash;
     },
@@ -77,7 +83,7 @@ const Swiper = () => {
       alpha.value = minmax(
         Math.abs(translateX.value - width.value) / 150 - 0.3,
         0,
-        1
+        1,
       );
     })
     .onUpdate((e) => {
@@ -85,7 +91,7 @@ const Swiper = () => {
       alpha.value = minmax(
         Math.abs(translateX.value + width.value) / 150 - 0.3,
         0,
-        1
+        1,
       );
     })
     .onEnd((e) => {
@@ -93,7 +99,7 @@ const Swiper = () => {
       alpha.value = minmax(
         Math.abs(translateX.value + width.value) / 150 - 0.3,
         0,
-        1
+        1,
       );
     })
     .onFinalize((e) => {
@@ -229,7 +235,10 @@ const Swiper = () => {
 
 export default function Example() {
   const [open, setOpen] = React.useState(true);
+  const [list, setList] = React.useState([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+
   const theme = useTheme();
+  const router = useRouter();
 
   return (
     <View style={{ flex: 1 }}>
@@ -245,7 +254,48 @@ export default function Example() {
           }}
           title="Show/Hidden"
         />
+        <Button
+          onPress={() => {
+            router.back();
+          }}
+          title="back"
+        />
       </View>
+      <Animated.FlatList
+        data={list}
+        keyExtractor={(item) => item.toString()}
+        itemLayoutAnimation={LinearTransition}
+        renderItem={({ item }) => (
+          <View
+            style={{
+              padding: theme.spacing(3),
+              backgroundColor: theme.palette.primary.main,
+              marginVertical: theme.spacing(1),
+            }}
+          >
+            <Pressable
+              onPress={() => {
+                setList((prev) => prev.filter((i) => i !== item));
+              }}
+            >
+              <Text style={[theme.typography.body1]}>{item}</Text>
+            </Pressable>
+          </View>
+        )}
+        ListFooterComponent={() => (
+          <View
+            style={{
+              padding: theme.spacing(3),
+              backgroundColor: theme.palette.primary.main,
+              marginVertical: theme.spacing(1),
+            }}
+          >
+            <Pressable onPress={() => {}}>
+              <Text style={[theme.typography.body1]}>Footer</Text>
+            </Pressable>
+          </View>
+        )}
+      />
     </View>
   );
 }
