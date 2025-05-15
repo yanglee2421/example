@@ -18,6 +18,8 @@ import { db } from "@/db/db";
 import * as schemas from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { useLiveQuery } from "drizzle-orm/expo-sqlite";
+import { useForm } from "@tanstack/react-form";
+import { z } from "zod";
 import type { Message, MessageInAPI } from "@/db/schema";
 
 const getContent = (data: string) => {
@@ -57,6 +59,9 @@ const MessageUI = (props: MessageUIProps) => {
         code_inline: {
           ...theme.typography.body1,
           color: theme.palette.info.dark,
+        },
+        hr: {
+          borderColor: theme.palette.divider,
         },
       }}
     >
@@ -123,6 +128,21 @@ const Divider = () => {
   );
 };
 
+const chatSchema = z.object({
+  message: z.string().min(1),
+});
+
+const useChatForm = () =>
+  useForm({
+    defaultValues: {
+      message: "",
+    },
+    validators: {
+      onChange: chatSchema,
+    },
+    onSubmit() {},
+  });
+
 const ChatUI = () => {
   const [placeholderHeight, setPlaceholderHeight] = React.useState(0);
   const [question, setQuestion] = React.useState("");
@@ -134,6 +154,7 @@ const ChatUI = () => {
   const timerRef = React.useRef(0);
   const controllerRef = React.useRef<AbortController | null>(null);
 
+  const form = useChatForm();
   const theme = useTheme();
   const router = useRouter();
   const local = useLocalSearchParams<{ id: string }>();
@@ -251,6 +272,7 @@ const ChatUI = () => {
   };
 
   const handleSubmit = async () => {
+    form.handleSubmit();
     Keyboard.dismiss();
     setQuestion("");
 
@@ -300,7 +322,7 @@ const ChatUI = () => {
         }}
         data={completionMessages.data}
         keyExtractor={(i) => i.id.toString()}
-        keyboardShouldPersistTaps="handled"
+        stickyHeaderIndices={[0]}
         renderItem={(i) => (
           <View key={i.item.id} style={{ paddingInline: theme.spacing(3) }}>
             <View>
