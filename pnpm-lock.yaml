@@ -125,6 +125,9 @@ importers:
       react-native-svg:
         specifier: 15.11.2
         version: 15.11.2(react-native@0.79.2(@babel/core@7.26.8)(@types/react@19.0.14)(react@19.0.0))(react@19.0.0)
+      try:
+        specifier: 1.0.0-beta.5
+        version: 1.0.0-beta.5
       use-immer:
         specifier: ^0.11.0
         version: 0.11.0(immer@10.1.1)(react@19.0.0)
@@ -5069,6 +5072,9 @@ packages:
 
   tr46@0.0.3:
     resolution: {integrity: sha512-N3WMsuqV66lT30CrXNbEjx4GEwlow3v6rr4mCcv6prnfwhS01rkgyFdjPNBYd9br7LpXV1+Emh01fHnq2Gdgrw==}
+
+  try@1.0.0-beta.5:
+    resolution: {integrity: sha512-t6M4KO1dIyxK90nfq5WtiILtAuEQMHVNzwpS4I0Kf1jSLmD8cofq9iJBwgkVQuZwwAxOpc9rJ3oQztNK51c6YA==}
 
   ts-api-utils@2.1.0:
     resolution: {integrity: sha512-CUgTZL1irw8u29bzrOD/nH85jqyc74D6SshFgujOIA7osm2Rz7dYH77agkx7H4FBNxDq7Cjf+IjaX/8zwFW+ZQ==}
@@ -11444,6 +11450,8 @@ snapshots:
   toidentifier@1.0.1: {}
 
   tr46@0.0.3: {}
+
+  try@1.0.0-beta.5: {}
 
   ts-api-utils@2.1.0(typescript@5.8.3):
     dependencies:

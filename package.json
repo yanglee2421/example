@@ -52,6 +52,7 @@
     "react-native-safe-area-context": "5.4.0",
     "react-native-screens": "~4.10.0",
     "react-native-svg": "15.11.2",
+    "try": "1.0.0-beta.5",
     "use-immer": "^0.11.0",
     "zod": "^3.24.4",
     "zustand": "^5.0.3"

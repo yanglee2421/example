@@ -324,7 +324,12 @@ const ChatUI = () => {
         keyExtractor={(i) => i.id.toString()}
         stickyHeaderIndices={[0]}
         renderItem={(i) => (
-          <View key={i.item.id} style={{ paddingInline: theme.spacing(3) }}>
+          <View
+            key={i.item.id}
+            style={{
+              paddingInline: theme.spacing(3),
+            }}
+          >
             <View>
               <Text
                 style={[
@@ -345,6 +350,7 @@ const ChatUI = () => {
                 {
                   paddingInline: theme.spacing(3),
                   paddingBlock: theme.spacing(2),
+                  backgroundColor: theme.palette.background.default,
                 },
               ]}
             >

@@ -204,134 +204,132 @@ export default function Account() {
   ].sort((c, n) => c.label.localeCompare(n.label));
 
   return (
-    <View style={{ flex: 1 }}>
-      <FlatList
-        data={list}
-        keyExtractor={(i) => i.href}
-        renderItem={(i) => (
-          <Link
-            href={i.item.href}
-            key={i.item.label}
-            asChild
-            style={[
-              styles.itemLink,
-              {
-                borderBlockEndColor: theme.palette.divider,
-              },
-            ]}
+    <FlatList
+      data={list}
+      keyExtractor={(i) => i.href}
+      renderItem={(i) => (
+        <Link
+          href={i.item.href}
+          key={i.item.label}
+          asChild
+          style={[
+            styles.itemLink,
+            {
+              borderBlockEndColor: theme.palette.divider,
+            },
+          ]}
+        >
+          <Pressable
+            android_ripple={{
+              borderless: false,
+              foreground: true,
+              color: theme.palette.action.focus,
+            }}
           >
-            <Pressable
-              android_ripple={{
-                borderless: false,
-                foreground: true,
-                color: theme.palette.action.focus,
-              }}
-            >
-              <View
-                style={[
-                  styles.itemView,
-                  {
-                    paddingInline: theme.spacing(3),
-                    paddingBlock: theme.spacing(2),
-                  },
-                ]}
-              >
-                <View
-                  style={[
-                    {
-                      backgroundColor: colors[i.index % colors.length],
-                      padding: theme.spacing(1.5),
-                      borderRadius: theme.spacing(2),
-                    },
-                  ]}
-                >
-                  {i.item.icon}
-                </View>
-                <Text
-                  style={[
-                    styles.itemText,
-                    {
-                      color: theme.palette.text.primary,
-                      fontSize: theme.typography.body1.fontSize,
-                      fontFamily: theme.typography.body1.fontFamily,
-                      fontWeight: theme.typography.body1.fontWeight,
-                      letterSpacing: theme.typography.body1.letterSpacing,
-                    },
-                  ]}
-                >
-                  {i.item.label}
-                </Text>
-              </View>
-            </Pressable>
-          </Link>
-        )}
-        ListHeaderComponent={
-          <>
             <View
               style={[
+                styles.itemView,
                 {
                   paddingInline: theme.spacing(3),
                   paddingBlock: theme.spacing(2),
-                  backgroundColor: theme.palette.background.paper,
                 },
               ]}
             >
-              <Text
+              <View
                 style={[
-                  theme.typography.h5,
                   {
-                    color: theme.palette.text.primary,
+                    backgroundColor: colors[i.index % colors.length],
+                    padding: theme.spacing(1.5),
+                    borderRadius: theme.spacing(2),
                   },
                 ]}
               >
-                Apps
+                {i.item.icon}
+              </View>
+              <Text
+                style={[
+                  styles.itemText,
+                  {
+                    color: theme.palette.text.primary,
+                    fontSize: theme.typography.body1.fontSize,
+                    fontFamily: theme.typography.body1.fontFamily,
+                    fontWeight: theme.typography.body1.fontWeight,
+                    letterSpacing: theme.typography.body1.letterSpacing,
+                  },
+                ]}
+              >
+                {i.item.label}
               </Text>
             </View>
-            <Divider />
-          </>
-        }
-        ListEmptyComponent={
+          </Pressable>
+        </Link>
+      )}
+      ListHeaderComponent={
+        <>
           <View
-            style={{
-              paddingInline: theme.spacing(3),
-              paddingBlock: theme.spacing(2),
-              justifyContent: "center",
-              alignItems: "center",
-            }}
+            style={[
+              {
+                paddingInline: theme.spacing(3),
+                paddingBlock: theme.spacing(2),
+                backgroundColor: theme.palette.background.paper,
+              },
+            ]}
           >
             <Text
               style={[
-                theme.typography.body1,
-                { color: theme.palette.text.primary },
+                theme.typography.h5,
+                {
+                  color: theme.palette.text.primary,
+                },
               ]}
             >
-              Empty
+              Apps
             </Text>
           </View>
-        }
-        ListFooterComponent={
-          <View
-            style={{
-              paddingInline: theme.spacing(3),
-              paddingBlock: theme.spacing(2),
-              justifyContent: "center",
-              alignItems: "center",
-            }}
+          <Divider />
+        </>
+      }
+      ListEmptyComponent={
+        <View
+          style={{
+            paddingInline: theme.spacing(3),
+            paddingBlock: theme.spacing(2),
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Text
+            style={[
+              theme.typography.body1,
+              { color: theme.palette.text.primary },
+            ]}
           >
-            <Text
-              style={[
-                theme.typography.body1,
-                { color: theme.palette.text.primary },
-              ]}
-            >
-              Footer
-            </Text>
-          </View>
-        }
-        // StickyHeaderComponent={StickyHeader}
-        stickyHeaderIndices={[0]}
-      />
-    </View>
+            Empty
+          </Text>
+        </View>
+      }
+      ListFooterComponent={
+        <View
+          style={{
+            paddingInline: theme.spacing(3),
+            paddingBlock: theme.spacing(2),
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Text
+            style={[
+              theme.typography.body1,
+              { color: theme.palette.text.primary },
+            ]}
+          >
+            Footer
+          </Text>
+        </View>
+      }
+      // StickyHeaderComponent={StickyHeader}
+      stickyHeaderIndices={[0]}
+    />
   );
 }
 
