@@ -8,7 +8,6 @@ import {
   Pressable,
   FlatList,
   StyleSheet,
-  Text,
   TextInput,
   View,
 } from "react-native";
@@ -20,15 +19,16 @@ import { eq } from "drizzle-orm";
 import { useLiveQuery } from "drizzle-orm/expo-sqlite";
 import { useForm } from "@tanstack/react-form";
 import { z } from "zod";
+import { t } from "try";
+import { Text } from "@/components/Text";
 import type { Message, MessageInAPI } from "@/db/schema";
 
 const getContent = (data: string) => {
-  try {
-    const json = JSON.parse(data.replace("data:", ""));
-    return json.choices[0].delta.content;
-  } catch {
-    return "";
-  }
+  const [ok, , json] = t(JSON.parse, data.replace("data:", ""));
+
+  if (!ok) return "";
+
+  return json.choices[0].delta.content;
 };
 
 const getMessage = (buf: string) =>
@@ -128,35 +128,58 @@ const Divider = () => {
   );
 };
 
+const ListHeader = () => {
+  const theme = useTheme();
+  const router = useRouter();
+  const local = useLocalSearchParams<{ id: string }>();
+
+  const completionId = +local.id;
+
+  return (
+    <View>
+      <View
+        style={[
+          {
+            paddingInline: theme.spacing(3),
+            paddingBlock: theme.spacing(2),
+            backgroundColor: theme.palette.background.default,
+          },
+        ]}
+      >
+        <Pressable onPress={() => router.back()}>
+          <Text
+            variant="h5"
+            style={[
+              {
+                color: theme.palette.primary.main,
+              },
+            ]}
+          >
+            #{completionId}
+          </Text>
+        </Pressable>
+      </View>
+      <Divider />
+    </View>
+  );
+};
+
 const chatSchema = z.object({
   message: z.string().min(1),
 });
 
-const useChatForm = () =>
-  useForm({
-    defaultValues: {
-      message: "",
-    },
-    validators: {
-      onChange: chatSchema,
-    },
-    onSubmit() {},
-  });
+type SendButtonStatus = "idle" | "loading" | "streaming";
 
 const ChatUI = () => {
   const [placeholderHeight, setPlaceholderHeight] = React.useState(0);
-  const [question, setQuestion] = React.useState("");
-  const [sendButtonStatus, setSendButtonStatus] = React.useState<
-    "idle" | "loading" | "streaming"
-  >("idle");
+  const [sendButtonStatus, setSendButtonStatus] =
+    React.useState<SendButtonStatus>("idle");
 
   const scrollRef = React.useRef<FlatList>(null);
   const timerRef = React.useRef(0);
   const controllerRef = React.useRef<AbortController | null>(null);
 
-  const form = useChatForm();
   const theme = useTheme();
-  const router = useRouter();
   const local = useLocalSearchParams<{ id: string }>();
   const [, keyboardHeight] = useKeyboard();
 
@@ -196,7 +219,11 @@ const ChatUI = () => {
     });
   };
 
-  const runFetch = async (id: number, messages: MessageInAPI[]) => {
+  const runFetch = async (
+    id: number,
+    messages: MessageInAPI[],
+    question: string,
+  ) => {
     controllerRef.current = new AbortController();
     const res = await fetch(
       "https://spark-api-open.xf-yun.com/v1/chat/completions",
@@ -257,9 +284,13 @@ const ChatUI = () => {
       .where(eq(schemas.completionTable.id, completionId));
   };
 
-  const runChat = async (id: number, messages: MessageInAPI[]) => {
+  const runChat = async (
+    id: number,
+    messages: MessageInAPI[],
+    question: string,
+  ) => {
     setSendButtonStatus("loading");
-    await runFetch(id, messages).catch(async (e) => {
+    await runFetch(id, messages, question).catch(async (e) => {
       await db
         .update(schemas.messageTable)
         .set({
@@ -271,10 +302,9 @@ const ChatUI = () => {
     setSendButtonStatus("idle");
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (question: string) => {
     form.handleSubmit();
     Keyboard.dismiss();
-    setQuestion("");
 
     await db.transaction(async (tx) => {
       if (!completion.data) throw new Error("No completion data");
@@ -297,9 +327,22 @@ const ChatUI = () => {
         })
         .returning({ id: schemas.messageTable.id });
 
-      await runChat(id, messages);
+      await runChat(id, messages, question);
     });
   };
+
+  const form = useForm({
+    defaultValues: {
+      message: "",
+    },
+    validators: {
+      onChange: chatSchema,
+    },
+    onSubmit(data) {
+      data.formApi.reset();
+      handleSubmit(data.value.message);
+    },
+  });
 
   const renderMessages = () => {
     if (completion.error) {
@@ -343,33 +386,7 @@ const ChatUI = () => {
             </View>
           </View>
         )}
-        ListHeaderComponent={
-          <View>
-            <View
-              style={[
-                {
-                  paddingInline: theme.spacing(3),
-                  paddingBlock: theme.spacing(2),
-                  backgroundColor: theme.palette.background.default,
-                },
-              ]}
-            >
-              <Pressable onPress={() => router.back()}>
-                <Text
-                  style={[
-                    theme.typography.h5,
-                    {
-                      color: theme.palette.primary.main,
-                    },
-                  ]}
-                >
-                  #{completionId}
-                </Text>
-              </Pressable>
-            </View>
-            <Divider />
-          </View>
-        }
+        ListHeaderComponent={ListHeader}
       />
     );
   };
@@ -392,25 +409,29 @@ const ChatUI = () => {
             paddingBlockStart: theme.spacing(1),
           }}
         >
-          <TextInput
-            value={question}
-            onChangeText={setQuestion}
-            onFocus={scrollToBottom}
-            multiline
-            placeholder="Search"
-            placeholderTextColor={theme.palette.text.secondary}
-            style={[
-              theme.typography.body1,
-              { color: theme.palette.text.primary },
-            ]}
-            selectionColor={theme.palette.primary.main}
-          />
+          <form.Field name="message">
+            {(field) => (
+              <TextInput
+                value={field.state.value}
+                onChangeText={field.handleChange}
+                onFocus={scrollToBottom}
+                multiline
+                placeholder="Search"
+                placeholderTextColor={theme.palette.text.secondary}
+                style={[
+                  theme.typography.body1,
+                  { color: theme.palette.text.primary },
+                ]}
+                selectionColor={theme.palette.primary.main}
+              />
+            )}
+          </form.Field>
         </View>
 
         <View style={styles.charFormBar}>
           <View style={styles.chatFormBarSpace}></View>
           <Pressable
-            onPress={handleSubmit}
+            onPress={form.handleSubmit}
             disabled={sendButtonStatus !== "idle"}
             android_ripple={android_ripple(theme.palette.action.focus)}
             style={[

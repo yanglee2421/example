@@ -20,18 +20,27 @@ const ListHeader = () => {
     <View>
       <View
         style={{
-          backgroundColor: theme.palette.background.default,
+          backgroundColor: theme.palette.primary.main,
 
           paddingInline: theme.spacing(6),
           paddingBlock: theme.spacing(3),
         }}
       >
-        <Text variant="h5">{news.data?.data.data.date}</Text>
+        <Text
+          variant="h5"
+          style={[
+            {
+              color: theme.palette.primary.contrastText,
+            },
+          ]}
+        >
+          {news.data?.data.data.date}
+        </Text>
         <Text
           variant="body2"
           style={[
             {
-              color: theme.palette.text.secondary,
+              color: theme.palette.primary.contrastText,
             },
           ]}
         >
@@ -72,38 +81,61 @@ export default function News() {
   const theme = useTheme();
 
   return (
-    <Animated.FlatList
-      data={news.data?.data.data.news}
-      keyExtractor={(i) => i}
-      renderItem={({ item: i }) => (
-        <Pressable
-          key={i}
-          onPress={() => Share.share({ message: i })}
+    <View style={[{ flex: 1 }]}>
+      <View
+        style={[
+          {
+            paddingInline: theme.spacing(5),
+            paddingBlock: theme.spacing(3),
+
+            backgroundColor: theme.palette.primary.main,
+          },
+        ]}
+      >
+        <Text
+          variant="h5"
           style={[
             {
-              borderWidth: 1,
-              borderColor: "transparent",
-              borderBlockEndColor: theme.palette.divider,
-
-              paddingInline: theme.spacing(6),
-              paddingBlock: theme.spacing(3),
+              color: theme.palette.primary.contrastText,
             },
           ]}
-          android_ripple={android_ripple(theme.palette.action.focus)}
         >
-          <Text>{i.slice(0, i.length - 1)}</Text>
-        </Pressable>
-      )}
-      stickyHeaderIndices={[0]}
-      ListHeaderComponent={ListHeader}
-      ListEmptyComponent={ListEmpty}
-      refreshControl={
-        <RefreshControl
-          refreshing={news.isRefetching}
-          onRefresh={() => news.refetch()}
-          colors={[theme.palette.primary.main]}
-        />
-      }
-    />
+          News
+        </Text>
+      </View>
+      <Animated.FlatList
+        data={news.data?.data.data.news}
+        keyExtractor={(i) => i}
+        renderItem={({ item: i }) => (
+          <Pressable
+            key={i}
+            onPress={() => Share.share({ message: i })}
+            style={[
+              {
+                borderWidth: 1,
+                borderColor: "transparent",
+                borderBlockEndColor: theme.palette.divider,
+
+                paddingInline: theme.spacing(6),
+                paddingBlock: theme.spacing(3),
+              },
+            ]}
+            android_ripple={android_ripple(theme.palette.action.focus)}
+          >
+            <Text>{i.slice(0, i.length - 1)}</Text>
+          </Pressable>
+        )}
+        // stickyHeaderIndices={[0]}
+        ListHeaderComponent={ListHeader}
+        ListEmptyComponent={ListEmpty}
+        refreshControl={
+          <RefreshControl
+            refreshing={news.isRefetching}
+            onRefresh={() => news.refetch()}
+            colors={[theme.palette.primary.main]}
+          />
+        }
+      />
+    </View>
   );
 }
