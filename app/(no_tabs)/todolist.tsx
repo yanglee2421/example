@@ -1,170 +1,30 @@
-import { useTheme } from "@/hooks/useTheme";
 import React from "react";
-import { View } from "react-native";
-import Svg, { Polyline, Circle, Text, Line } from "react-native-svg";
-import Animated, {
-  useAnimatedProps,
-  useSharedValue,
-  withSpring,
-  runOnJS,
-  useAnimatedRef,
-  useFrameCallback,
-  measure,
+import { Canvas, Circle, Group } from "@shopify/react-native-skia";
+import {
   useDerivedValue,
+  useSharedValue,
+  withRepeat,
+  withTiming,
 } from "react-native-reanimated";
-import { GestureDetector, Gesture } from "react-native-gesture-handler";
-import { minmax } from "@/lib/worklet";
 
-const AnimatedLine = Animated.createAnimatedComponent(Line);
-const AnimatedText = Animated.createAnimatedComponent(Text);
-const AnimatedPolyline = Animated.createAnimatedComponent(Polyline);
-
-const randomDelay = () => Math.floor(Math.random() * 1000 * 1.5);
-const randomInt = (min: number, max: number) =>
-  Math.random() * (max - min) + min;
-
-const height = 300;
-
-export default function Page() {
-  const [width, setWidth] = React.useState(0);
-  const [cursorText, setCursorText] = React.useState("");
-
-  const theme = useTheme();
-  const seed = useSharedValue(0);
-  const showCursor = useSharedValue(false);
-  const cursorX = useSharedValue(0);
-  const renderNodes = useSharedValue<number[]>([]);
-  const svgRef = useAnimatedRef<Svg>();
-
-  const points = useDerivedValue(() =>
-    renderNodes.value
-      .map((i, idx) => `${idx},${Math.floor(height * (1 - i / 700))}`)
-      .join(" "),
-  );
-
-  const polylineProps = useAnimatedProps(() => ({ points: points.value }));
-
-  const cursorXProps = useAnimatedProps(() => ({
-    x1: cursorX.value,
-    x2: cursorX.value,
-    strokeWidth: cursorX.value ? 1 : 0,
-  }));
-
-  const cursorTextProps = useAnimatedProps(() => ({
-    x: cursorX.value + 4,
-    fill: showCursor.value ? theme.palette.error.main : "rgba(0,0,0,0)",
-  }));
-
-  useFrameCallback(() => {
-    const xSize = measure(svgRef)?.width;
-    if (!xSize) return;
-
-    renderNodes.value = [...renderNodes.value, seed.value].slice(-xSize);
-
-    if (showCursor.value) {
-      const val = renderNodes.value[Math.floor(cursorX.value)];
-      runOnJS(setCursorText)(val ? Math.floor(val).toString() : "");
-    } else {
-      runOnJS(setCursorText)("");
-    }
-  });
+const HelloWorld = () => {
+  const size = 256;
+  const r = useSharedValue(0);
+  const c = useDerivedValue(() => size - r.value);
 
   React.useEffect(() => {
-    let timer: number | NodeJS.Timeout = 0;
-    const update = () => {
-      seed.value = randomInt(50, 700);
-      timer = setTimeout(update, randomDelay());
-    };
-
-    update();
-
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [seed]);
-
-  const gesture = Gesture.Pan()
-    .onBegin((e) => {
-      showCursor.value = true;
-      const width = measure(svgRef)?.width || Number.POSITIVE_INFINITY;
-      cursorX.value = minmax(e.x, 0, width);
-    })
-    .onUpdate((e) => {
-      const width = measure(svgRef)?.width || Number.POSITIVE_INFINITY;
-      cursorX.value = minmax(e.x, 0, width);
-    })
-    .onEnd((e) => {
-      const width = measure(svgRef)?.width || Number.POSITIVE_INFINITY;
-      cursorX.value = minmax(e.x, 0, width);
-    })
-    .onFinalize(() => {
-      showCursor.value = false;
-      cursorX.value = withSpring(0);
-    });
+    r.value = withRepeat(withTiming(size * 0.33, { duration: 1000 }), -1);
+  }, [r, size]);
 
   return (
-    <View style={{ paddingInline: theme.spacing(3) }}>
-      <View
-        style={{
-          height: height,
-          paddingBlockStart: 10,
-        }}
-        onLayout={(e) => {
-          setWidth(e.nativeEvent.layout.width);
-        }}
-      >
-        <GestureDetector gesture={gesture}>
-          <Svg ref={svgRef} height={height} width={width}>
-            <AnimatedPolyline
-              fill={"none"}
-              stroke={theme.palette.primary.main}
-              strokeWidth={2}
-              animatedProps={polylineProps}
-            />
-            <Line
-              x1={0}
-              y1={height}
-              x2={width}
-              y2={height}
-              stroke={theme.palette.divider}
-              strokeWidth={1}
-            />
-            <Line
-              x1={0}
-              y1={0}
-              x2={0}
-              y2={height}
-              stroke={theme.palette.divider}
-              strokeWidth={1}
-            />
-            <Circle
-              x={0}
-              y={(height / 4) * 3}
-              r={5}
-              fill={theme.palette.error.main}
-            />
-            <Text
-              x={10}
-              y={10}
-              fill={theme.palette.text.secondary}
-              textAnchor="start"
-              alignmentBaseline="top"
-            >
-              label
-            </Text>
-
-            <AnimatedLine
-              y2={height}
-              y1={0}
-              stroke={theme.palette.error.main}
-              animatedProps={cursorXProps}
-            />
-            <AnimatedText y={24} animatedProps={cursorTextProps}>
-              {cursorText}
-            </AnimatedText>
-          </Svg>
-        </GestureDetector>
-      </View>
-    </View>
+    <Canvas style={{ flex: 1 }}>
+      <Group blendMode="multiply">
+        <Circle cx={r} cy={r} r={r} color="cyan" />
+        <Circle cx={c} cy={r} r={r} color="magenta" />
+        <Circle cx={size / 2} cy={c} r={r} color="yellow" />
+      </Group>
+    </Canvas>
   );
-}
+};
+
+export default HelloWorld;
