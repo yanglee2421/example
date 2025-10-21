@@ -1,81 +1,40 @@
 import { Button, View } from "react-native";
-import * as fs from "expo-file-system/next";
+import * as fs from "expo-file-system";
 import * as consts from "@/lib/constants";
-import * as DocPicker from "expo-document-picker";
-import * as pfs from "expo-file-system";
-import * as safx from "react-native-saf-x";
+
+const getSQLiteFile = () => {
+  return new fs.File(fs.Paths.document, `SQLite/${consts.databaseName}`);
+};
 
 export default function Page() {
   return (
     <View>
       <Button
-        title="export safx"
-        onPress={async () => {
-          const file = new fs.File(
-            fs.Paths.document,
-            `SQLite/${consts.databaseName}`,
-          );
-          const dir = await safx.openDocumentTree(true);
-          if (!dir) return;
-          await safx.copyFile(
-            file.uri,
-            dir.uri + "/" + Date.now() + consts.databaseName,
-            { replaceIfDestinationExists: true },
-          );
-        }}
-      />
-      <Button
         title="export expo"
         onPress={async () => {
-          const file = new fs.File(
-            fs.Paths.document,
-            `SQLite/${consts.databaseName}`,
-          );
-
-          const dir =
-            await pfs.StorageAccessFramework.requestDirectoryPermissionsAsync();
-
-          if (!dir.granted) return;
-          const nFile = await pfs.StorageAccessFramework.createFileAsync(
-            dir.directoryUri,
-            Date.now() + "_" + consts.databaseName,
-            "application/x-sqlite3",
-          );
-
-          await pfs.StorageAccessFramework.writeAsStringAsync(
-            nFile,
-            file.base64(),
-            { encoding: pfs.EncodingType.Base64 },
-          );
+          const sqliteFile = getSQLiteFile();
+          const dir = await fs.Directory.pickDirectoryAsync();
+          const newFile = dir.createFile(consts.databaseName, sqliteFile.type);
+          const bytes = await sqliteFile.bytes();
+          newFile.write(bytes);
         }}
       />
       <Button
         title="import"
         onPress={async () => {
-          const doc = await DocPicker.getDocumentAsync({
-            copyToCacheDirectory: true,
-          });
-
-          if (!doc.assets) return;
-          if (doc.canceled) return;
-          const dir = doc.assets[0].uri;
-          const file = new fs.File(
-            fs.Paths.document,
-            `SQLite/${consts.databaseName}`,
-          );
-          file.delete();
-          const backup = new fs.File(dir);
-          backup.copy(file);
+          const sqliteFile = getSQLiteFile();
+          const result = await fs.File.pickFileAsync();
+          const backup = Array.isArray(result) ? result.at(0) : result;
+          if (!backup) return;
+          const bytes = await backup.bytes();
+          sqliteFile.write(bytes);
         }}
       />
       <Button
         title="delete"
         onPress={() => {
-          const file = new fs.File(
-            fs.Paths.document,
-            `SQLite/${consts.databaseName}`,
-          );
-          file.exists && file.delete();
+          const sqliteFile = getSQLiteFile();
+          sqliteFile.exists && sqliteFile.delete();
         }}
       />
     </View>

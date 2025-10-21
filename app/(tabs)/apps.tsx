@@ -61,17 +61,6 @@ export default function Account() {
     {
       icon: (
         <MaterialCommunityIcons
-          name="qrcode-scan"
-          size={iconSize}
-          color={theme.palette.common.white}
-        />
-      ),
-      label: "Activation",
-      href: "/activation" as const,
-    },
-    {
-      icon: (
-        <MaterialCommunityIcons
           name="lan"
           size={iconSize}
           color={theme.palette.common.white}
