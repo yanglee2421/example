@@ -282,19 +282,6 @@ export default function Example() {
             </Pressable>
           </View>
         )}
-        ListFooterComponent={() => (
-          <View
-            style={{
-              padding: theme.spacing(3),
-              backgroundColor: theme.palette.primary.main,
-              marginVertical: theme.spacing(1),
-            }}
-          >
-            <Pressable onPress={() => {}}>
-              <Text style={[theme.typography.body1]}>Footer</Text>
-            </Pressable>
-          </View>
-        )}
       />
     </View>
   );
