@@ -1,3 +1,4 @@
+import { t } from "try";
 import React from "react";
 import {
   FlatList,
@@ -5,8 +6,8 @@ import {
   Pressable,
   RefreshControl,
   ScrollView,
-  Share,
   Text,
+  ToastAndroid,
 } from "react-native";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { fetchFengjing } from "@/api/qqlykm_cn";
@@ -15,6 +16,8 @@ import { NeedAPIKEY } from "@/components/NeedAPIKEY";
 import { useStorageStore } from "@/hooks/useStorageStore";
 import { android_ripple } from "@/lib/utils";
 import { useTheme } from "@/hooks/useTheme";
+import { downloadFile } from "@/lib/expo";
+import { nativeConfirm } from "@/lib/react-native";
 
 const fetcher = fetchFengjing();
 
@@ -23,6 +26,21 @@ export default function Page() {
   const fengjing = useInfiniteQuery({ ...fetcher, enabled: !!apikey });
   const queryClient = useQueryClient();
   const theme = useTheme();
+
+  const hanldeImagePress = async (url: string) => {
+    const [ok, error] = await t(async () => {
+      await downloadFile(url);
+      await nativeConfirm("Download ?", "Download image");
+    });
+    if (ok) {
+      ToastAndroid.show("Cancel", 1000 * 2);
+    } else {
+      const message = error instanceof Error ? error.message : String(error);
+
+      ToastAndroid.show(message, 1000 * 2);
+      console.error(error);
+    }
+  };
 
   return (
     <>
@@ -82,9 +100,10 @@ export default function Page() {
                   ]}
                 >
                   <Pressable
-                    onPress={() =>
-                      Share.share({ message: item.data.data.cover })
-                    }
+                    onPress={() => {
+                      const url = item.data.data.cover;
+                      hanldeImagePress(url);
+                    }}
                     style={[
                       {
                         backgroundColor: `rgba(0,0,0,${theme.palette.action.disabledOpacity})`,

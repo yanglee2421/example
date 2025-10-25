@@ -78,6 +78,8 @@ const RootLayout = () => {
   );
 };
 
-export default function Layout() {
+const Layout = () => {
   return <RootLayout />;
-}
+};
+
+export default Layout;
