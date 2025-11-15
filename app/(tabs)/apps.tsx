@@ -190,6 +190,17 @@ export default function Account() {
       label: "Calendar",
       href: "/calendar" as const,
     },
+    {
+      icon: (
+        <MaterialCommunityIcons
+          name={"calendar"}
+          size={iconSize}
+          color={theme.palette.common.white}
+        />
+      ),
+      label: "Date",
+      href: "/date" as const,
+    },
   ].sort((c, n) => c.label.localeCompare(n.label));
 
   return (

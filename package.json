@@ -13,11 +13,13 @@
     "lint": "expo lint"
   },
   "dependencies": {
+    "@expo/ui": "0.2.0-beta.7",
     "@expo/vector-icons": "^15.0.2",
     "@shopify/react-native-skia": "2.2.12",
     "@tanstack/react-form": "^1.23.7",
     "@tanstack/react-query": "^5.90.5",
     "axios": "^1.12.2",
+    "dayjs": "^1.11.19",
     "drizzle-orm": "^0.44.6",
     "expo": "~54.0.13",
     "expo-application": "~7.0.7",
@@ -61,5 +63,6 @@
     "prettier": "^3.6.2",
     "typescript": "^5.9.3"
   },
-  "private": true
+  "private": true,
+  "packageManager": "pnpm@10.22.0+sha512.bf049efe995b28f527fd2b41ae0474ce29186f7edcb3bf545087bd61fbbebb2bf75362d1307fda09c2d288e1e499787ac12d4fcb617a974718a6051f2eee741c"
 }
