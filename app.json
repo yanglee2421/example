@@ -2,7 +2,7 @@
   "expo": {
     "name": "Example",
     "slug": "example",
-    "version": "0.0.42",
+    "version": "0.0.44",
     "orientation": "default",
     "icon": "./assets/icon.png",
     "scheme": "example",
