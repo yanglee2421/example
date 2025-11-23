@@ -11,7 +11,7 @@ export default function Page() {
   const [begin, setBegin] = React.useState(() => new Date());
   const [end, setEnd] = React.useState(() => new Date());
 
-  const result = dayjs(end).diff(dayjs(begin), "day");
+  const result = dayjs(end).diff(dayjs(begin), "day") + 1;
 
   const theme = useTheme();
 
