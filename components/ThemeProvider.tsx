@@ -21,9 +21,5 @@ export function ThemeProvider(props: React.PropsWithChildren) {
   const isDark = colorScheme === "dark";
   const theme = modeToHasSelector(mode, isDark) ? darkTheme : lightTheme;
 
-  return (
-    <ThemeContext.Provider value={theme}>
-      {props.children}
-    </ThemeContext.Provider>
-  );
+  return <ThemeContext value={theme}>{props.children}</ThemeContext>;
 }

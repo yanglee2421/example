@@ -4,7 +4,7 @@ const color = (
   main: string,
   light: string,
   dark: string,
-  contrastText: string
+  contrastText: string,
 ) => ({ main, light, dark, contrastText });
 
 const black = "#000";
@@ -34,7 +34,7 @@ const text = (
   size: number,
   lh: number,
   ls: number,
-  textTransform?: TextTransform
+  textTransform?: TextTransform,
 ) => ({
   fontFamily,
   fontWeight,
@@ -222,5 +222,4 @@ export const darkTheme = {
 };
 
 export const ThemeContext = React.createContext(lightTheme);
-
-export const useTheme = () => React.useContext(ThemeContext);
+export const useTheme = () => React.use(ThemeContext);

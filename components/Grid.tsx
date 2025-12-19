@@ -5,7 +5,7 @@ export const itemSize = (
   totalWidth: number,
   columns: number,
   span: number,
-  spacing: number
+  spacing: number,
 ) => {
   const perColSize = totalWidth / columns;
   const preSpacing = spacing / columns;
@@ -46,7 +46,7 @@ const Container = (props: ContainerProps) => {
       }}
       {...viewProps}
     >
-      <GridContext.Provider
+      <GridContext
         value={{
           columns,
           spacing,
@@ -54,7 +54,7 @@ const Container = (props: ContainerProps) => {
         }}
       >
         {props.children}
-      </GridContext.Provider>
+      </GridContext>
     </View>
   );
 };

@@ -1,18 +1,18 @@
+import React from "react";
 import { Stack } from "expo-router";
 import { useFonts } from "expo-font";
+import { View, Text } from "react-native";
+import { StatusBar } from "expo-status-bar";
+import * as SplashScreen from "expo-splash-screen";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
-import { View } from "react-native";
-import React from "react";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { db } from "@/db/db";
+import { useTheme } from "@/hooks/useTheme";
 import migrations from "@/drizzle/migrations.js";
 import { QueryProvider } from "@/components/QueryProvider";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { useStorageHasHydrated } from "@/hooks/useStorageStore";
-import * as SplashScreen from "expo-splash-screen";
-import { StatusBar } from "expo-status-bar";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from "@/hooks/useTheme";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -21,65 +21,95 @@ SplashScreen.setOptions({
   duration: 1000 * 0.2,
 });
 
-const RootUI = () => {
+const RootLayout = (props: React.PropsWithChildren) => {
   const theme = useTheme();
+
   return (
     <SafeAreaView
       style={{ flex: 1, backgroundColor: theme.palette.background.default }}
     >
       <GestureHandlerRootView style={{ flex: 1 }}>
-        <StatusBar />
-        <Stack
-          screenOptions={{
-            headerShown: false,
-            contentStyle: { backgroundColor: theme.palette.background.default },
-          }}
-        />
+        {props.children}
       </GestureHandlerRootView>
     </SafeAreaView>
   );
 };
 
-const RootLayout = () => {
-  const hasHydrated = useStorageHasHydrated();
-  const dbState = useMigrations(db, migrations);
-  const [fontLoaded, error] = useFonts({
-    SpaceMono: require("@/assets/fonts/SpaceMono-Regular.ttf"),
-  });
-
-  React.useEffect(() => {
-    // Load Failed
-    if (dbState.error || error) {
-      SplashScreen.hideAsync();
-      return;
-    }
-
-    // Load Successfully
-    if (hasHydrated && fontLoaded && dbState.success) {
-      SplashScreen.hideAsync();
-      return;
-    }
-  }, [fontLoaded, error, dbState.error, dbState.success, hasHydrated]);
-
-  if (error || dbState.error) {
-    return <View></View>;
-  }
+const AppRouter = () => {
+  const theme = useTheme();
 
   return (
-    hasHydrated &&
-    fontLoaded &&
-    dbState.success && (
-      <QueryProvider>
-        <ThemeProvider>
-          <RootUI />
-        </ThemeProvider>
-      </QueryProvider>
-    )
+    <Stack
+      screenOptions={{
+        headerShown: false,
+        contentStyle: { backgroundColor: theme.palette.background.default },
+      }}
+    />
   );
 };
 
-const Layout = () => {
-  return <RootLayout />;
+const calculateLoadingProgress = (
+  migrations: {
+    success: boolean;
+    error?: Error;
+  },
+  [fontLoaded, fontError]: [boolean, Error | null],
+  hasHydrated: boolean,
+) => {
+  const error = migrations.error || fontError;
+  const isSuccess = migrations.success && fontLoaded;
+
+  if (error) {
+    return { isError: true, error };
+  }
+
+  if (isSuccess) {
+    return { isSuccess: true };
+  }
+
+  return { isPending: !hasHydrated };
 };
 
-export default Layout;
+const App = () => {
+  const hasHydrated = useStorageHasHydrated();
+  const migrationState = useMigrations(db, migrations);
+  const fontsState = useFonts({
+    SpaceMono: require("@/assets/fonts/SpaceMono-Regular.ttf"),
+  });
+
+  const loadingProgress = calculateLoadingProgress(
+    migrationState,
+    fontsState,
+    hasHydrated,
+  );
+
+  React.useEffect(() => {
+    if (loadingProgress.isPending) return;
+    SplashScreen.hideAsync();
+  }, [loadingProgress.isPending]);
+
+  if (loadingProgress.isPending) {
+    return null;
+  }
+
+  if (loadingProgress.isError) {
+    return (
+      <View>
+        <Text>Error loading app: {loadingProgress.error.message}</Text>
+      </View>
+    );
+  }
+
+  return (
+    <QueryProvider>
+      <ThemeProvider>
+        <StatusBar />
+        <RootLayout>
+          <AppRouter />
+        </RootLayout>
+      </ThemeProvider>
+    </QueryProvider>
+  );
+};
+
+export default App;

@@ -1,19 +1,12 @@
-import { android_ripple } from "@/lib/utils";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { setStringAsync } from "expo-clipboard";
-import * as ExpoNet from "expo-network";
-import { ActivityAction, startActivityAsync } from "expo-intent-launcher";
 import React from "react";
-import {
-  ActivityIndicator,
-  Pressable,
-  ScrollView,
-  ToastAndroid,
-  View,
-} from "react-native";
-import { useTheme } from "@/hooks/useTheme";
-import { fetchIp } from "@/api/qqlykm_cn";
+import * as ExpoNet from "expo-network";
+import { setStringAsync } from "expo-clipboard";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { Pressable, ScrollView, ToastAndroid } from "react-native";
+import { ActivityAction, startActivityAsync } from "expo-intent-launcher";
 import { Text } from "@/components/Text";
+import { useTheme } from "@/hooks/useTheme";
+import { android_ripple } from "@/lib/utils";
 
 const netSelector = <TError, TWarning, TSuccess>(
   isConnected: boolean,
@@ -40,7 +33,6 @@ export default function Network() {
     queryFn: () => ExpoNet.getIpAddressAsync(),
     networkMode: "offlineFirst",
   });
-  const netIp = useQuery(fetchIp({ params: {} }));
 
   const state = ExpoNet.useNetworkState();
 
@@ -67,35 +59,6 @@ export default function Network() {
     },
     networkMode: "offlineFirst",
   });
-
-  const renderNetIP = () => {
-    if (netIp.isPending) {
-      return (
-        <View>
-          <ActivityIndicator size="small" color={theme.palette.primary.main} />
-        </View>
-      );
-    }
-
-    if (netIp.isError) {
-      return (
-        <Text
-          style={[theme.typography.body1, { color: theme.palette.error.main }]}
-        >
-          {netIp.error.message}
-        </Text>
-      );
-    }
-
-    return (
-      <View>
-        <Text>{netIp.data.data.data.ip}</Text>
-        <Text>{netIp.data.data.data.country}</Text>
-        <Text>{netIp.data.data.data.net}</Text>
-        <Text>{netIp.data.data.data.location}</Text>
-      </View>
-    );
-  };
 
   return (
     <ScrollView
@@ -200,8 +163,6 @@ export default function Network() {
           </Text>
         </Pressable>
       )}
-
-      {renderNetIP()}
     </ScrollView>
   );
 }
