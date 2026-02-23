@@ -13,6 +13,8 @@ import migrations from "@/drizzle/migrations.js";
 import { QueryProvider } from "@/components/QueryProvider";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { useStorageHasHydrated } from "@/hooks/useStorageStore";
+import * as QuickActions from "expo-quick-actions";
+import { useQuickActionRouting, RouterAction } from "expo-quick-actions/router";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -21,8 +23,52 @@ SplashScreen.setOptions({
   duration: 1000 * 0.2,
 });
 
+const calculateLoadingProgress = (
+  migrations: {
+    success: boolean;
+    error?: Error;
+  },
+  [fontLoaded, fontError]: [boolean, Error | null],
+  hasHydrated: boolean,
+) => {
+  const error = migrations.error || fontError;
+  const isSuccess = migrations.success && fontLoaded;
+
+  if (error) {
+    return { isError: true, error };
+  }
+
+  if (isSuccess) {
+    return { isSuccess: true };
+  }
+
+  return { isPending: !hasHydrated };
+};
+
 const RootLayout = (props: React.PropsWithChildren) => {
   const theme = useTheme();
+  useQuickActionRouting();
+
+  React.useEffect(() => {
+    QuickActions.setItems<RouterAction>([
+      {
+        title: "New Chat",
+        id: "0",
+        params: { href: "/compose" },
+      },
+      {
+        title: "Search",
+        id: "1",
+        params: { href: "/qrcode" },
+      },
+      {
+        title: "Leave Feedback",
+        subtitle: "Please provide feedback before deleting the app",
+        id: "2",
+        params: { href: "mailto:support@myapp.dev" },
+      },
+    ]);
+  }, []);
 
   return (
     <SafeAreaView
@@ -46,28 +92,6 @@ const AppRouter = () => {
       }}
     />
   );
-};
-
-const calculateLoadingProgress = (
-  migrations: {
-    success: boolean;
-    error?: Error;
-  },
-  [fontLoaded, fontError]: [boolean, Error | null],
-  hasHydrated: boolean,
-) => {
-  const error = migrations.error || fontError;
-  const isSuccess = migrations.success && fontLoaded;
-
-  if (error) {
-    return { isError: true, error };
-  }
-
-  if (isSuccess) {
-    return { isSuccess: true };
-  }
-
-  return { isPending: !hasHydrated };
 };
 
 const App = () => {

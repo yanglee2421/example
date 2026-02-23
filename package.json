@@ -31,6 +31,7 @@
     "expo-intent-launcher": "~13.0.7",
     "expo-linking": "~8.0.8",
     "expo-network": "~8.0.7",
+    "expo-quick-actions": "^6.0.1",
     "expo-router": "~6.0.12",
     "expo-splash-screen": "~31.0.10",
     "expo-sqlite": "~16.0.8",
