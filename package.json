@@ -1,69 +1,32 @@
 {
-  "name": "example",
-  "main": "expo-router/entry",
-  "version": "0.0.44",
+  "name": "@yanglee2421/example-monorepo",
+  "version": "0.0.0",
+  "description": "React Native Expo App Example",
+  "keywords": [
+    "react-native",
+    "expo",
+    "monorepo"
+  ],
+  "license": "MIT",
+  "author": "yanglee2421",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yanglee2421/example.git",
+    "directory": "/"
+  },
+  "bugs": {
+    "url": "https://github.com/yanglee2421/example/issues"
+  },
+  "homepage": "https://github.com/yanglee2421/example/blob/main/README.md",
+  "private": true,
   "scripts": {
-    "android": "expo run:android --variant debugOptimized",
-    "ios": "expo run:ios",
-    "dev": "expo start --android",
-    "prebuild": "expo prebuild",
-    "check": "expo install --check",
-    "build": "eas build",
-    "generate": "drizzle-kit generate",
-    "lint": "expo lint"
+    "dev": "pnpm -F example android"
   },
-  "dependencies": {
-    "@expo/ui": "0.2.0-beta.7",
-    "@expo/vector-icons": "^15.0.2",
-    "@shopify/react-native-skia": "2.2.12",
-    "@tanstack/react-form": "^1.23.7",
-    "@tanstack/react-query": "^5.90.5",
-    "axios": "^1.12.2",
-    "dayjs": "^1.11.19",
-    "drizzle-orm": "^0.44.6",
-    "expo": "~54.0.13",
-    "expo-application": "~7.0.7",
-    "expo-camera": "~17.0.8",
-    "expo-clipboard": "~8.0.7",
-    "expo-crypto": "~15.0.7",
-    "expo-file-system": "~19.0.17",
-    "expo-font": "~14.0.9",
-    "expo-intent-launcher": "~13.0.7",
-    "expo-linking": "~8.0.8",
-    "expo-network": "~8.0.7",
-    "expo-quick-actions": "^6.0.1",
-    "expo-router": "~6.0.12",
-    "expo-splash-screen": "~31.0.10",
-    "expo-sqlite": "~16.0.8",
-    "expo-status-bar": "~3.0.8",
-    "expo-symbols": "~1.0.7",
-    "expo-system-ui": "~6.0.7",
-    "expo-web-browser": "~15.0.8",
-    "immer": "^10.1.1",
-    "react": "19.1.0",
-    "react-native": "0.81.4",
-    "react-native-gesture-handler": "~2.28.0",
-    "react-native-markdown-display": "^7.0.2",
-    "react-native-pager-view": "6.9.1",
-    "react-native-reanimated": "~4.1.3",
-    "react-native-safe-area-context": "5.6.1",
-    "react-native-screens": "~4.16.0",
-    "try": "1.0.0-beta.10",
-    "use-immer": "^0.11.0",
-    "zod": "^4.1.12",
-    "zustand": "^5.0.8"
-  },
+  "packageManager": "pnpm@9.15.9+sha512.68046141893c66fad01c079231128e9afb89ef87e2691d69e4d40eee228988295fd4682181bae55b58418c3a253bde65a505ec7c5f9403ece5cc3cd37dcf2531",
   "devDependencies": {
-    "@babel/core": "^7.25.2",
-    "@types/react": "~19.1.17",
-    "babel-plugin-inline-import": "^3.0.0",
-    "drizzle-kit": "^0.31.5",
-    "eas-cli": "^15.0.6",
     "eslint": "^9.38.0",
-    "eslint-config-expo": "~10.0.0",
+    "eslint-config-expo": "~55.0.0",
     "prettier": "^3.6.2",
     "typescript": "^5.9.3"
-  },
-  "private": true,
-  "packageManager": "pnpm@10.22.0+sha512.bf049efe995b28f527fd2b41ae0474ce29186f7edcb3bf545087bd61fbbebb2bf75362d1307fda09c2d288e1e499787ac12d4fcb617a974718a6051f2eee741c"
+  }
 }

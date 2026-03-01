@@ -1,20 +1,20 @@
-import React from "react";
-import { Stack } from "expo-router";
-import { useFonts } from "expo-font";
-import { View, Text } from "react-native";
-import { StatusBar } from "expo-status-bar";
-import * as SplashScreen from "expo-splash-screen";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { db } from "@/db/db";
-import { useTheme } from "@/hooks/useTheme";
-import migrations from "@/drizzle/migrations.js";
 import { QueryProvider } from "@/components/QueryProvider";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { db } from "@/db/db";
 import { useStorageHasHydrated } from "@/hooks/useStorageStore";
+import { useTheme } from "@/hooks/useTheme";
+import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
+import { useFonts } from "expo-font";
 import * as QuickActions from "expo-quick-actions";
-import { useQuickActionRouting, RouterAction } from "expo-quick-actions/router";
+import { RouterAction, useQuickActionRouting } from "expo-quick-actions/router";
+import { Stack } from "expo-router";
+import * as SplashScreen from "expo-splash-screen";
+import { StatusBar } from "expo-status-bar";
+import React from "react";
+import { Text, View } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { SafeAreaView } from "react-native-safe-area-context";
+import migrations from "../../drizzle/migrations.js";
 
 SplashScreen.preventAutoHideAsync();
 
