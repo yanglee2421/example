@@ -1,12 +1,11 @@
 import { Divider } from "@/components/ui";
 import { useTheme } from "@/hooks/useTheme";
 import * as consts from "@/lib/constants";
-import { android_ripple } from "@/lib/utils";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { Host, Icon, IconButton } from "@expo/ui/jetpack-compose";
 import { queryOptions, useQuery } from "@tanstack/react-query";
 import * as fs from "expo-file-system";
 import React from "react";
-import { ActivityIndicator, Pressable, Text, View } from "react-native";
+import { ActivityIndicator, Text, View } from "react-native";
 import Animated, {
   Easing,
   Extrapolation,
@@ -44,6 +43,11 @@ export default function Page() {
           "deg",
       },
     ],
+
+    width: 50,
+    height: 50,
+    justifyContent: "center",
+    alignItems: "center",
   }));
 
   React.useEffect(() => {
@@ -107,29 +111,16 @@ export default function Page() {
           Database File Size
         </Text>
         {renderDatabaseSize()}
-        <Pressable
-          onPress={() => databaseSize.refetch()}
-          style={{
-            backgroundColor: theme.palette.primary.main,
-            width: 40,
-            height: 40,
-            borderRadius: 20,
-
-            justifyContent: "center",
-            alignItems: "center",
-
-            overflow: "hidden",
-          }}
-          android_ripple={android_ripple(theme.palette.action.focus)}
-        >
-          <Animated.View style={animatedStyle}>
-            <MaterialCommunityIcons
-              name="refresh"
-              color={theme.palette.primary.contrastText}
-              size={28}
-            />
-          </Animated.View>
-        </Pressable>
+        <Animated.View style={animatedStyle}>
+          <Host matchContents>
+            <IconButton onPress={() => databaseSize.refetch()}>
+              <Icon
+                source={require("@/assets/add_24px.xml")}
+                tintColor={"white"}
+              />
+            </IconButton>
+          </Host>
+        </Animated.View>
       </View>
     </View>
   );

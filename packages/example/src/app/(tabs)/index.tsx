@@ -3,7 +3,7 @@ import { Divider } from "@/components/ui";
 import { db } from "@/db/db";
 import * as schema from "@/db/schema";
 import { useTheme } from "@/hooks/useTheme";
-import { android_ripple } from "@/lib/utils";
+import { Host, Icon, IconButton } from "@expo/ui/jetpack-compose";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { count, eq } from "drizzle-orm";
 import { useLiveQuery } from "drizzle-orm/expo-sqlite";
@@ -198,41 +198,29 @@ export default function Home() {
               ]}
             >
               <Text variant="h5">Chat App</Text>
-              <Pressable
-                onPress={async () => {
-                  const data = await db
-                    .insert(schema.completionTable)
-                    .values({ name: "new chat" });
+              <Host matchContents>
+                <IconButton
+                  onPress={async () => {
+                    const data = await db
+                      .insert(schema.completionTable)
+                      .values({ name: "new chat" });
 
-                  router.push({
-                    pathname: "/chat/[id]",
-                    params: {
-                      id: data.lastInsertRowId,
-                    },
-                  });
-                }}
-                style={{
-                  width: 40,
-                  height: 40,
-                  backgroundColor: theme.palette.primary.main,
-
-                  justifyContent: "center",
-                  alignItems: "center",
-                  borderRadius: 9999,
-
-                  marginStart: "auto",
-                  overflow: "hidden",
-                }}
-                android_ripple={android_ripple(theme.palette.action.focus)}
-              >
-                <MaterialCommunityIcons
-                  name="plus"
-                  style={{
-                    color: theme.palette.primary.contrastText,
-                    fontSize: theme.typography.h4.fontSize,
+                    router.push({
+                      pathname: "/chat/[id]",
+                      params: {
+                        id: data.lastInsertRowId,
+                      },
+                    });
                   }}
-                />
-              </Pressable>
+                >
+                  <Icon
+                    source={require("@/assets/add_24px.xml")}
+                    tintColor={
+                      theme.palette.mode === "dark" ? "white" : "black"
+                    }
+                  />
+                </IconButton>
+              </Host>
             </View>
             <Text
               style={[

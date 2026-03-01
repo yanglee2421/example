@@ -50,7 +50,7 @@ export default function Page() {
 
       <Host matchContents>
         <Column
-          modifiers={[fillMaxWidth(), padding(10, 0, 10, 0)]}
+          modifiers={[fillMaxWidth(), padding(14, 4, 14, 4)]}
           verticalArrangement={{ spacedBy: 0 }}
         >
           <Button
