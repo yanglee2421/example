@@ -1,22 +1,22 @@
-import { useTheme } from "@/hooks/useTheme";
-import { Link, useRouter } from "expo-router";
-import React from "react";
-import { Pressable, View, StyleSheet } from "react-native";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { android_ripple } from "@/lib/utils";
-import Animated, {
-  useAnimatedStyle,
-  LinearTransition,
-} from "react-native-reanimated";
-import ReanimatedSwipeable from "react-native-gesture-handler/ReanimatedSwipeable";
-import type { SharedValue } from "react-native-reanimated";
-import type { SwipeableMethods } from "react-native-gesture-handler/ReanimatedSwipeable";
-import { useLiveQuery } from "drizzle-orm/expo-sqlite";
-import { db } from "@/db/db";
-import { count, eq } from "drizzle-orm";
-import * as schema from "@/db/schema";
 import { Text } from "@/components/Text";
 import { Divider } from "@/components/ui";
+import { db } from "@/db/db";
+import * as schema from "@/db/schema";
+import { useTheme } from "@/hooks/useTheme";
+import { android_ripple } from "@/lib/utils";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { count, eq } from "drizzle-orm";
+import { useLiveQuery } from "drizzle-orm/expo-sqlite";
+import { Link, useRouter } from "expo-router";
+import React from "react";
+import { Pressable, StyleSheet, View } from "react-native";
+import type { SwipeableMethods } from "react-native-gesture-handler/ReanimatedSwipeable";
+import ReanimatedSwipeable from "react-native-gesture-handler/ReanimatedSwipeable";
+import type { SharedValue } from "react-native-reanimated";
+import Animated, {
+  LinearTransition,
+  useAnimatedStyle,
+} from "react-native-reanimated";
 
 const styles = StyleSheet.create({
   leftAction: {
@@ -94,6 +94,7 @@ export default function Home() {
 
   return (
     <Animated.FlatList
+      style={{ backgroundColor: theme.palette.background.default }}
       data={chats.data}
       keyExtractor={(i) => i.id.toString()}
       itemLayoutAnimation={LinearTransition}

@@ -1,9 +1,9 @@
+import { Text } from "@/components/Text";
 import { useTheme } from "@/hooks/useTheme";
-import { DateTimePicker, Button } from "@expo/ui/jetpack-compose";
+import { Button, DateTimePicker, Host } from "@expo/ui/jetpack-compose";
 import dayjs from "dayjs";
 import React from "react";
-import { Modal, ScrollView, Pressable, View } from "react-native";
-import { Text } from "@/components/Text";
+import { Modal, Pressable, ScrollView, View } from "react-native";
 
 export default function Page() {
   const [show, setShow] = React.useState(false);
@@ -27,96 +27,82 @@ export default function Page() {
         }}
       >
         <Text>{result}</Text>
-        <Button
-          onPress={() => {
-            setShow((p) => !p);
-          }}
-        >
-          Begin: {dayjs(begin).format("YYYY/MM/DD")}
-        </Button>
+        <Host matchContents>
+          <Button
+            onPress={() => {
+              setShow((p) => !p);
+            }}
+          >
+            Begin: {dayjs(begin).format("YYYY/MM/DD")}
+          </Button>
+        </Host>
+        <Host matchContents>
+          <Button
+            onPress={() => {
+              setShowEnd((p) => !p);
+            }}
+          >
+            End: {dayjs(end).format("YYYY/MM/DD")}
+          </Button>
+        </Host>
         <Modal
           visible={show}
           onRequestClose={() => {
             setShow(false);
           }}
           transparent={false}
-          animationType="fade"
-          backdropColor={"rgba(0,0,0,.5)"}
-          statusBarTranslucent
+          backdropColor={`rgba(0,0,0,.5)`}
         >
           <Pressable
+            style={{
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
             onPress={() => {
               setShow(false);
             }}
-            style={{
-              height: "100%",
-
-              justifyContent: "center",
-              padding: 12,
-            }}
           >
-            <Pressable>
+            <Host matchContents>
               <DateTimePicker
                 initialDate={begin.toISOString()}
                 onDateSelected={(date) => {
                   setBegin(date);
                 }}
                 displayedComponents="date"
-                showVariantToggle={false}
                 variant="picker"
-                style={{
-                  position: "static",
-
-                  height: 520,
-                }}
               />
-            </Pressable>
+            </Host>
           </Pressable>
         </Modal>
-        <Button
-          onPress={() => {
-            setShowEnd((p) => !p);
-          }}
-        >
-          End: {dayjs(end).format("YYYY/MM/DD")}
-        </Button>
         <Modal
           visible={showEnd}
           onRequestClose={() => {
             setShowEnd(false);
           }}
           transparent={false}
-          animationType="fade"
-          backdropColor={"rgba(0,0,0,.5)"}
-          statusBarTranslucent
+          backdropColor={`rgba(0,0,0,.5)`}
         >
           <Pressable
+            style={{
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
             onPress={() => {
               setShowEnd(false);
             }}
-            style={{
-              height: "100%",
-
-              justifyContent: "center",
-              padding: 12,
-            }}
           >
-            <Pressable>
+            <Host matchContents>
               <DateTimePicker
-                initialDate={begin.toISOString()}
+                initialDate={end.toISOString()}
                 onDateSelected={(date) => {
                   setEnd(date);
                 }}
                 displayedComponents="date"
-                showVariantToggle={false}
                 variant="picker"
-                style={{
-                  position: "static",
-
-                  height: 520,
-                }}
               />
-            </Pressable>
+            </Host>
           </Pressable>
         </Modal>
       </View>

@@ -1,22 +1,23 @@
 import { useTheme } from "@/hooks/useTheme";
+import { minmax } from "@/lib/worklet";
+import { Button, Host } from "@expo/ui/jetpack-compose";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { queryOptions, useQuery } from "@tanstack/react-query";
+import * as Crypto from "expo-crypto";
+import { useRouter } from "expo-router";
 import React from "react";
-import { Button, Text, View } from "react-native";
+import { Text, View } from "react-native";
+import {
+  Gesture,
+  GestureDetector,
+  Pressable,
+} from "react-native-gesture-handler";
 import Animated, {
   LinearTransition,
   useAnimatedStyle,
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
-import {
-  GestureDetector,
-  Gesture,
-  Pressable,
-} from "react-native-gesture-handler";
-import { minmax } from "@/lib/worklet";
-import * as Crypto from "expo-crypto";
-import { queryOptions, useQuery } from "@tanstack/react-query";
-import { useRouter } from "expo-router";
 
 const data = "522A49SMP00037EP000G";
 
@@ -248,18 +249,24 @@ export default function Example() {
         </Collapse>
       </View>
       <View style={{ marginTop: theme.spacing(3) }}>
-        <Button
-          onPress={() => {
-            setOpen((prev) => !prev);
-          }}
-          title="Show/Hidden"
-        />
-        <Button
-          onPress={() => {
-            router.back();
-          }}
-          title="back"
-        />
+        <Host matchContents>
+          <Button
+            onPress={() => {
+              setOpen((prev) => !prev);
+            }}
+          >
+            Show/Hidden
+          </Button>
+        </Host>
+        <Host matchContents>
+          <Button
+            onPress={() => {
+              router.back();
+            }}
+          >
+            back
+          </Button>
+        </Host>
       </View>
       <Animated.FlatList
         data={list}

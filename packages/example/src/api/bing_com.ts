@@ -1,21 +1,6 @@
 import { queryOptions } from "@tanstack/react-query";
 import axios from "axios";
 
-const CN_BING = "https://cn.bing.com";
-const WWW_BING = "https://www.bing.com";
-const TIMEOUT = 1000 * 30;
-const path = "/HPImageArchive.aspx";
-
-export const cnBing = axios.create({
-  timeout: TIMEOUT,
-  baseURL: CN_BING,
-});
-
-export const wwwBing = axios.create({
-  timeout: TIMEOUT,
-  baseURL: WWW_BING,
-});
-
 type BingImageParams = {
   idx: number;
   n: number;
@@ -40,7 +25,7 @@ type BingImageRes = {
       top: number;
       bot: number;
       hs: [];
-    }
+    },
   ];
   tooltips: {
     loading: string;
@@ -50,6 +35,21 @@ type BingImageRes = {
     walls: string;
   };
 };
+
+const CN_BING = "https://cn.bing.com";
+const WWW_BING = "https://www.bing.com";
+const TIMEOUT = 1000 * 30;
+const path = "/HPImageArchive.aspx";
+
+export const cnBing = axios.create({
+  timeout: TIMEOUT,
+  baseURL: CN_BING,
+});
+
+export const wwwBing = axios.create({
+  timeout: TIMEOUT,
+  baseURL: WWW_BING,
+});
 
 export const fetchCnBingImage = (params: BingImageParams) =>
   queryOptions({

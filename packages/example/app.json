@@ -16,8 +16,8 @@
         "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#6366f1"
       },
-      "package": "app.vercel.yanglee2421",
-      "edgeToEdgeEnabled": true
+      "predictiveBackGestureEnabled": false,
+      "package": "app.vercel.yanglee2421"
     },
     "plugins": [
       "expo-router",
@@ -50,7 +50,8 @@
       "expo-quick-actions"
     ],
     "experiments": {
-      "typedRoutes": false
+      "typedRoutes": true,
+      "reactCompiler": true
     },
     "extra": {
       "eas": {

@@ -1,10 +1,10 @@
+import { Text } from "@/components/Text";
 import { Divider } from "@/components/ui";
 import { useTheme } from "@/hooks/useTheme";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Link } from "expo-router";
 import React from "react";
 import { FlatList, Pressable, StyleSheet, View } from "react-native";
-import { Text } from "@/components/Text";
 
 const colors = [
   "#f44336",
@@ -90,17 +90,6 @@ export default function Account() {
       ),
       label: "News",
       href: "/news" as const,
-    },
-    {
-      icon: (
-        <MaterialCommunityIcons
-          name="robot-happy-outline"
-          size={iconSize}
-          color={theme.palette.common.white}
-        />
-      ),
-      label: "Joke",
-      href: "/joke" as const,
     },
     {
       icon: (
@@ -205,6 +194,9 @@ export default function Account() {
 
   return (
     <FlatList
+      style={{
+        backgroundColor: theme.palette.background.default,
+      }}
       data={list}
       keyExtractor={(i) => i.href}
       renderItem={(i) => (

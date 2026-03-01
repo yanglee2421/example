@@ -1,9 +1,12 @@
+import { Divider } from "@/components/ui";
 import { useTheme } from "@/hooks/useTheme";
-import { queryOptions, useQuery } from "@tanstack/react-query";
-import { ActivityIndicator, Pressable, Text, View } from "react-native";
-import * as fs from "expo-file-system/next";
 import * as consts from "@/lib/constants";
+import { android_ripple } from "@/lib/utils";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { queryOptions, useQuery } from "@tanstack/react-query";
+import * as fs from "expo-file-system";
+import React from "react";
+import { ActivityIndicator, Pressable, Text, View } from "react-native";
 import Animated, {
   Easing,
   Extrapolation,
@@ -13,9 +16,6 @@ import Animated, {
   withRepeat,
   withTiming,
 } from "react-native-reanimated";
-import React from "react";
-import { android_ripple } from "@/lib/utils";
-import { Divider } from "@/components/ui";
 
 const fetchDatabaseSize = () =>
   queryOptions({
@@ -80,7 +80,9 @@ export default function Page() {
   };
 
   return (
-    <View style={{ flex: 1 }}>
+    <View
+      style={{ flex: 1, backgroundColor: theme.palette.background.default }}
+    >
       <View
         style={[
           { paddingInline: theme.spacing(3), paddingBlock: theme.spacing(2) },

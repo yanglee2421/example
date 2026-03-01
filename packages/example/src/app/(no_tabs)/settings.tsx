@@ -1,9 +1,11 @@
-import { Button, View, Pressable, Text, ToastAndroid } from "react-native";
-import * as fs from "expo-file-system";
-import * as clipboard from "expo-clipboard";
-import * as consts from "@/lib/constants";
 import { useTheme } from "@/hooks/useTheme";
+import * as consts from "@/lib/constants";
 import { android_ripple } from "@/lib/utils";
+import { Button, Column, Host } from "@expo/ui/jetpack-compose";
+import { fillMaxWidth, padding } from "@expo/ui/jetpack-compose/modifiers";
+import * as clipboard from "expo-clipboard";
+import * as fs from "expo-file-system";
+import { Pressable, Text, ToastAndroid, View } from "react-native";
 
 const getSQLiteFile = () => {
   return new fs.File(fs.Paths.document, `SQLite/${consts.databaseName}`);
@@ -17,34 +19,6 @@ export default function Page() {
 
   return (
     <View>
-      <Button
-        title="export expo"
-        onPress={async () => {
-          const sqliteFile = getSQLiteFile();
-          const dir = await fs.Directory.pickDirectoryAsync();
-          const newFile = dir.createFile(consts.databaseName, sqliteFile.type);
-          const bytes = await sqliteFile.bytes();
-          newFile.write(bytes);
-        }}
-      />
-      <Button
-        title="import"
-        onPress={async () => {
-          const sqliteFile = getSQLiteFile();
-          const result = await fs.File.pickFileAsync();
-          const backup = Array.isArray(result) ? result.at(0) : result;
-          if (!backup) return;
-          const bytes = await backup.bytes();
-          sqliteFile.write(bytes);
-        }}
-      />
-      <Button
-        title="delete"
-        onPress={() => {
-          const sqliteFile = getSQLiteFile();
-          sqliteFile.exists && sqliteFile.delete();
-        }}
-      />
       <Pressable
         onPress={async () => {
           await clipboard.setStringAsync(getURL());
@@ -73,6 +47,51 @@ export default function Page() {
           {getURL()}
         </Text>
       </Pressable>
+
+      <Host matchContents>
+        <Column
+          modifiers={[fillMaxWidth(), padding(10, 0, 10, 0)]}
+          verticalArrangement={{ spacedBy: 0 }}
+        >
+          <Button
+            onPress={async () => {
+              const sqliteFile = getSQLiteFile();
+              const dir = await fs.Directory.pickDirectoryAsync();
+              const newFile = dir.createFile(
+                consts.databaseName,
+                sqliteFile.type,
+              );
+              const bytes = await sqliteFile.bytes();
+              newFile.write(bytes);
+            }}
+            modifiers={[fillMaxWidth()]}
+          >
+            export expo
+          </Button>
+          <Button
+            onPress={() => {
+              const sqliteFile = getSQLiteFile();
+              sqliteFile.exists && sqliteFile.delete();
+            }}
+            modifiers={[fillMaxWidth()]}
+          >
+            delete
+          </Button>
+          <Button
+            onPress={async () => {
+              const sqliteFile = getSQLiteFile();
+              const result = await fs.File.pickFileAsync();
+              const backup = Array.isArray(result) ? result.at(0) : result;
+              if (!backup) return;
+              const bytes = await backup.bytes();
+              sqliteFile.write(bytes);
+            }}
+            modifiers={[fillMaxWidth()]}
+          >
+            import
+          </Button>
+        </Column>
+      </Host>
     </View>
   );
 }

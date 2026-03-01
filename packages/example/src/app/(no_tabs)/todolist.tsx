@@ -1,8 +1,9 @@
-import React from "react";
+import { Button, Host } from "@expo/ui/jetpack-compose";
 import { Canvas, Path, usePathValue } from "@shopify/react-native-skia";
+import React from "react";
+import { View } from "react-native";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { useSharedValue, withSpring } from "react-native-reanimated";
-import { Button, View } from "react-native";
-import { GestureDetector, Gesture } from "react-native-gesture-handler";
 
 // path.close();
 
@@ -68,20 +69,23 @@ const HelloWorld = () => {
         </GestureDetector>
       </View>
 
-      <Button
-        title="click me"
-        onPress={() => {
-          points.set((prev) => {
-            return [
-              ...prev,
-              {
-                x: prev.length * 10,
-                y: Math.floor(Math.random() * 300),
-              },
-            ];
-          });
-        }}
-      />
+      <Host matchContents>
+        <Button
+          onPress={() => {
+            points.set((prev) => {
+              return [
+                ...prev,
+                {
+                  x: prev.length * 10,
+                  y: Math.floor(Math.random() * 300),
+                },
+              ];
+            });
+          }}
+        >
+          click me
+        </Button>
+      </Host>
     </>
   );
 };
