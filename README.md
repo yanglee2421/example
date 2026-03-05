@@ -13,13 +13,14 @@ choco install -y microsoft-openjdk17
 
 # Add Env ANDROID_HOME %USERPROFILE%\android_sdk
 # Add Path %ANDROID_HOME%\cmdline-tools\latest\bin
+# Add Path %ANDROID_HOME%\platform-tools
 # Install Android SDK
-sdkmanager "platform-tools" "build-tools;34.0.0"
+sdkmanager "platform-tools" "build-tools;35.0.0"
 
 # Install Emulator
-sdkmanager "emulator" "platforms;android-34" "system-images;android-34;google_apis;x86_64"
-avdmanager create avd -n emulatorName -k "system-images;android-34;google_apis;x86_64" -d "pixel"
-# emulator -avd emulatorName -gpu host
+sdkmanager "emulator" "platforms;android-35" "system-images;android-35;google_apis;x86_64"
+avdmanager create avd -n emulatorName -k "system-images;android-35;google_apis;x86_64" -d "pixel"
+emulator -avd emulatorName -gpu host
 ```
 
 ## Build
