@@ -1,340 +1,160 @@
-import { Text } from "@/components/Text";
-import { Divider } from "@/components/ui";
-import { useTheme } from "@/hooks/useTheme";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { Link } from "expo-router";
+import { Host, Icon, List, ListItem } from "@expo/ui";
+import { HorizontalDivider, Surface } from "@expo/ui/jetpack-compose";
+import { useRouter } from "expo-router";
 import React from "react";
-import { FlatList, Pressable, StyleSheet, View } from "react-native";
-
-const colors = [
-  "#f44336",
-  "#e91e63",
-  "#9c27b0",
-  "#673ab7",
-  "#3f51b5",
-  "#2196f3",
-  "#03a9f4",
-  "#00bcd4",
-  "#009688",
-  "#4caf50",
-  "#ff5722",
-];
 
 export default function Account() {
-  const theme = useTheme();
-  const iconSize = theme.typography.body1.fontSize * 1.4;
+  const router = useRouter();
 
   const list = [
     {
-      icon: (
-        <MaterialCommunityIcons
-          name="information-variant"
-          size={iconSize}
-          color={theme.palette.common.white}
-        />
-      ),
       label: "About",
       href: "/about" as const,
-    },
-    {
       icon: (
-        <MaterialCommunityIcons
-          name="format-list-numbered"
-          size={iconSize}
-          color={theme.palette.common.white}
+        <Icon
+          name={Icon.select({
+            android: import("@expo/material-symbols/info_i.xml"),
+            ios: "0.circle.ar",
+          })}
         />
       ),
-      label: "To Do List",
-      href: "/todolist" as const,
     },
     {
-      icon: (
-        <MaterialCommunityIcons
-          name="qrcode-scan"
-          size={iconSize}
-          color={theme.palette.common.white}
-        />
-      ),
       label: "QR Code Scaner",
       href: "/qrcode" as const,
-    },
-    {
       icon: (
-        <MaterialCommunityIcons
-          name="lan"
-          size={iconSize}
-          color={theme.palette.common.white}
+        <Icon
+          name={Icon.select({
+            android: import("@expo/material-symbols/qr_code_scanner.xml"),
+            ios: "0.circle.ar",
+          })}
         />
       ),
+    },
+    {
       label: "Network",
       href: "/network" as const,
-    },
-    {
       icon: (
-        <MaterialCommunityIcons
-          name="microsoft-bing"
-          size={iconSize}
-          color={theme.palette.common.white}
+        <Icon
+          name={Icon.select({
+            android: import("@expo/material-symbols/network_node.xml"),
+            ios: "0.circle.ar",
+          })}
         />
       ),
+    },
+    {
       label: "Bing",
       href: "/bing" as const,
-    },
-    {
       icon: (
-        <MaterialCommunityIcons
-          name="newspaper-variant-outline"
-          size={iconSize}
-          color={theme.palette.common.white}
+        <Icon
+          name={Icon.select({
+            android: import("@expo/material-symbols/image_search.xml"),
+            ios: "0.circle.ar",
+          })}
         />
       ),
+    },
+    {
       label: "News",
       href: "/news" as const,
-    },
-    {
       icon: (
-        <MaterialCommunityIcons
-          name="image-filter-hdr"
-          size={iconSize}
-          color={theme.palette.common.white}
+        <Icon
+          name={Icon.select({
+            android: import("@expo/material-symbols/news.xml"),
+            ios: "0.circle.ar",
+          })}
         />
       ),
+    },
+    {
       label: "Landscape",
       href: "/fengjing" as const,
-    },
-    {
       icon: (
-        <MaterialCommunityIcons
-          name="book-open-page-variant-outline"
-          size={iconSize}
-          color={theme.palette.common.white}
+        <Icon
+          name={Icon.select({
+            android: import("@expo/material-symbols/imagesmode.xml"),
+            ios: "0.circle.ar",
+          })}
         />
       ),
+    },
+    {
       label: "History",
       href: "/history" as const,
-    },
-    {
       icon: (
-        <MaterialCommunityIcons
-          name="dog"
-          size={iconSize}
-          color={theme.palette.common.white}
+        <Icon
+          name={Icon.select({
+            android: import("@expo/material-symbols/book_ribbon.xml"),
+            ios: "0.circle.ar",
+          })}
         />
       ),
+    },
+    {
       label: "Locking Dog",
       href: "/locking_dog" as const,
-    },
-    {
       icon: (
-        <MaterialCommunityIcons
-          name="movie-outline"
-          size={iconSize}
-          color={theme.palette.common.white}
+        <Icon
+          name={Icon.select({
+            android:
+              import("@expo/material-symbols/sound_detection_dog_barking.xml"),
+            ios: "0.circle.ar",
+          })}
         />
       ),
+    },
+    {
       label: "Movie",
       href: "/movie" as const,
-    },
-    {
       icon: (
-        <MaterialCommunityIcons
-          name="format-quote-close-outline"
-          size={iconSize}
-          color={theme.palette.common.white}
+        <Icon
+          name={Icon.select({
+            android: import("@expo/material-symbols/movie.xml"),
+            ios: "0.circle.ar",
+          })}
         />
       ),
+    },
+    {
       label: "Rand Text",
       href: "/randtext" as const,
-    },
-    {
       icon: (
-        <MaterialCommunityIcons
-          name="cogs"
-          size={iconSize}
-          color={theme.palette.common.white}
+        <Icon
+          name={Icon.select({
+            android: import("@expo/material-symbols/format_quote.xml"),
+            ios: "0.circle.ar",
+          })}
         />
       ),
-      label: "Settings",
-      href: "/settings" as const,
-    },
-    {
-      icon: (
-        <MaterialCommunityIcons
-          name={"flask"}
-          size={iconSize}
-          color={theme.palette.common.white}
-        />
-      ),
-      label: "Lab",
-      href: "/lab" as const,
-    },
-    {
-      icon: (
-        <MaterialCommunityIcons
-          name={"calendar"}
-          size={iconSize}
-          color={theme.palette.common.white}
-        />
-      ),
-      label: "Calendar",
-      href: "/calendar" as const,
-    },
-    {
-      icon: (
-        <MaterialCommunityIcons
-          name={"calendar"}
-          size={iconSize}
-          color={theme.palette.common.white}
-        />
-      ),
-      label: "Date",
-      href: "/date" as const,
     },
   ].sort((c, n) => c.label.localeCompare(n.label));
 
   return (
-    <FlatList
-      style={{
-        backgroundColor: theme.palette.background.default,
-      }}
-      data={list}
-      keyExtractor={(i) => i.href}
-      renderItem={(i) => (
-        <Link
-          href={i.item.href}
-          key={i.item.label}
-          asChild
-          style={[
-            styles.itemLink,
-            {
-              borderBlockEndColor: theme.palette.divider,
-            },
-          ]}
-        >
-          <Pressable
-            android_ripple={{
-              borderless: false,
-              foreground: true,
-              color: theme.palette.action.focus,
-            }}
-          >
-            <View
-              style={[
-                styles.itemView,
-                {
-                  paddingInline: theme.spacing(3),
-                  paddingBlock: theme.spacing(2),
-                },
-              ]}
-            >
-              <View
-                style={[
-                  {
-                    backgroundColor: colors[i.index % colors.length],
-                    padding: theme.spacing(1.5),
-                    borderRadius: theme.spacing(2),
-                  },
-                ]}
-              >
-                {i.item.icon}
-              </View>
-              <Text
-                style={[
-                  styles.itemText,
-                  {
-                    color: theme.palette.text.primary,
-                    fontSize: theme.typography.body1.fontSize,
-                    fontFamily: theme.typography.body1.fontFamily,
-                    fontWeight: theme.typography.body1.fontWeight,
-                    letterSpacing: theme.typography.body1.letterSpacing,
-                  },
-                ]}
-              >
-                {i.item.label}
-              </Text>
-            </View>
-          </Pressable>
-        </Link>
-      )}
-      ListHeaderComponent={
-        <>
-          <View
-            style={[
-              {
-                paddingInline: theme.spacing(3),
-                paddingBlock: theme.spacing(2),
-                backgroundColor: theme.palette.background.paper,
-              },
-            ]}
-          >
-            <Text
-              style={[
-                theme.typography.h5,
-                {
-                  color: theme.palette.text.primary,
-                },
-              ]}
-            >
-              Apps
-            </Text>
-          </View>
-          <Divider />
-        </>
-      }
-      ListEmptyComponent={
-        <View
-          style={{
-            paddingInline: theme.spacing(3),
-            paddingBlock: theme.spacing(2),
-            justifyContent: "center",
-            alignItems: "center",
+    <Host style={{ flex: 1 }}>
+      <Surface>
+        <List
+          onRefresh={() => {
+            return Promise.resolve();
           }}
         >
-          <Text
-            style={[
-              theme.typography.body1,
-              { color: theme.palette.text.primary },
-            ]}
-          >
-            Empty
-          </Text>
-        </View>
-      }
-      ListFooterComponent={
-        <View
-          style={{
-            paddingInline: theme.spacing(3),
-            paddingBlock: theme.spacing(2),
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <Text
-            style={[
-              theme.typography.body1,
-              { color: theme.palette.text.primary },
-            ]}
-          >
-            Footer
-          </Text>
-        </View>
-      }
-      // StickyHeaderComponent={StickyHeader}
-      stickyHeaderIndices={[0]}
-    />
+          {list.map((item, index) => {
+            return (
+              <React.Fragment key={item.href}>
+                {!!index && <HorizontalDivider />}
+                <ListItem
+                  onPress={() => {
+                    router.push(item.href);
+                  }}
+                >
+                  <ListItem.Leading>{item.icon}</ListItem.Leading>
+                  <ListItem.Supporting>{item.label}</ListItem.Supporting>
+                </ListItem>
+              </React.Fragment>
+            );
+          })}
+        </List>
+      </Surface>
+    </Host>
   );
 }
-
-const styles = StyleSheet.create({
-  itemLink: {
-    borderWidth: 1,
-    borderColor: "transparent",
-  },
-  itemView: {
-    flexDirection: "row",
-    justifyContent: "flex-start",
-    alignItems: "center",
-    gap: 12,
-  },
-  itemText: {},
-});

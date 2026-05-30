@@ -1,15 +1,15 @@
-import { Linking, Pressable, RefreshControl, View } from "react-native";
-import { useQuery } from "@tanstack/react-query";
-import { openBrowserAsync } from "expo-web-browser";
 import { fetchHistoryGet } from "@/api/qqlykm_cn";
-import { useLocaleDate } from "@/hooks/useLocaleDate";
-import { useLocaleTime } from "@/hooks/useLocaleTime";
 import { Loading } from "@/components/Loading";
-import { useStorageStore } from "@/hooks/useStorageStore";
-import { useTheme } from "@/hooks/useTheme";
-import Animated from "react-native-reanimated";
 import { Text } from "@/components/Text";
 import { Divider } from "@/components/ui";
+import { useLocaleDate } from "@/hooks/useLocaleDate";
+import { useLocaleTime } from "@/hooks/useLocaleTime";
+import { useStorageStore } from "@/hooks/useStorageStore";
+import { useTheme } from "@/hooks/useTheme";
+import { useQuery } from "@tanstack/react-query";
+import { openBrowserAsync } from "expo-web-browser";
+import { Linking, Pressable, RefreshControl, View } from "react-native";
+import Animated from "react-native-reanimated";
 import { t } from "try";
 
 const ListHeader = () => {
@@ -69,10 +69,8 @@ export default function Page() {
           onPress={async () => {
             const [ok] = await t(
               openBrowserAsync(i.url, {
-                toolbarColor: "#000",
                 enableBarCollapsing: true,
                 enableDefaultShareMenuItem: true,
-
                 createTask: false,
               }),
             );

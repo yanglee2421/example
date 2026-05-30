@@ -46,7 +46,6 @@ const calculateLoadingProgress = (
 };
 
 const RootLayout = (props: React.PropsWithChildren) => {
-  const theme = useTheme();
   useQuickActionRouting();
 
   React.useEffect(() => {
@@ -71,9 +70,7 @@ const RootLayout = (props: React.PropsWithChildren) => {
   }, []);
 
   return (
-    <SafeAreaView
-      style={{ flex: 1, backgroundColor: theme.palette.background.default }}
-    >
+    <SafeAreaView style={{ flex: 1 }}>
       <GestureHandlerRootView style={{ flex: 1 }}>
         {props.children}
       </GestureHandlerRootView>
@@ -94,7 +91,7 @@ const AppRouter = () => {
   );
 };
 
-const App = () => {
+export default function App() {
   const hasHydrated = useStorageHasHydrated();
   const migrationState = useMigrations(db, migrations);
   const fontsState = useFonts({
@@ -134,6 +131,4 @@ const App = () => {
       </ThemeProvider>
     </QueryProvider>
   );
-};
-
-export default App;
+}

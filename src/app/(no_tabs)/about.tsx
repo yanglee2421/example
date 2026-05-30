@@ -1,133 +1,125 @@
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { openBrowserAsync } from "expo-web-browser";
-import React from "react";
-import {
-  Linking,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
-import { useTheme } from "@/hooks/useTheme";
-import { android_ripple } from "@/lib/utils";
+import { Button, Column, Host, Icon, List, Row, Text } from "@expo/ui";
+import { ListItem, Surface } from "@expo/ui/jetpack-compose";
+import { fillMaxWidth } from "@expo/ui/jetpack-compose/modifiers";
 import * as Application from "expo-application";
+import { openBrowserAsync } from "expo-web-browser";
+import { Linking } from "react-native";
+import { t } from "try";
 
 const githubUrl = "https://github.com/yanglee2421/example";
 
-const infos = [
-  {
-    label: "App ID",
-    value: Application.applicationId,
-  },
-  {
-    label: "App Name",
-    value: Application.applicationName,
-  },
-  {
-    label: "App Version",
-    value: Application.nativeApplicationVersion,
-  },
-  {
-    label: "Build Version",
-    value: Application.nativeBuildVersion,
-  },
-];
-
 export default function About() {
-  const theme = useTheme();
-
   return (
-    <ScrollView contentContainerStyle={{ padding: theme.spacing(3) }}>
-      {infos.map((i) => (
-        <View
-          key={i.value}
-          style={[
-            styles.listItem,
-            {
-              paddingInline: theme.spacing(0),
-              paddingBlock: theme.spacing(1.5),
-            },
-          ]}
-        >
-          <Text
-            style={[
-              theme.typography.body1,
-              { color: theme.palette.text.primary },
-            ]}
+    <Host style={{ flex: 1 }}>
+      <Surface>
+        <Column>
+          <List>
+            <ListItem>
+              <ListItem.OverlineContent>
+                <Text>App ID</Text>
+              </ListItem.OverlineContent>
+              <ListItem.HeadlineContent>
+                <Text>Application ID</Text>
+              </ListItem.HeadlineContent>
+              <ListItem.SupportingContent>
+                <Text>{Application.applicationId || ""}</Text>
+              </ListItem.SupportingContent>
+              <ListItem.LeadingContent>
+                <Icon
+                  name={Icon.select({
+                    android: import("@expo/material-symbols/id_card.xml"),
+                    ios: "0.circle.ar",
+                  })}
+                />
+              </ListItem.LeadingContent>
+            </ListItem>
+            <ListItem>
+              <ListItem.OverlineContent>
+                <Text>App Name</Text>
+              </ListItem.OverlineContent>
+              <ListItem.HeadlineContent>
+                <Text>Application name</Text>
+              </ListItem.HeadlineContent>
+              <ListItem.SupportingContent>
+                <Text>{Application.applicationName || ""}</Text>
+              </ListItem.SupportingContent>
+              <ListItem.LeadingContent>
+                <Icon
+                  name={Icon.select({
+                    android: import("@expo/material-symbols/badge.xml"),
+                    ios: "0.circle.ar",
+                  })}
+                />
+              </ListItem.LeadingContent>
+            </ListItem>
+            <ListItem>
+              <ListItem.OverlineContent>
+                <Text>App Version</Text>
+              </ListItem.OverlineContent>
+              <ListItem.HeadlineContent>
+                <Text>Application version</Text>
+              </ListItem.HeadlineContent>
+              <ListItem.SupportingContent>
+                <Text>{Application.nativeApplicationVersion || ""}</Text>
+              </ListItem.SupportingContent>
+              <ListItem.LeadingContent>
+                <Icon
+                  name={Icon.select({
+                    android: import("@expo/material-symbols/numbers.xml"),
+                    ios: "0.circle.ar",
+                  })}
+                />
+              </ListItem.LeadingContent>
+            </ListItem>
+            <ListItem>
+              <ListItem.OverlineContent>
+                <Text>Build Version</Text>
+              </ListItem.OverlineContent>
+              <ListItem.HeadlineContent>
+                <Text>Application build version</Text>
+              </ListItem.HeadlineContent>
+              <ListItem.SupportingContent>
+                <Text>{Application.nativeBuildVersion || ""}</Text>
+              </ListItem.SupportingContent>
+              <ListItem.LeadingContent>
+                <Icon
+                  name={Icon.select({
+                    android: import("@expo/material-symbols/build.xml"),
+                    ios: "0.circle.ar",
+                  })}
+                />
+              </ListItem.LeadingContent>
+            </ListItem>
+          </List>
+          <Button
+            modifiers={[fillMaxWidth()]}
+            variant="text"
+            onPress={async () => {
+              const [ok] = await t(async () => {
+                await openBrowserAsync(githubUrl, {
+                  enableBarCollapsing: true,
+                  enableDefaultShareMenuItem: true,
+                  createTask: false,
+                });
+              });
+
+              if (ok) return;
+
+              Linking.openURL(githubUrl);
+            }}
           >
-            {i.label}
-          </Text>
-          <Text
-            style={[
-              theme.typography.body2,
-              { color: theme.palette.text.secondary },
-            ]}
-          >
-            {i.value}
-          </Text>
-        </View>
-      ))}
-
-      <Pressable
-        onPress={async () => {
-          try {
-            await openBrowserAsync(githubUrl, {
-              toolbarColor: "#000",
-              enableBarCollapsing: true,
-              enableDefaultShareMenuItem: true,
-
-              createTask: false,
-            });
-          } catch {
-            Linking.openURL(githubUrl);
-          }
-        }}
-        style={[
-          {
-            borderWidth: 1,
-            borderColor: "transparent",
-
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: theme.spacing(2),
-
-            paddingInline: theme.spacing(4),
-            paddingBlock: theme.spacing(2),
-          },
-        ]}
-        android_ripple={android_ripple(theme.palette.action.focus)}
-      >
-        <MaterialCommunityIcons
-          name="github"
-          color={theme.palette.text.primary}
-          size={theme.spacing(5)}
-          style={[{ marginInlineStart: theme.spacing(-1) }]}
-        />
-        <Text
-          style={[
-            theme.typography.button,
-            {
-              color: theme.palette.text.primary,
-            },
-          ]}
-        >
-          &copy;2024 by Yotu_Lee
-        </Text>
-      </Pressable>
-    </ScrollView>
+            <Row alignment="center" spacing={8}>
+              <Icon
+                name={Icon.select({
+                  android: import("@expo/material-symbols/bug_report.xml"),
+                  ios: "0.circle.ar",
+                })}
+              />
+              <Text>Open GitHub</Text>
+            </Row>
+          </Button>
+        </Column>
+      </Surface>
+    </Host>
   );
 }
-
-const styles = StyleSheet.create({
-  listItem: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    flexDirection: "row",
-
-    borderWidth: 1,
-    borderColor: "transparent",
-  },
-});

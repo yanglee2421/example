@@ -12,10 +12,11 @@ export const OffLine = (props: OffLineProps) => {
       return unsubscribe;
     },
     () => onlineManager.isOnline(),
-    () => false
   );
 
-  if (isOnline) return props.children;
+  if (isOnline) {
+    return props.children;
+  }
 
   return props.fallback;
 };

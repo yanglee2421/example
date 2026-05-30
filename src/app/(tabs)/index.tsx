@@ -1,239 +1,38 @@
-import { Text } from "@/components/Text";
-import { Divider } from "@/components/ui";
-import { db } from "@/db/db";
-import * as schema from "@/db/schema";
-import { useTheme } from "@/hooks/useTheme";
-import { Host, Icon, IconButton } from "@expo/ui/jetpack-compose";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { count, eq } from "drizzle-orm";
-import { useLiveQuery } from "drizzle-orm/expo-sqlite";
-import { Link, useRouter } from "expo-router";
-import React from "react";
-import { Pressable, StyleSheet, View } from "react-native";
-import type { SwipeableMethods } from "react-native-gesture-handler/ReanimatedSwipeable";
-import ReanimatedSwipeable from "react-native-gesture-handler/ReanimatedSwipeable";
-import type { SharedValue } from "react-native-reanimated";
-import Animated, {
-  LinearTransition,
-  useAnimatedStyle,
-} from "react-native-reanimated";
+import { Column, Host, Row, Text } from "@expo/ui";
+import { Box, Surface } from "@expo/ui/jetpack-compose";
+import { fillMaxWidth, weight } from "@expo/ui/jetpack-compose/modifiers";
 
-const styles = StyleSheet.create({
-  leftAction: {
-    left: "-100%",
-
-    width: "100%",
-
-    padding: 10,
-
-    flexDirection: "row",
-    justifyContent: "flex-end",
-    alignItems: "center",
-  },
-});
-
-const RenderLeftActions = (
-  prog: SharedValue<number>,
-  drag: SharedValue<number>,
-) => {
-  const styleAnimation = useAnimatedStyle(() => {
-    return {
-      transform: [{ translateX: drag.value }],
-      backgroundColor: `rgba(255,0,0,${prog.value})`,
-    };
-  });
-
+export default function HomeScreen() {
   return (
-    <Animated.View style={[styleAnimation, styles.leftAction]}>
-      <MaterialCommunityIcons name="delete-outline" size={26} color="white" />
-    </Animated.View>
-  );
-};
-
-type SwipeToDeleteProps = React.PropsWithChildren<{
-  onDelete?: () => void;
-}>;
-
-const SwipeToDelete = (props: SwipeToDeleteProps) => {
-  const ref = React.useRef<SwipeableMethods>(null);
-
-  return (
-    <ReanimatedSwipeable
-      ref={ref}
-      leftThreshold={50}
-      friction={1}
-      renderLeftActions={RenderLeftActions}
-      onSwipeableOpen={(dir) => {
-        if (dir === "right") {
-          props.onDelete?.();
-        }
-      }}
-    >
-      {props.children}
-    </ReanimatedSwipeable>
-  );
-};
-
-export default function Home() {
-  const pageIndex = 0;
-  const pageSize = 20;
-
-  const theme = useTheme();
-  const router = useRouter();
-  const chats = useLiveQuery(
-    db.query.completionTable.findMany({
-      offset: pageIndex * pageSize,
-      limit: pageSize,
-    }),
-    [pageIndex, pageSize],
-  );
-  const chatCount = useLiveQuery(
-    db.select({ count: count() }).from(schema.completionTable).limit(1),
-    [],
-  );
-
-  return (
-    <Animated.FlatList
-      style={{ backgroundColor: theme.palette.background.default }}
-      data={chats.data}
-      keyExtractor={(i) => i.id.toString()}
-      itemLayoutAnimation={LinearTransition}
-      stickyHeaderIndices={[0]}
-      renderItem={(i) => (
-        <View>
-          <SwipeToDelete
-            onDelete={() => {
-              db.transaction(async (tx) => {
-                // If not await this, this re-render will be cancelled
-                await tx
-                  .delete(schema.completionTable)
-                  .where(eq(schema.completionTable.id, i.item.id));
-                await tx
-                  .delete(schema.messageTable)
-                  .where(eq(schema.messageTable.completionId, i.item.id));
-              });
-            }}
-          >
-            <View
-              style={[
-                {
-                  paddingInline: theme.spacing(5),
-                  paddingBlock: theme.spacing(3),
-                },
-              ]}
-            >
-              <Link
-                href={{ pathname: "/chat/[id]", params: { id: i.item.id } }}
-                asChild
-              >
-                <Pressable>
-                  <View>
-                    <Text
-                      style={[
-                        theme.typography.body1,
-                        { color: theme.palette.text.primary },
-                      ]}
-                      numberOfLines={1}
-                    >
-                      {i.item.name?.substring(0, 48)}
-                    </Text>
-                  </View>
-                </Pressable>
-              </Link>
-            </View>
-          </SwipeToDelete>
-          <Divider />
-        </View>
-      )}
-      ListEmptyComponent={
-        <View>
-          <Pressable
-            onPress={async () => {
-              const data = await db
-                .insert(schema.completionTable)
-                .values({ name: "new chat" });
-              router.push({
-                pathname: "/chat/[id]",
-                params: {
-                  id: data.lastInsertRowId,
-                },
-              });
-            }}
-            style={[
-              {
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              },
-            ]}
-          >
-            <Text
-              style={[
-                theme.typography.body1,
-                { color: theme.palette.text.primary },
-              ]}
-            >
-              No avaliable chats
-            </Text>
-          </Pressable>
-        </View>
-      }
-      ListHeaderComponent={
-        <View style={{ backgroundColor: theme.palette.background.default }}>
-          <View
-            style={[
-              {
-                paddingBlock: theme.spacing(1.5),
-                paddingInline: theme.spacing(3),
-              },
-            ]}
-          >
-            <View
-              style={[
-                {
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                },
-              ]}
-            >
-              <Text variant="h5">Chat App</Text>
-              <Host matchContents>
-                <IconButton
-                  onPress={async () => {
-                    const data = await db
-                      .insert(schema.completionTable)
-                      .values({ name: "new chat" });
-
-                    router.push({
-                      pathname: "/chat/[id]",
-                      params: {
-                        id: data.lastInsertRowId,
-                      },
-                    });
-                  }}
-                >
-                  <Icon
-                    source={require("@/assets/add_24px.xml")}
-                    tintColor={
-                      theme.palette.mode === "dark" ? "white" : "black"
-                    }
-                  />
-                </IconButton>
-              </Host>
-            </View>
-            <Text
-              style={[
-                { color: theme.palette.text.secondary },
-                theme.typography.overline,
-              ]}
-            >
-              Total count: {chatCount.data[0]?.count}
-            </Text>
-          </View>
-          <Divider />
-        </View>
-      }
-    />
+    <Host style={{ flex: 1 }}>
+      <Surface>
+        <Row spacing={8}>
+          <Column spacing={8} modifiers={[weight(1)]}>
+            <Box contentAlignment="center" modifiers={[fillMaxWidth()]}>
+              <Text>Centered in Box</Text>
+            </Box>
+            <Box contentAlignment="center" modifiers={[fillMaxWidth()]}>
+              <Text>Centered in Box</Text>
+            </Box>
+          </Column>
+          <Column spacing={8} modifiers={[weight(1)]}>
+            <Box contentAlignment="center" modifiers={[fillMaxWidth()]}>
+              <Text>Centered in Box</Text>
+            </Box>
+            <Box contentAlignment="center" modifiers={[fillMaxWidth()]}>
+              <Text>Centered in Box</Text>
+            </Box>
+          </Column>
+          <Column spacing={8} modifiers={[weight(1)]}>
+            <Box contentAlignment="center" modifiers={[fillMaxWidth()]}>
+              <Text>Centered in Box</Text>
+            </Box>
+            <Box contentAlignment="center" modifiers={[fillMaxWidth()]}>
+              <Text>Centered in Box</Text>
+            </Box>
+          </Column>
+        </Row>
+      </Surface>
+    </Host>
   );
 }

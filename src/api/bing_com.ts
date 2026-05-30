@@ -1,32 +1,32 @@
 import { queryOptions } from "@tanstack/react-query";
 import axios from "axios";
 
-type BingImageParams = {
+interface BingImageParams {
   idx: number;
   n: number;
   format: "js";
-};
+}
 
-type BingImageRes = {
-  images: [
-    {
-      startdate: string;
-      fullstartdate: string;
-      enddate: string;
-      url: string;
-      urlbase: string;
-      copyright: string;
-      copyrightlink: string;
-      title: string;
-      quiz: string;
-      wp: boolean;
-      hsh: string;
-      drk: number;
-      top: number;
-      bot: number;
-      hs: [];
-    },
-  ];
+interface BingImage {
+  startdate: string;
+  fullstartdate: string;
+  enddate: string;
+  url: string;
+  urlbase: string;
+  copyright: string;
+  copyrightlink: string;
+  title: string;
+  quiz: string;
+  wp: boolean;
+  hsh: string;
+  drk: number;
+  top: number;
+  bot: number;
+  hs: [];
+}
+
+interface BingImageRes {
+  images: BingImage[];
   tooltips: {
     loading: string;
     previous: string;
@@ -34,7 +34,7 @@ type BingImageRes = {
     walle: string;
     walls: string;
   };
-};
+}
 
 const CN_BING = "https://cn.bing.com";
 const WWW_BING = "https://www.bing.com";
