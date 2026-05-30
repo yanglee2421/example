@@ -1,19 +1,26 @@
-import React from "react";
-import { setStringAsync } from "expo-clipboard";
-import { type CameraType, CameraView, useCameraPermissions } from "expo-camera";
+import { Button, Column, Host, Icon, Text } from "@expo/ui";
+import {
+  Box,
+  Card,
+  FloatingActionButton,
+  Surface,
+} from "@expo/ui/jetpack-compose";
+import {
+  align,
+  fillMaxWidth,
+  paddingAll,
+} from "@expo/ui/jetpack-compose/modifiers";
 import { useMutation } from "@tanstack/react-query";
-import { Loading } from "@/components/Loading";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { Pressable, Text, ToastAndroid, View } from "react-native";
-import { android_ripple } from "@/lib/utils";
-import { useTheme } from "@/hooks/useTheme";
+import { type CameraType, CameraView, useCameraPermissions } from "expo-camera";
+import { setStringAsync } from "expo-clipboard";
+import React from "react";
+import { ToastAndroid } from "react-native";
 
 export default function Qrcode() {
   const [data, setData] = React.useState("");
   const [codeType, setCodeType] = React.useState("");
   const [facing, setFacing] = React.useState<CameraType>("back");
   const [permission, requestPermission] = useCameraPermissions();
-  const theme = useTheme();
 
   const copy = useMutation<boolean, Error, string>({
     async mutationFn(data) {
@@ -30,131 +37,73 @@ export default function Qrcode() {
 
   if (!permission) {
     // Camera permissions are still loading.
-    return <Loading />;
+    return <></>;
   }
 
   if (!permission.granted) {
     // Camera permissions are not granted yet.
     return (
-      <View
-        style={[
-          {
-            borderColor: theme.palette.divider,
-            borderWidth: 1,
-
-            paddingInline: theme.spacing(4),
-            paddingBlock: theme.spacing(3),
-            margin: theme.spacing(6),
-          },
-          theme.shape,
-        ]}
-      >
-        <Text
-          style={[theme.typography.h5, { color: theme.palette.text.primary }]}
-        >
-          Need Permission
-        </Text>
-        <Text
-          style={[
-            theme.typography.body1,
-            {
-              color: theme.palette.text.primary,
-            },
-          ]}
-        >
-          We need your permission to show the camera
-        </Text>
-
-        <Pressable
-          onPress={requestPermission}
-          style={[
-            {
-              backgroundColor: theme.palette.primary.main,
-
-              paddingInline: theme.spacing(4),
-              paddingBlock: theme.spacing(2),
-            },
-            theme.shape,
-          ]}
-          android_ripple={{
-            color: theme.palette.action.focus,
-            foreground: true,
-            borderless: false,
-          }}
-        >
-          <Text
-            style={[
-              theme.typography.button,
-              ,
-              {
-                color: theme.palette.primary.contrastText,
-                textAlign: "center",
-              },
-            ]}
-          >
-            grant permission
-          </Text>
-        </Pressable>
-      </View>
+      <Host style={{ flex: 1 }}>
+        <Surface>
+          <Box contentAlignment="center" modifiers={[paddingAll(16)]}>
+            <Card modifiers={[align("center")]}>
+              <Column modifiers={[paddingAll(16)]}>
+                <Text textStyle={{ fontSize: 24 }}>Need Permission</Text>
+                <Text textStyle={{ fontSize: 16 }}>
+                  We need your permission to show the camera
+                </Text>
+                <Button
+                  onPress={requestPermission}
+                  label="grant permission"
+                  modifiers={[fillMaxWidth()]}
+                />
+              </Column>
+            </Card>
+          </Box>
+        </Surface>
+      </Host>
     );
   }
 
   if (data) {
     return (
-      <View
-        style={[
-          theme.shape,
-          {
-            margin: theme.spacing(3),
-            paddingInline: theme.spacing(5),
-            paddingBlock: theme.spacing(3),
-
-            borderColor: theme.palette.divider,
-            borderWidth: 1,
-          },
-        ]}
-      >
-        <Text
-          style={[theme.typography.h5, { color: theme.palette.text.primary }]}
-        >
-          QR Code
-        </Text>
-        <Pressable
-          onPress={() =>
-            copy.mutate(data, {
-              onError(error) {
-                ToastAndroid.show(error.message, 1000 * 2);
-              },
-              onSuccess() {
-                ToastAndroid.show("Copied!", 1000 * 2);
-              },
-            })
-          }
-          disabled={copy.isPending}
-          android_ripple={android_ripple(theme.palette.action.focus)}
-        >
-          <Text
-            style={[
-              theme.typography.body1,
-              {
-                color: theme.palette.text.primary,
-              },
-            ]}
-          >
-            {data}
-          </Text>
-          <Text
-            style={[
-              theme.typography.body2,
-              {
-                color: theme.palette.text.secondary,
-              },
-            ]}
-          >
-            {codeType}
-          </Text>
-        </Pressable>
-      </View>
+      <Host style={{ flex: 1 }}>
+        <Surface>
+          <Box contentAlignment="center" modifiers={[paddingAll(16)]}>
+            <Card>
+              <Column modifiers={[paddingAll(16)]} spacing={8}>
+                <Text textStyle={{ fontSize: 24 }}>QR Code</Text>
+                <Text textStyle={{ fontSize: 14 }}>{"Code Data: " + data}</Text>
+                <Text textStyle={{ fontSize: 16 }}>
+                  {"Code Type: " + codeType}
+                </Text>
+                <Button
+                  label="Copy"
+                  modifiers={[fillMaxWidth()]}
+                  onPress={() => {
+                    copy.mutate(data, {
+                      onError(error) {
+                        ToastAndroid.show(error.message, 1000 * 2);
+                      },
+                      onSuccess() {
+                        ToastAndroid.show("Copied!", 1000 * 2);
+                      },
+                    });
+                  }}
+                  disabled={copy.isPending}
+                />
+                <Button
+                  label="Continue"
+                  modifiers={[fillMaxWidth()]}
+                  onPress={() => {
+                    setData("");
+                  }}
+                />
+              </Column>
+            </Card>
+          </Box>
+        </Surface>
+      </Host>
     );
   }
 
@@ -186,32 +135,25 @@ export default function Qrcode() {
         setData(res.data);
         setCodeType(res.type);
       }}
-      style={{ flex: 1, justifyContent: "flex-end", alignItems: "center" }}
+      style={{
+        flex: 1,
+        alignItems: "center",
+        justifyContent: "flex-end",
+        padding: 64,
+      }}
     >
-      <Pressable
-        onPress={toggleCameraFacing}
-        style={[
-          {
-            borderRadius: 99999,
-            backgroundColor: theme.palette.common.white,
-
-            width: theme.spacing(14),
-            height: theme.spacing(14),
-
-            marginBlockEnd: theme.spacing(16),
-
-            justifyContent: "center",
-            alignItems: "center",
-          },
-        ]}
-      >
-        <MaterialCommunityIcons
-          name="camera-flip-outline"
-          size={36}
-          color={theme.palette.common.black}
-          style={{ borderWidth: 1, borderColor: "transparent" }}
-        />
-      </Pressable>
+      <Host matchContents>
+        <FloatingActionButton onClick={toggleCameraFacing}>
+          <FloatingActionButton.Icon>
+            <Icon
+              name={Icon.select({
+                android: import("@expo/material-symbols/camera.xml"),
+                ios: "camera",
+              })}
+            />
+          </FloatingActionButton.Icon>
+        </FloatingActionButton>
+      </Host>
     </CameraView>
   );
 }

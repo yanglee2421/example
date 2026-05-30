@@ -1,12 +1,16 @@
-import React from "react";
-import * as ExpoNet from "expo-network";
-import { setStringAsync } from "expo-clipboard";
+import { Column, Host, Text } from "@expo/ui";
+import { Card, Surface } from "@expo/ui/jetpack-compose";
+import {
+  clickable,
+  fillMaxWidth,
+  paddingAll,
+} from "@expo/ui/jetpack-compose/modifiers";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { Pressable, ScrollView, ToastAndroid } from "react-native";
+import { setStringAsync } from "expo-clipboard";
 import { ActivityAction, startActivityAsync } from "expo-intent-launcher";
-import { Text } from "@/components/Text";
-import { useTheme } from "@/hooks/useTheme";
-import { android_ripple } from "@/lib/utils";
+import * as ExpoNet from "expo-network";
+import React from "react";
+import { ToastAndroid } from "react-native";
 
 const netSelector = <TError, TWarning, TSuccess>(
   isConnected: boolean,
@@ -27,7 +31,6 @@ const netSelector = <TError, TWarning, TSuccess>(
 };
 
 export default function Network() {
-  const theme = useTheme();
   const ip = useQuery({
     queryKey: ["getIpAddressAsync"],
     queryFn: () => ExpoNet.getIpAddressAsync(),
@@ -61,108 +64,56 @@ export default function Network() {
   });
 
   return (
-    <ScrollView
-      contentContainerStyle={{
-        padding: theme.spacing(3),
-        gap: theme.spacing(4),
-      }}
-    >
-      <Pressable
-        onPress={() => startActivityAsync(ActivityAction.WIFI_SETTINGS)}
-        style={[
-          theme.shape,
-          {
-            borderColor: theme.palette.divider,
-            borderWidth: 1,
-
-            padding: theme.spacing(3),
-          },
-        ]}
-        android_ripple={android_ripple(theme.palette.action.focus)}
-      >
-        <Text
-          style={[
-            theme.typography.body1,
-            {
-              color: theme.palette.text.primary,
-            },
-          ]}
-        >
-          {state.type}
-        </Text>
-        <Text
-          style={[
-            theme.typography.body2,
-            {
-              color: netSelector(
-                !!state.isConnected,
-                !!state.isInternetReachable,
-                theme.palette.error.main,
-                theme.palette.warning.main,
-                theme.palette.success.main,
-              ),
-            },
-          ]}
-        >
-          {netSelector(
-            !!state.isConnected,
-            !!state.isInternetReachable,
-            "No Connected",
-            "Connected but no internet",
-            "Ready",
+    <Host style={{ flex: 1 }}>
+      <Surface>
+        <Column modifiers={[paddingAll(12)]} spacing={12}>
+          <Card
+            modifiers={[
+              clickable(() => startActivityAsync(ActivityAction.WIFI_SETTINGS)),
+              fillMaxWidth(),
+            ]}
+          >
+            <Column modifiers={[paddingAll(16)]}>
+              <Text textStyle={{ fontSize: 24 }}>{state.type}</Text>
+              <Text textStyle={{ fontSize: 16 }}>
+                {netSelector(
+                  !!state.isConnected,
+                  !!state.isInternetReachable,
+                  "No Connected",
+                  "Connected but no internet",
+                  "Ready",
+                )}
+              </Text>
+            </Column>
+          </Card>
+          {ip.isSuccess && (
+            <Card
+              modifiers={[
+                clickable(() => {
+                  copy.mutate(ip.data, {
+                    onError(error) {
+                      ToastAndroid.show(error.message, 1000 * 2);
+                    },
+                    onSuccess() {
+                      ToastAndroid.showWithGravity(
+                        "Copied",
+                        1000 * 2,
+                        ToastAndroid.BOTTOM,
+                      );
+                    },
+                  });
+                }),
+                fillMaxWidth(),
+              ]}
+            >
+              <Column modifiers={[paddingAll(16)]}>
+                <Text textStyle={{ fontSize: 24 }}>IP</Text>
+                <Text textStyle={{ fontSize: 16 }}>{ip.data}</Text>
+              </Column>
+            </Card>
           )}
-        </Text>
-      </Pressable>
-
-      {ip.isSuccess && (
-        <Pressable
-          onPress={() =>
-            copy.mutate(ip.data, {
-              onError(error) {
-                ToastAndroid.show(error.message, 1000 * 2);
-              },
-              onSuccess() {
-                ToastAndroid.showWithGravity(
-                  "Copied",
-                  1000 * 2,
-                  ToastAndroid.BOTTOM,
-                );
-              },
-            })
-          }
-          style={[
-            theme.shape,
-            {
-              borderColor: theme.palette.divider,
-              borderWidth: 1,
-
-              padding: theme.spacing(3),
-            },
-          ]}
-          android_ripple={android_ripple(theme.palette.action.focus)}
-        >
-          <Text
-            style={[
-              theme.typography.body1,
-              {
-                color: theme.palette.text.primary,
-              },
-            ]}
-          >
-            IP
-          </Text>
-          <Text
-            style={[
-              theme.typography.body2,
-              {
-                color: theme.palette.text.secondary,
-              },
-            ]}
-          >
-            {ip.data}
-          </Text>
-        </Pressable>
-      )}
-    </ScrollView>
+        </Column>
+      </Surface>
+    </Host>
   );
 }

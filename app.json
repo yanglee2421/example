@@ -20,10 +20,11 @@
       "package": "app.vercel.yanglee2421"
     },
     "plugins": [
+      "expo-font",
       "expo-router",
       "expo-sqlite",
-      "expo-font",
       "expo-web-browser",
+      "expo-quick-actions",
       [
         "expo-splash-screen",
         {
@@ -47,7 +48,22 @@
           "recordAudioAndroid": true
         }
       ],
-      "expo-quick-actions"
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "compileSdkVersion": 36,
+            "targetSdkVersion": 36,
+            "buildToolsVersion": "36.0.0",
+            "ndk": {
+              "abiFilters": ["arm64-v8a"]
+            }
+          },
+          "ios": {
+            "deploymentTarget": "16.4"
+          }
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,
