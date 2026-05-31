@@ -1,46 +1,53 @@
 import { fetchHistoryGet } from "@/api/qqlykm_cn";
-import { Loading } from "@/components/Loading";
-import { Text } from "@/components/Text";
-import { Divider } from "@/components/ui";
 import { useLocaleDate } from "@/hooks/useLocaleDate";
 import { useLocaleTime } from "@/hooks/useLocaleTime";
 import { useStorageStore } from "@/hooks/useStorageStore";
-import { useTheme } from "@/hooks/useTheme";
+import { Column, Host, Icon, List, Row, Spacer, Text } from "@expo/ui";
+
+import {
+  HorizontalDivider,
+  IconButton,
+  ListItem,
+  Surface,
+} from "@expo/ui/jetpack-compose";
+import { clickable } from "@expo/ui/jetpack-compose/modifiers";
 import { useQuery } from "@tanstack/react-query";
+import { useRouter } from "expo-router";
 import { openBrowserAsync } from "expo-web-browser";
-import { Linking, Pressable, RefreshControl, View } from "react-native";
-import Animated from "react-native-reanimated";
+import React from "react";
+import { Linking } from "react-native";
 import { t } from "try";
 
 const ListHeader = () => {
-  const theme = useTheme();
-  const date = useLocaleDate();
-  const time = useLocaleTime();
+  const router = useRouter();
 
   return (
     <>
-      <View
-        style={[
-          {
-            backgroundColor: theme.palette.background.default,
-
-            paddingInline: theme.spacing(6),
-            paddingBlock: theme.spacing(3),
-          },
-        ]}
-      >
-        <Text variant="h5">{time}</Text>
-        <Text
-          style={[
-            {
-              color: theme.palette.text.secondary,
-            },
-          ]}
+      <Row style={{ paddingVertical: 8 }} alignment="center">
+        <IconButton
+          onClick={() => {
+            router.back();
+          }}
         >
-          {date}
-        </Text>
-      </View>
-      <Divider />
+          <Icon
+            name={Icon.select({
+              ios: "0.circle",
+              android: import("@expo/material-symbols/arrow_left_alt.xml"),
+            })}
+          />
+        </IconButton>
+        <Text textStyle={{ fontSize: 24 }}>History</Text>
+        <Spacer flexible />
+        <IconButton>
+          <Icon
+            name={Icon.select({
+              ios: "0.circle",
+              android: import("@expo/material-symbols/more_vert.xml"),
+            })}
+          />
+        </IconButton>
+      </Row>
+      <HorizontalDivider />
     </>
   );
 };
@@ -50,81 +57,83 @@ const fetcher = fetchHistoryGet();
 export default function Page() {
   const apikey = useStorageStore((s) => s.qqlykmKey);
   const history = useQuery({ ...fetcher, enabled: !!apikey });
-  const theme = useTheme();
+  const date = useLocaleDate();
+  const time = useLocaleTime();
 
-  return (
-    <Animated.FlatList
-      refreshControl={
-        <RefreshControl
-          refreshing={history.isRefetching}
-          onRefresh={() => history.refetch()}
-          colors={[theme.palette.primary.main]}
-        />
-      }
-      data={history.data?.data.data}
-      keyExtractor={(i) => i.url}
-      renderItem={({ item: i }) => (
-        <Pressable
-          key={i.url}
-          onPress={async () => {
-            const [ok] = await t(
-              openBrowserAsync(i.url, {
-                enableBarCollapsing: true,
-                enableDefaultShareMenuItem: true,
-                createTask: false,
+  const renderQuery = () => {
+    if (history.isPending) {
+      return <Text>Loading</Text>;
+    }
+
+    if (history.isError) {
+      return <Text>{history.error.message}</Text>;
+    }
+
+    const list = history.data.data.data;
+
+    if (list.length === 0) {
+      return <></>;
+    }
+
+    return list.map((i) => {
+      return (
+        <React.Fragment key={i.url}>
+          <HorizontalDivider />
+          <ListItem
+            modifiers={[
+              clickable(async () => {
+                const [ok] = await t(
+                  openBrowserAsync(i.url, {
+                    enableBarCollapsing: true,
+                    enableDefaultShareMenuItem: true,
+                    createTask: false,
+                  }),
+                );
+
+                if (ok) return;
+
+                Linking.openURL(i.url);
               }),
-            );
-
-            if (!ok) {
-              Linking.openURL(i.url);
-            }
-          }}
-          style={[
-            {
-              paddingInline: theme.spacing(6),
-              paddingBlock: theme.spacing(3),
-
-              borderWidth: 1,
-              borderColor: "transparent",
-              borderBlockEndColor: theme.palette.divider,
-            },
-          ]}
-          android_ripple={{
-            color: theme.palette.action.focus,
-            foreground: true,
-            borderless: false,
-          }}
-        >
-          <Text>{i.year}</Text>
-          <Text
-            style={[
-              theme.typography.body2,
-              {
-                color: theme.palette.text.secondary,
-              },
             ]}
           >
-            {i.title}
-          </Text>
-        </Pressable>
-      )}
-      ListHeaderComponent={ListHeader}
-      stickyHeaderIndices={[0]}
-      ListEmptyComponent={
-        <View
-          style={{
-            flex: 1,
+            <ListItem.TrailingContent>
+              <Icon
+                name={Icon.select({
+                  ios: "0.circle",
+                  android: import("@expo/material-symbols/arrow_right_alt.xml"),
+                })}
+              />
+            </ListItem.TrailingContent>
+            <ListItem.HeadlineContent>
+              <Text>{i.year}</Text>
+            </ListItem.HeadlineContent>
+            <ListItem.SupportingContent>
+              <Text>{i.title}</Text>
+            </ListItem.SupportingContent>
+          </ListItem>
+        </React.Fragment>
+      );
+    });
+  };
 
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <Loading />
-        </View>
-      }
-      contentContainerStyle={{
-        flexGrow: 1,
-      }}
-    />
+  return (
+    <Host style={{ flex: 1 }}>
+      <Surface>
+        <Column>
+          <ListHeader />
+          <List
+            onRefresh={async () => {
+              await history.refetch();
+            }}
+          >
+            <Column style={{ padding: 12 }}>
+              <Text textStyle={{ fontSize: 22 }}>{date}</Text>
+              <Text textStyle={{ fontSize: 16 }}>{time}</Text>
+            </Column>
+            {renderQuery()}
+          </List>
+        </Column>
+      </Surface>
+    </Host>
   );
 }

@@ -1,10 +1,7 @@
+import { AppHeader } from "@/components/app-header";
 import { Column, Host, Text } from "@expo/ui";
 import { Card, Surface } from "@expo/ui/jetpack-compose";
-import {
-  clickable,
-  fillMaxWidth,
-  paddingAll,
-} from "@expo/ui/jetpack-compose/modifiers";
+import { clickable, fillMaxWidth } from "@expo/ui/jetpack-compose/modifiers";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { setStringAsync } from "expo-clipboard";
 import { ActivityAction, startActivityAsync } from "expo-intent-launcher";
@@ -66,52 +63,57 @@ export default function Network() {
   return (
     <Host style={{ flex: 1 }}>
       <Surface>
-        <Column modifiers={[paddingAll(12)]} spacing={12}>
-          <Card
-            modifiers={[
-              clickable(() => startActivityAsync(ActivityAction.WIFI_SETTINGS)),
-              fillMaxWidth(),
-            ]}
-          >
-            <Column modifiers={[paddingAll(16)]}>
-              <Text textStyle={{ fontSize: 24 }}>{state.type}</Text>
-              <Text textStyle={{ fontSize: 16 }}>
-                {netSelector(
-                  !!state.isConnected,
-                  !!state.isInternetReachable,
-                  "No Connected",
-                  "Connected but no internet",
-                  "Ready",
-                )}
-              </Text>
-            </Column>
-          </Card>
-          {ip.isSuccess && (
+        <Column>
+          <AppHeader pageName="Network" />
+          <Column spacing={12} style={{ padding: 12 }}>
             <Card
               modifiers={[
-                clickable(() => {
-                  copy.mutate(ip.data, {
-                    onError(error) {
-                      ToastAndroid.show(error.message, 1000 * 2);
-                    },
-                    onSuccess() {
-                      ToastAndroid.showWithGravity(
-                        "Copied",
-                        1000 * 2,
-                        ToastAndroid.BOTTOM,
-                      );
-                    },
-                  });
-                }),
                 fillMaxWidth(),
+                clickable(() => {
+                  startActivityAsync(ActivityAction.WIFI_SETTINGS);
+                }),
               ]}
             >
-              <Column modifiers={[paddingAll(16)]}>
-                <Text textStyle={{ fontSize: 24 }}>IP</Text>
-                <Text textStyle={{ fontSize: 16 }}>{ip.data}</Text>
+              <Column style={{ padding: 14 }}>
+                <Text textStyle={{ fontSize: 24 }}>{state.type}</Text>
+                <Text textStyle={{ fontSize: 16 }}>
+                  {netSelector(
+                    !!state.isConnected,
+                    !!state.isInternetReachable,
+                    "No Connected",
+                    "Connected but no internet",
+                    "Ready",
+                  )}
+                </Text>
               </Column>
             </Card>
-          )}
+            {ip.isSuccess && (
+              <Card
+                modifiers={[
+                  fillMaxWidth(),
+                  clickable(() => {
+                    copy.mutate(ip.data, {
+                      onError(error) {
+                        ToastAndroid.show(error.message, 1000 * 2);
+                      },
+                      onSuccess() {
+                        ToastAndroid.showWithGravity(
+                          "Copied",
+                          1000 * 2,
+                          ToastAndroid.BOTTOM,
+                        );
+                      },
+                    });
+                  }),
+                ]}
+              >
+                <Column style={{ padding: 14 }}>
+                  <Text textStyle={{ fontSize: 24 }}>IP</Text>
+                  <Text textStyle={{ fontSize: 16 }}>{ip.data}</Text>
+                </Column>
+              </Card>
+            )}
+          </Column>
         </Column>
       </Surface>
     </Host>

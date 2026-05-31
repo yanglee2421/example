@@ -1,5 +1,4 @@
 import { QueryProvider } from "@/components/QueryProvider";
-import { ThemeProvider } from "@/components/ThemeProvider";
 import { db } from "@/db/db";
 import { useStorageHasHydrated } from "@/hooks/useStorageStore";
 import { useTheme } from "@/hooks/useTheme";
@@ -123,12 +122,10 @@ export default function App() {
 
   return (
     <QueryProvider>
-      <ThemeProvider>
-        <StatusBar />
-        <RootLayout>
-          <AppRouter />
-        </RootLayout>
-      </ThemeProvider>
+      <StatusBar />
+      <RootLayout>
+        <AppRouter />
+      </RootLayout>
     </QueryProvider>
   );
 }

@@ -1,6 +1,6 @@
 import { infiniteQueryOptions, queryOptions } from "@tanstack/react-query";
-import axios from "axios";
 import type { AxiosRequestConfig } from "axios";
+import axios from "axios";
 
 const baseURL = "https://qqlykm.cn/api";
 
@@ -22,10 +22,10 @@ qqlykm.interceptors.response.use((res) => {
   throw new Error(res.data.msg);
 });
 
-type DiaryRes = {
+interface DiaryRes {
   success: boolean;
   data: string;
-};
+}
 
 const DIARY_PATH = "/diary/index";
 
@@ -45,7 +45,7 @@ export const fetchDiary = () =>
     },
   });
 
-type FengjingRes = {
+interface FengjingRes {
   success: true;
   data: {
     cover: string;
@@ -56,7 +56,7 @@ type FengjingRes = {
     copyright: string;
     time: string;
   };
-};
+}
 
 const FENGJING_PATH = "/fengjing/index";
 
@@ -79,17 +79,15 @@ export const fetchFengjing = () =>
     },
   });
 
-type HistoryGetRes = {
+interface HistoryGetRes {
   success: true;
   date: string;
-  data: [
-    {
-      year: string;
-      title: string;
-      url: string;
-    },
-  ];
-};
+  data: Array<{
+    year: string;
+    title: string;
+    url: string;
+  }>;
+}
 
 const HISTORY_GET_PATH = "/history/get";
 
@@ -101,7 +99,7 @@ export const fetchHistoryGet = () =>
     },
   });
 
-type JijiangshangyingRes = {
+interface JijiangshangyingRes {
   success: boolean;
   data: {
     title: string;
@@ -111,7 +109,7 @@ type JijiangshangyingRes = {
     actors: string;
     releaseDateStr: string;
   }[];
-};
+}
 
 const JIJIANGSHANGYING_PATH = "/jijiangshangying/get";
 
@@ -126,7 +124,7 @@ export const fetchJijiangshangying = () =>
     },
   });
 
-type JokeRes = {
+interface JokeRes {
   success: true;
   data: {
     joke: string;
@@ -136,7 +134,7 @@ type JokeRes = {
     copyright: string;
     time: string;
   };
-};
+}
 
 const JOKE_INDEX_PATH = "/joke/index";
 
@@ -159,7 +157,7 @@ export const fetchJoke = () =>
     },
   });
 
-type NewsRes = {
+interface NewsRes {
   success: true;
   data: {
     date: string;
@@ -169,7 +167,7 @@ type NewsRes = {
   text: {
     copyright: string;
   };
-};
+}
 
 const NEWS_PATH = "/60s/index";
 
@@ -181,14 +179,14 @@ export const fetchNews = () =>
     },
   });
 
-type RandtextRes = {
+interface RandtextRes {
   code: number;
   msg: string;
   data: string;
   debug: string;
   exec_time: number;
   user_ip: string;
-};
+}
 
 const RANDTEXT_PATH = "/randtext/get";
 
@@ -208,15 +206,15 @@ export const fetchRandtext = () =>
     },
   });
 
-type IPParams = {
+interface IPParams {
   ip?: string;
-};
+}
 
 type IPConf = AxiosRequestConfig & {
   params: IPParams;
 };
 
-type IPRes = {
+interface IPRes {
   success: true;
   data: {
     ip: "117.151.14.189";
@@ -225,7 +223,7 @@ type IPRes = {
     net: "移动/数据上网公共出口";
   };
   msg: "查询成功";
-};
+}
 
 const IP_PATH = "/free/ip/get";
 

@@ -1,4 +1,5 @@
-import { Host, Icon, List, ListItem } from "@expo/ui";
+import { AppHeader } from "@/components/app-header";
+import { Column, Host, Icon, List, ListItem } from "@expo/ui";
 import { HorizontalDivider, Surface } from "@expo/ui/jetpack-compose";
 import { useRouter } from "expo-router";
 import React from "react";
@@ -133,27 +134,26 @@ export default function Account() {
   return (
     <Host style={{ flex: 1 }}>
       <Surface>
-        <List
-          onRefresh={() => {
-            return Promise.resolve();
-          }}
-        >
-          {list.map((item, index) => {
-            return (
-              <React.Fragment key={item.href}>
-                {!!index && <HorizontalDivider />}
-                <ListItem
-                  onPress={() => {
-                    router.push(item.href);
-                  }}
-                >
-                  <ListItem.Leading>{item.icon}</ListItem.Leading>
-                  <ListItem.Supporting>{item.label}</ListItem.Supporting>
-                </ListItem>
-              </React.Fragment>
-            );
-          })}
-        </List>
+        <Column>
+          <AppHeader pageName="Apps" showBack={false} />
+          <List>
+            {list.map((item, index) => {
+              return (
+                <React.Fragment key={item.href}>
+                  {!!index && <HorizontalDivider />}
+                  <ListItem
+                    onPress={() => {
+                      router.push(item.href);
+                    }}
+                  >
+                    <ListItem.Leading>{item.icon}</ListItem.Leading>
+                    <ListItem.Supporting>{item.label}</ListItem.Supporting>
+                  </ListItem>
+                </React.Fragment>
+              );
+            })}
+          </List>
+        </Column>
       </Surface>
     </Host>
   );

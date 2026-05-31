@@ -1,4 +1,4 @@
-import { Button, Column, Host, Icon, Text } from "@expo/ui";
+import { Button, Column, Host, Icon, RNHostView, Spacer, Text } from "@expo/ui";
 import {
   Box,
   Card,
@@ -112,48 +112,55 @@ export default function Qrcode() {
   };
 
   return (
-    <CameraView
-      facing={facing}
-      barcodeScannerSettings={{
-        barcodeTypes: [
-          "aztec",
-          "ean13",
-          "ean8",
-          "qr",
-          "pdf417",
-          "upc_e",
-          "datamatrix",
-          "code39",
-          "code93",
-          "itf14",
-          "codabar",
-          "code128",
-          "upc_a",
-        ],
-      }}
-      onBarcodeScanned={(res) => {
-        setData(res.data);
-        setCodeType(res.type);
-      }}
-      style={{
-        flex: 1,
-        alignItems: "center",
-        justifyContent: "flex-end",
-        padding: 64,
-      }}
-    >
-      <Host matchContents>
-        <FloatingActionButton onClick={toggleCameraFacing}>
-          <FloatingActionButton.Icon>
-            <Icon
-              name={Icon.select({
-                android: import("@expo/material-symbols/camera.xml"),
-                ios: "camera",
-              })}
-            />
-          </FloatingActionButton.Icon>
-        </FloatingActionButton>
+    <>
+      <Host style={{ flex: 1 }}>
+        <RNHostView>
+          <CameraView
+            facing={facing}
+            barcodeScannerSettings={{
+              barcodeTypes: [
+                "aztec",
+                "ean13",
+                "ean8",
+                "qr",
+                "pdf417",
+                "upc_e",
+                "datamatrix",
+                "code39",
+                "code93",
+                "itf14",
+                "codabar",
+                "code128",
+                "upc_a",
+              ],
+            }}
+            onBarcodeScanned={(res) => {
+              setData(res.data);
+              setCodeType(res.type);
+            }}
+            style={{
+              flex: 1,
+              alignItems: "center",
+              justifyContent: "flex-end",
+              padding: 64,
+            }}
+          />
+        </RNHostView>
+        <Column alignment="center">
+          <Spacer flexible />
+          <FloatingActionButton onClick={toggleCameraFacing}>
+            <FloatingActionButton.Icon>
+              <Icon
+                name={Icon.select({
+                  android: import("@expo/material-symbols/camera.xml"),
+                  ios: "camera",
+                })}
+              />
+            </FloatingActionButton.Icon>
+          </FloatingActionButton>
+          <Spacer size={64} />
+        </Column>
       </Host>
-    </CameraView>
+    </>
   );
 }

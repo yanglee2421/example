@@ -1,5 +1,6 @@
+import { AppHeader } from "@/components/app-header";
 import { Button, Column, Host, Icon, List, Row, Text } from "@expo/ui";
-import { ListItem, Surface } from "@expo/ui/jetpack-compose";
+import { HorizontalDivider, ListItem, Surface } from "@expo/ui/jetpack-compose";
 import { fillMaxWidth } from "@expo/ui/jetpack-compose/modifiers";
 import * as Application from "expo-application";
 import { openBrowserAsync } from "expo-web-browser";
@@ -13,6 +14,7 @@ export default function About() {
     <Host style={{ flex: 1 }}>
       <Surface>
         <Column>
+          <AppHeader pageName="About" />
           <List>
             <ListItem>
               <ListItem.OverlineContent>
@@ -33,6 +35,7 @@ export default function About() {
                 />
               </ListItem.LeadingContent>
             </ListItem>
+            <HorizontalDivider />
             <ListItem>
               <ListItem.OverlineContent>
                 <Text>App Name</Text>
@@ -52,6 +55,7 @@ export default function About() {
                 />
               </ListItem.LeadingContent>
             </ListItem>
+            <HorizontalDivider />
             <ListItem>
               <ListItem.OverlineContent>
                 <Text>App Version</Text>
@@ -71,6 +75,7 @@ export default function About() {
                 />
               </ListItem.LeadingContent>
             </ListItem>
+            <HorizontalDivider />
             <ListItem>
               <ListItem.OverlineContent>
                 <Text>Build Version</Text>

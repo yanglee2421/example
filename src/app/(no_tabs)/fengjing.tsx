@@ -1,23 +1,16 @@
-import { t } from "try";
-import React from "react";
-import {
-  FlatList,
-  ImageBackground,
-  Pressable,
-  RefreshControl,
-  ScrollView,
-  Text,
-  ToastAndroid,
-} from "react-native";
-import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { fetchFengjing } from "@/api/qqlykm_cn";
-import { Loading } from "@/components/Loading";
-import { NeedAPIKEY } from "@/components/NeedAPIKEY";
+import { AppHeader } from "@/components/app-header";
 import { useStorageStore } from "@/hooks/useStorageStore";
-import { android_ripple } from "@/lib/utils";
-import { useTheme } from "@/hooks/useTheme";
 import { downloadFile } from "@/lib/expo";
 import { nativeConfirm } from "@/lib/react-native";
+import { Button, Column, Host, List, RNHostView, Spacer, Text } from "@expo/ui";
+import { Surface } from "@expo/ui/jetpack-compose";
+import { fillMaxWidth } from "@expo/ui/jetpack-compose/modifiers";
+import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
+import { ImageBackground } from "expo-image";
+import React from "react";
+import { ToastAndroid, View } from "react-native";
+import { t } from "try";
 
 const fetcher = fetchFengjing();
 
@@ -25,7 +18,6 @@ export default function Page() {
   const apikey = useStorageStore((s) => s.qqlykmKey);
   const fengjing = useInfiniteQuery({ ...fetcher, enabled: !!apikey });
   const queryClient = useQueryClient();
-  const theme = useTheme();
 
   const hanldeImagePress = async (url: string) => {
     const [ok, error] = await t(async () => {
@@ -42,132 +34,75 @@ export default function Page() {
     }
   };
 
-  return (
-    <>
-      {fengjing.isLoading && <Loading />}
-      {fengjing.isPending && !fengjing.isFetching && <NeedAPIKEY />}
-      {fengjing.isError && (
-        <ScrollView
-          refreshControl={
-            <RefreshControl
-              refreshing={fengjing.isRefetching}
-              onRefresh={() => {
-                queryClient.removeQueries({ queryKey: fetcher.queryKey });
-                fengjing.refetch();
-              }}
-              colors={[theme.palette.primary.main]}
-            />
-          }
-        >
-          <Text
-            style={[
-              theme.typography.body1,
-              {
-                color: theme.palette.error.main,
-              },
-            ]}
-          >
-            Error
-          </Text>
-        </ScrollView>
-      )}
-      {fengjing.isSuccess && (
-        <>
-          <FlatList
-            refreshControl={
-              <RefreshControl
-                refreshing={fengjing.isRefetching}
-                onRefresh={() => {
-                  queryClient.removeQueries({ queryKey: fetcher.queryKey });
-                  fengjing.refetch();
-                }}
-                colors={[theme.palette.primary.main]}
-              />
-            }
-            contentContainerStyle={{
-              padding: theme.spacing(3),
-              gap: theme.spacing(3),
-            }}
-            data={fengjing.data.pages}
-            keyExtractor={(i) => i.data.data.cover}
-            renderItem={({ item, index }) => (
-              <>
-                <ImageBackground
-                  source={{ uri: item.data.data.cover }}
-                  style={[
-                    { aspectRatio: 16 / 9, overflow: "hidden" },
-                    theme.shape,
-                  ]}
+  const renderQuery = () => {
+    if (fengjing.isPending) {
+      return null;
+    }
+
+    if (fengjing.isError) {
+      return null;
+    }
+
+    const list = fengjing.data.pages;
+
+    if (list.length === 0) {
+      return null;
+    }
+
+    return list.map((item, index) => (
+      <React.Fragment key={item.data.data.cover}>
+        <Spacer size={12} />
+        <RNHostView matchContents>
+          <View style={{ paddingInline: 12 }}>
+            <ImageBackground
+              source={{ uri: item.data.data.cover }}
+              style={[{ aspectRatio: 16 / 9, overflow: "hidden" }]}
+            >
+              <Host style={{ flex: 1 }}>
+                <Column
+                  onPress={() => {
+                    const url = item.data.data.cover;
+                    hanldeImagePress(url);
+                  }}
+                  alignment="center"
                 >
-                  <Pressable
-                    onPress={() => {
-                      const url = item.data.data.cover;
-                      hanldeImagePress(url);
-                    }}
-                    style={[
-                      {
-                        backgroundColor: `rgba(0,0,0,${theme.palette.action.disabledOpacity})`,
-                        position: "absolute",
-                        inset: 0,
+                  <Spacer flexible />
+                  <Text>{item.data.data.tag}</Text>
+                  <Spacer flexible />
+                </Column>
+              </Host>
+            </ImageBackground>
+          </View>
+        </RNHostView>
+        {Object.is(index + 1, fengjing.data.pages.length) && (
+          <Column style={{ padding: 12 }}>
+            <Button
+              onPress={() => fengjing.fetchNextPage()}
+              disabled={fengjing.isFetchingNextPage}
+              label="Click to fetch more"
+              modifiers={[fillMaxWidth()]}
+            />
+          </Column>
+        )}
+      </React.Fragment>
+    ));
+  };
 
-                        justifyContent: "center",
-                        alignItems: "center",
-                      },
-                    ]}
-                    android_ripple={android_ripple(theme.palette.action.focus)}
-                  >
-                    <Text
-                      style={[
-                        theme.typography.h6,
-                        {
-                          color: theme.palette.common.white,
-                          textAlign: "center",
-                        },
-                      ]}
-                    >
-                      {item.data.data.tag}
-                    </Text>
-                  </Pressable>
-                </ImageBackground>
-
-                {Object.is(index + 1, fengjing.data.pages.length) && (
-                  <Pressable
-                    onPress={() => fengjing.fetchNextPage()}
-                    disabled={fengjing.isFetchingNextPage}
-                    style={[
-                      theme.shape,
-                      {
-                        backgroundColor: fengjing.isPending
-                          ? theme.palette.action.disabledBackground
-                          : theme.palette.primary.main,
-
-                        paddingInline: theme.spacing(4),
-                        paddingBlock: theme.spacing(2),
-                        marginBlockStart: theme.spacing(3),
-                      },
-                    ]}
-                    android_ripple={android_ripple(theme.palette.action.focus)}
-                  >
-                    <Text
-                      style={[
-                        theme.typography.button,
-                        {
-                          color: fengjing.isPending
-                            ? theme.palette.action.disabled
-                            : theme.palette.primary.contrastText,
-                          textAlign: "center",
-                        },
-                      ]}
-                    >
-                      Click to fetch more
-                    </Text>
-                  </Pressable>
-                )}
-              </>
-            )}
-          />
-        </>
-      )}
-    </>
+  return (
+    <Host style={{ flex: 1 }}>
+      <Surface>
+        <Column>
+          <AppHeader pageName="Landscape" />
+          <List
+            onRefresh={async () => {
+              queryClient.removeQueries({ queryKey: fetcher.queryKey });
+              await fengjing.refetch();
+            }}
+          >
+            {renderQuery()}
+          </List>
+        </Column>
+      </Surface>
+    </Host>
   );
 }

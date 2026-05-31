@@ -1,3 +1,4 @@
+import { AppHeader } from "@/components/app-header";
 import * as consts from "@/lib/constants";
 import { Button, Column, Host, Icon, Row, Text } from "@expo/ui";
 import { Surface } from "@expo/ui/jetpack-compose";
@@ -35,28 +36,31 @@ export default function Page() {
   return (
     <Host style={{ flex: 1 }}>
       <Surface>
-        <Column modifiers={[padding(10, 10, 10, 10)]}>
-          <Text>{databaseSize.data?.toString()}</Text>
-          <Row spacing={6}>
-            <Column modifiers={[weight(1)]}>
-              <Button modifiers={[fillMaxWidth()]}>
-                <Column>
+        <Column>
+          <AppHeader pageName="Atom" showBack={false} />
+          <Column modifiers={[padding(10, 10, 10, 10)]}>
+            <Text>{databaseSize.data?.toString()}</Text>
+            <Row spacing={6}>
+              <Column modifiers={[weight(1)]}>
+                <Button modifiers={[fillMaxWidth()]}>
+                  <Column>
+                    <Row spacing={6} alignment="center">
+                      <Icon name={STAR} size={16} />
+                      <Text>Favorite</Text>
+                    </Row>
+                  </Column>
+                </Button>
+              </Column>
+              <Column modifiers={[weight(1)]}>
+                <Button modifiers={[fillMaxWidth()]}>
                   <Row spacing={6} alignment="center">
                     <Icon name={STAR} size={16} />
                     <Text>Favorite</Text>
                   </Row>
-                </Column>
-              </Button>
-            </Column>
-            <Column modifiers={[weight(1)]}>
-              <Button modifiers={[fillMaxWidth()]}>
-                <Row spacing={6} alignment="center">
-                  <Icon name={STAR} size={16} />
-                  <Text>Favorite</Text>
-                </Row>
-              </Button>
-            </Column>
-          </Row>
+                </Button>
+              </Column>
+            </Row>
+          </Column>
         </Column>
       </Surface>
     </Host>
