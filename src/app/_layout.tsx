@@ -1,7 +1,8 @@
 import { QueryProvider } from "@/components/QueryProvider";
 import { db } from "@/db/db";
 import { useStorageHasHydrated } from "@/hooks/useStorageStore";
-import { useTheme } from "@/hooks/useTheme";
+import { Column, Host, Text } from "@expo/ui";
+import { Surface } from "@expo/ui/jetpack-compose";
 import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
 import { useFonts } from "expo-font";
 import * as QuickActions from "expo-quick-actions";
@@ -10,7 +11,7 @@ import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import React from "react";
-import { Text, View } from "react-native";
+import { useColorScheme } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
 import migrations from "../../drizzle/migrations.js";
@@ -46,6 +47,7 @@ const calculateLoadingProgress = (
 
 const RootLayout = (props: React.PropsWithChildren) => {
   useQuickActionRouting();
+  const color = useColorScheme();
 
   React.useEffect(() => {
     QuickActions.setItems<RouterAction>([
@@ -69,24 +71,11 @@ const RootLayout = (props: React.PropsWithChildren) => {
   }, []);
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={{ flex: 1 }} key={color}>
       <GestureHandlerRootView style={{ flex: 1 }}>
         {props.children}
       </GestureHandlerRootView>
     </SafeAreaView>
-  );
-};
-
-const AppRouter = () => {
-  const theme = useTheme();
-
-  return (
-    <Stack
-      screenOptions={{
-        headerShown: false,
-        contentStyle: { backgroundColor: theme.palette.background.default },
-      }}
-    />
   );
 };
 
@@ -114,9 +103,14 @@ export default function App() {
 
   if (loadingProgress.isError) {
     return (
-      <View>
-        <Text>Error loading app: {loadingProgress.error.message}</Text>
-      </View>
+      <Host style={{ flex: 1 }}>
+        <Surface>
+          <Column>
+            <Text textStyle={{ fontSize: 20 }}>Error</Text>
+            <Text>{"Error loading app: " + loadingProgress.error.message}</Text>
+          </Column>
+        </Surface>
+      </Host>
     );
   }
 
@@ -124,7 +118,7 @@ export default function App() {
     <QueryProvider>
       <StatusBar />
       <RootLayout>
-        <AppRouter />
+        <Stack screenOptions={{ headerShown: false }} />
       </RootLayout>
     </QueryProvider>
   );
