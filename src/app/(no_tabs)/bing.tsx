@@ -5,7 +5,11 @@ import { useLocaleTime } from "@/hooks/useLocaleTime";
 import { downloadFile } from "@/lib/expo";
 import { nativeConfirm } from "@/lib/react-native";
 import { Column, Host, List, RNHostView, Spacer, Text } from "@expo/ui";
-import { Card, Surface } from "@expo/ui/jetpack-compose";
+import {
+  Card,
+  CircularProgressIndicator,
+  Surface,
+} from "@expo/ui/jetpack-compose";
 import {
   fillMaxWidth,
   padding,
@@ -13,17 +17,15 @@ import {
 } from "@expo/ui/jetpack-compose/modifiers";
 import { useQuery } from "@tanstack/react-query";
 import { ImageBackground } from "expo-image";
-import { useRouter } from "expo-router";
 import { openBrowserAsync } from "expo-web-browser";
 import React from "react";
 import { Linking, ToastAndroid, View } from "react-native";
 import { t } from "try";
 
 export default function Bing() {
-  const bingImgs = useQuery(fetchCnBingImage({ format: "js", idx: 0, n: 8 }));
+  const query = useQuery(fetchCnBingImage({ format: "js", idx: 0, n: 8 }));
   const date = useLocaleDate();
   const time = useLocaleTime();
-  const router = useRouter();
 
   const hanldeImagePress = async (url: string) => {
     const [ok, error] = await t(async () => {
@@ -41,21 +43,39 @@ export default function Bing() {
   };
 
   const renderBingImage = () => {
-    if (bingImgs.isPending) {
-      return <></>;
+    if (query.isPending) {
+      return (
+        <Column alignment="center" modifiers={[fillMaxWidth(), paddingAll(32)]}>
+          <CircularProgressIndicator />
+        </Column>
+      );
     }
 
-    if (bingImgs.isError) {
-      return <></>;
+    if (query.isError) {
+      return (
+        <Card modifiers={[fillMaxWidth(), paddingAll(12)]}>
+          <Column style={{ padding: 12 }}>
+            <Text textStyle={{ fontSize: 20 }}>Error</Text>
+            <Text textStyle={{ fontSize: 14 }}>{query.error?.message}</Text>
+          </Column>
+        </Card>
+      );
     }
 
-    const list = bingImgs.data.data.images;
+    const list = query.data.data.images;
 
     if (list.length === 0) {
-      return <></>;
+      return (
+        <Card modifiers={[fillMaxWidth(), paddingAll(12)]}>
+          <Column style={{ padding: 12 }}>
+            <Text textStyle={{ fontSize: 20 }}>Empty</Text>
+            <Text textStyle={{ fontSize: 14 }}>No Data Found</Text>
+          </Column>
+        </Card>
+      );
     }
 
-    return list.map((item, index) => {
+    return list.map((item) => {
       return (
         <React.Fragment key={item.url}>
           <Spacer size={12} />
@@ -112,12 +132,11 @@ export default function Bing() {
           <AppHeader pageName="Bing" />
           <List
             onRefresh={async () => {
-              await bingImgs.refetch();
+              await query.refetch();
             }}
           >
             <Card modifiers={[fillMaxWidth(), padding(12, 12, 12, 0)]}>
               <Column modifiers={[paddingAll(16)]} spacing={4}>
-                <Text textStyle={{ fontSize: 24 }}>Bing</Text>
                 <Text textStyle={{ fontSize: 20 }}>{time}</Text>
                 <Text textStyle={{ fontSize: 16 }}>{date}</Text>
               </Column>

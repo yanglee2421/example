@@ -1,145 +1,111 @@
-import React from "react";
-import {
-  Alert,
-  FlatList,
-  Pressable,
-  RefreshControl,
-  ScrollView,
-  Share,
-  Text,
-} from "react-native";
-import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { fetchDiary } from "@/api/qqlykm_cn";
-import { Loading } from "@/components/Loading";
-import { NeedAPIKEY } from "@/components/NeedAPIKEY";
+import { AppHeader } from "@/components/app-header";
 import { useStorageStore } from "@/hooks/useStorageStore";
+import { Button, Column, Host, List, ListItem, Text } from "@expo/ui";
+import {
+  Card,
+  CircularProgressIndicator,
+  HorizontalDivider,
+  Surface,
+} from "@expo/ui/jetpack-compose";
+import { fillMaxWidth, paddingAll } from "@expo/ui/jetpack-compose/modifiers";
+import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { setStringAsync } from "expo-clipboard";
-import { android_ripple } from "@/lib/utils";
-import { useTheme } from "@/hooks/useTheme";
+import React from "react";
+import { Alert, Share } from "react-native";
 
 const fetcher = fetchDiary();
 
 export default function Page() {
   const apikey = useStorageStore((s) => s.qqlykmKey);
-  const diary = useInfiniteQuery({
+  const query = useInfiniteQuery({
     ...fetcher,
     enabled: !!apikey,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
   });
   const queryClient = useQueryClient();
-  const theme = useTheme();
+
+  const renderQuery = () => {
+    if (query.isPending) {
+      return (
+        <Column alignment="center" modifiers={[fillMaxWidth(), paddingAll(32)]}>
+          <CircularProgressIndicator />
+        </Column>
+      );
+    }
+
+    if (query.isError) {
+      return (
+        <Card modifiers={[fillMaxWidth(), paddingAll(12)]}>
+          <Column style={{ padding: 12 }}>
+            <Text textStyle={{ fontSize: 20 }}>Error</Text>
+            <Text textStyle={{ fontSize: 14 }}>{query.error?.message}</Text>
+          </Column>
+        </Card>
+      );
+    }
+
+    const list = query.data.pages;
+
+    if (list.length === 0) {
+      return (
+        <Card modifiers={[fillMaxWidth(), paddingAll(12)]}>
+          <Column style={{ padding: 12 }}>
+            <Text textStyle={{ fontSize: 20 }}>Empty</Text>
+            <Text textStyle={{ fontSize: 14 }}>No Data Found</Text>
+          </Column>
+        </Card>
+      );
+    }
+
+    return (
+      <>
+        {list.map((item) => {
+          return (
+            <React.Fragment key={item.data.data}>
+              <ListItem
+                onPress={async () => {
+                  try {
+                    await setStringAsync(item.data.data);
+                    await Share.share({ message: item.data.data });
+                  } catch {
+                    Alert.alert("Error");
+                  }
+                }}
+                supportingText={item.data.data.trim()}
+              />
+              <HorizontalDivider />
+            </React.Fragment>
+          );
+        })}
+        <ListItem>
+          <Button
+            onPress={() => query.fetchNextPage()}
+            disabled={query.isFetchingNextPage}
+            label="Load more"
+            modifiers={[fillMaxWidth()]}
+          />
+        </ListItem>
+      </>
+    );
+  };
 
   return (
-    <>
-      {diary.isLoading && <Loading />}
-      {diary.isPending && !diary.isFetching && <NeedAPIKEY />}
-      {diary.isError && (
-        <ScrollView
-          refreshControl={
-            <RefreshControl
-              refreshing={diary.isRefetching}
-              onRefresh={() => {
-                queryClient.removeQueries({ queryKey: fetcher.queryKey });
-                diary.refetch();
-              }}
-              colors={[theme.palette.primary.main]}
-            />
-          }
-        >
-          <Text>Error</Text>
-        </ScrollView>
-      )}
-      {diary.isSuccess && (
-        <>
-          <FlatList
-            refreshControl={
-              <RefreshControl
-                refreshing={diary.isRefetching}
-                onRefresh={() => {
-                  queryClient.removeQueries({ queryKey: fetcher.queryKey });
-                  diary.refetch();
-                }}
-              />
-            }
-            contentContainerStyle={{
-              padding: theme.spacing(3),
-              gap: theme.spacing(3),
+    <Host style={{ flex: 1 }}>
+      <Surface>
+        <Column>
+          <AppHeader pageName="Locking Dog" />
+          <List
+            onRefresh={async () => {
+              queryClient.removeQueries({ queryKey: fetcher.queryKey });
+              await query.refetch();
             }}
-            data={diary.data.pages}
-            keyExtractor={(i) => i.data.data}
-            renderItem={({ item, index }) => (
-              <>
-                <Pressable
-                  onPress={async () => {
-                    try {
-                      await setStringAsync(item.data.data);
-                      await Share.share({ message: item.data.data });
-                    } catch {
-                      Alert.alert("Error");
-                    }
-                  }}
-                  style={[
-                    theme.shape,
-                    {
-                      borderColor: theme.palette.divider,
-                      borderWidth: 1,
-
-                      padding: theme.spacing(3),
-                    },
-                  ]}
-                  android_ripple={android_ripple(theme.palette.action.focus)}
-                >
-                  <Text
-                    style={[
-                      theme.typography.body1,
-                      {
-                        color: theme.palette.text.primary,
-                      },
-                    ]}
-                  >
-                    {item.data.data}
-                  </Text>
-                </Pressable>
-
-                {Object.is(index + 1, diary.data.pages.length) && (
-                  <Pressable
-                    onPress={() => diary.fetchNextPage()}
-                    disabled={diary.isFetchingNextPage}
-                    style={[
-                      theme.shape,
-                      {
-                        backgroundColor: diary.isFetchingNextPage
-                          ? theme.palette.action.disabledBackground
-                          : theme.palette.primary.main,
-
-                        paddingInline: theme.spacing(4),
-                        paddingBlock: theme.spacing(2),
-                        marginBlockStart: theme.spacing(3),
-                      },
-                    ]}
-                    android_ripple={android_ripple(theme.palette.action.focus)}
-                  >
-                    <Text
-                      style={[
-                        theme.typography.button,
-                        {
-                          color: diary.isFetchingNextPage
-                            ? theme.palette.action.disabled
-                            : theme.palette.primary.contrastText,
-                          textAlign: "center",
-                        },
-                      ]}
-                    >
-                      Click to fetch more
-                    </Text>
-                  </Pressable>
-                )}
-              </>
-            )}
-          />
-        </>
-      )}
-    </>
+          >
+            {renderQuery()}
+          </List>
+        </Column>
+      </Surface>
+    </Host>
   );
 }

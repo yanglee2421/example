@@ -1,140 +1,100 @@
-import { useQuery } from "@tanstack/react-query";
-import React from "react";
-import {
-  FlatList,
-  Image,
-  RefreshControl,
-  ScrollView,
-  Text,
-  View,
-} from "react-native";
 import { fetchJijiangshangying } from "@/api/qqlykm_cn";
-import { Loading } from "@/components/Loading";
-import { NeedAPIKEY } from "@/components/NeedAPIKEY";
+import { AppHeader } from "@/components/app-header";
 import { useStorageStore } from "@/hooks/useStorageStore";
-import { useTheme } from "@/hooks/useTheme";
-
-const fetcher = fetchJijiangshangying();
+import { Column, Host, List, RNHostView, Row, Text } from "@expo/ui";
+import {
+  Card,
+  CircularProgressIndicator,
+  HorizontalDivider,
+  Surface,
+} from "@expo/ui/jetpack-compose";
+import { fillMaxWidth, paddingAll } from "@expo/ui/jetpack-compose/modifiers";
+import { useQuery } from "@tanstack/react-query";
+import { Image } from "expo-image";
+import React from "react";
 
 export default function Page() {
+  const fetcher = fetchJijiangshangying();
   const apikey = useStorageStore((s) => s.qqlykmKey);
-  const movies = useQuery({ ...fetcher, enabled: !!apikey });
-  const theme = useTheme();
+  const query = useQuery({ ...fetcher, enabled: !!apikey });
+
+  const renderQuery = () => {
+    if (query.isPending) {
+      return (
+        <Column alignment="center" modifiers={[fillMaxWidth(), paddingAll(32)]}>
+          <CircularProgressIndicator />
+        </Column>
+      );
+    }
+
+    if (query.isError) {
+      return (
+        <Card modifiers={[fillMaxWidth(), paddingAll(12)]}>
+          <Column style={{ padding: 12 }}>
+            <Text textStyle={{ fontSize: 20 }}>Error</Text>
+            <Text textStyle={{ fontSize: 14 }}>{query.error?.message}</Text>
+          </Column>
+        </Card>
+      );
+    }
+
+    const list = query.data.data.data;
+
+    if (list.length === 0) {
+      return (
+        <Card modifiers={[fillMaxWidth(), paddingAll(12)]}>
+          <Column style={{ padding: 12 }}>
+            <Text textStyle={{ fontSize: 20 }}>Empty</Text>
+            <Text textStyle={{ fontSize: 14 }}>No Data Found</Text>
+          </Column>
+        </Card>
+      );
+    }
+
+    return (
+      <>
+        {list.map((item) => {
+          return (
+            <React.Fragment key={item.title}>
+              <Row spacing={12} style={{ padding: 10 }}>
+                <RNHostView matchContents>
+                  <Image
+                    source={{ uri: item.picUrl }}
+                    style={{ width: 80, height: 120 }}
+                  />
+                </RNHostView>
+                <Column spacing={2}>
+                  <Text textStyle={{ fontSize: 18 }}>{item.title}</Text>
+                  <Text textStyle={{ fontSize: 16 }}>{item.director}</Text>
+                  <Text textStyle={{ fontSize: 14 }}>{item.type}</Text>
+                  <Text textStyle={{ fontSize: 12 }}>{item.actors}</Text>
+                  <Text textStyle={{ fontSize: 12 }}>
+                    {item.releaseDateStr}
+                  </Text>
+                </Column>
+              </Row>
+              <HorizontalDivider />
+            </React.Fragment>
+          );
+        })}
+      </>
+    );
+  };
 
   return (
-    <>
-      {movies.isLoading && <Loading />}
-      {movies.isPending && !movies.isFetching && <NeedAPIKEY />}
-      {movies.isError && (
-        <ScrollView
-          refreshControl={
-            <RefreshControl
-              refreshing={movies.isRefetching}
-              onRefresh={() => movies.refetch()}
-              colors={[theme.palette.primary.main]}
-            />
-          }
-        >
-          <Text
-            style={[
-              theme.typography.body1,
-              {
-                color: theme.palette.error.main,
-              },
-            ]}
-          >
-            Error
-          </Text>
-        </ScrollView>
-      )}
-      {movies.isSuccess && (
-        <>
-          <FlatList
-            refreshControl={
-              <RefreshControl
-                refreshing={movies.isRefetching}
-                onRefresh={() => movies.refetch()}
-                colors={[theme.palette.primary.main]}
-              />
-            }
-            contentContainerStyle={{
-              padding: theme.spacing(3),
-              gap: theme.spacing(3),
+    <Host style={{ flex: 1 }}>
+      <Surface>
+        <Column>
+          <AppHeader pageName="Movies" />
+          <List
+            onRefresh={async () => {
+              await query.refetch();
             }}
-            data={movies.data.data.data}
-            keyExtractor={(i) => i.title}
-            renderItem={({ item }) => (
-              <View
-                style={[
-                  theme.shape,
-                  {
-                    borderColor: theme.palette.divider,
-                    borderWidth: 1,
-
-                    padding: theme.spacing(3),
-                  },
-                ]}
-              >
-                <Image
-                  source={{ uri: item.picUrl }}
-                  resizeMode="contain"
-                  height={theme.spacing(40)}
-                />
-                <Text
-                  style={[
-                    theme.typography.h6,
-                    {
-                      color: theme.palette.text.primary,
-                    },
-                  ]}
-                >
-                  {item.title}
-                </Text>
-                <Text
-                  style={[
-                    theme.typography.subtitle1,
-                    {
-                      color: theme.palette.text.primary,
-                    },
-                  ]}
-                >
-                  {item.director}
-                </Text>
-                <Text
-                  style={[
-                    theme.typography.subtitle2,
-                    {
-                      color: theme.palette.text.primary,
-                    },
-                  ]}
-                >
-                  {item.type}
-                </Text>
-                <Text
-                  style={[
-                    theme.typography.caption,
-                    {
-                      color: theme.palette.text.primary,
-                    },
-                  ]}
-                >
-                  {item.actors}
-                </Text>
-                <Text
-                  style={[
-                    theme.typography.overline,
-                    {
-                      color: theme.palette.text.secondary,
-                    },
-                  ]}
-                >
-                  {item.releaseDateStr}
-                </Text>
-              </View>
-            )}
-          />
-        </>
-      )}
-    </>
+          >
+            {renderQuery()}
+          </List>
+        </Column>
+      </Surface>
+    </Host>
   );
 }

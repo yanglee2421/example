@@ -4,11 +4,14 @@ import { useStorageStore } from "@/hooks/useStorageStore";
 import { downloadFile } from "@/lib/expo";
 import { nativeConfirm } from "@/lib/react-native";
 import { Button, Column, Host, List, RNHostView, Spacer, Text } from "@expo/ui";
-import { Surface } from "@expo/ui/jetpack-compose";
-import { fillMaxWidth } from "@expo/ui/jetpack-compose/modifiers";
+import {
+  Card,
+  CircularProgressIndicator,
+  Surface,
+} from "@expo/ui/jetpack-compose";
+import { fillMaxWidth, paddingAll } from "@expo/ui/jetpack-compose/modifiers";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { ImageBackground } from "expo-image";
-import React from "react";
 import { ToastAndroid, View } from "react-native";
 import { t } from "try";
 
@@ -16,7 +19,7 @@ const fetcher = fetchFengjing();
 
 export default function Page() {
   const apikey = useStorageStore((s) => s.qqlykmKey);
-  const fengjing = useInfiniteQuery({ ...fetcher, enabled: !!apikey });
+  const query = useInfiniteQuery({ ...fetcher, enabled: !!apikey });
   const queryClient = useQueryClient();
 
   const hanldeImagePress = async (url: string) => {
@@ -35,28 +38,51 @@ export default function Page() {
   };
 
   const renderQuery = () => {
-    if (fengjing.isPending) {
-      return null;
+    if (query.isPending) {
+      return (
+        <Column alignment="center" modifiers={[fillMaxWidth(), paddingAll(32)]}>
+          <CircularProgressIndicator />
+        </Column>
+      );
     }
 
-    if (fengjing.isError) {
-      return null;
+    if (query.isError) {
+      return (
+        <Card modifiers={[fillMaxWidth(), paddingAll(12)]}>
+          <Column style={{ padding: 12 }}>
+            <Text textStyle={{ fontSize: 20 }}>Error</Text>
+            <Text textStyle={{ fontSize: 14 }}>{query.error?.message}</Text>
+          </Column>
+        </Card>
+      );
     }
 
-    const list = fengjing.data.pages;
+    const list = query.data.pages;
 
     if (list.length === 0) {
-      return null;
+      return (
+        <Card modifiers={[fillMaxWidth(), paddingAll(12)]}>
+          <Column style={{ padding: 12 }}>
+            <Text textStyle={{ fontSize: 20 }}>Empty</Text>
+            <Text textStyle={{ fontSize: 14 }}>No Data Found</Text>
+          </Column>
+        </Card>
+      );
     }
 
-    return list.map((item, index) => (
-      <React.Fragment key={item.data.data.cover}>
-        <Spacer size={12} />
-        <RNHostView matchContents>
-          <View style={{ paddingInline: 12 }}>
+    return list.map((item) => (
+      <RNHostView matchContents key={item.data.data.cover}>
+        <View style={{ paddingInline: 12, paddingTop: 12 }}>
+          <View
+            style={{
+              borderRadius: 12,
+              overflow: "hidden",
+              aspectRatio: 16 / 9,
+            }}
+          >
             <ImageBackground
               source={{ uri: item.data.data.cover }}
-              style={[{ aspectRatio: 16 / 9, overflow: "hidden" }]}
+              style={[{ width: "100%", height: "100%" }]}
             >
               <Host style={{ flex: 1 }}>
                 <Column
@@ -73,18 +99,8 @@ export default function Page() {
               </Host>
             </ImageBackground>
           </View>
-        </RNHostView>
-        {Object.is(index + 1, fengjing.data.pages.length) && (
-          <Column style={{ padding: 12 }}>
-            <Button
-              onPress={() => fengjing.fetchNextPage()}
-              disabled={fengjing.isFetchingNextPage}
-              label="Click to fetch more"
-              modifiers={[fillMaxWidth()]}
-            />
-          </Column>
-        )}
-      </React.Fragment>
+        </View>
+      </RNHostView>
     ));
   };
 
@@ -96,10 +112,18 @@ export default function Page() {
           <List
             onRefresh={async () => {
               queryClient.removeQueries({ queryKey: fetcher.queryKey });
-              await fengjing.refetch();
+              await query.refetch();
             }}
           >
             {renderQuery()}
+            <Column style={{ paddingHorizontal: 12, paddingVertical: 8 }}>
+              <Button
+                onPress={() => query.fetchNextPage()}
+                disabled={query.isFetchingNextPage}
+                label="Load more"
+                modifiers={[fillMaxWidth()]}
+              />
+            </Column>
           </List>
         </Column>
       </Surface>
