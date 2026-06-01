@@ -21,6 +21,18 @@ export default function Account() {
       ),
     },
     {
+      label: "Date Picker",
+      href: "/datepicker" as const,
+      icon: (
+        <Icon
+          name={Icon.select({
+            android: import("@expo/material-symbols/calendar_today.xml"),
+            ios: "0.circle.ar",
+          })}
+        />
+      ),
+    },
+    {
       label: "QR Code Scaner",
       href: "/qrcode" as const,
       icon: (
