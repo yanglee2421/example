@@ -72,7 +72,7 @@ export default function Page() {
           <Button
             onPress={() => query.fetchNextPage()}
             disabled={query.isFetchingNextPage}
-            label="Click to fetch more"
+            label="Load more"
             modifiers={[fillMaxWidth()]}
           />
         </ListItem>

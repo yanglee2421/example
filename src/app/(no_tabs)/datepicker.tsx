@@ -1,7 +1,6 @@
 import { AppHeader } from "@/components/app-header";
-import { Column, Host, Icon, Text } from "@expo/ui";
+import { Column, Host, Icon, Row, Text } from "@expo/ui";
 import {
-  Box,
   Card,
   DatePickerDialog,
   IconButton,
@@ -104,22 +103,22 @@ export default function DatePickerPage() {
               </Text>
             </Column>
           </Card>
-          <Box modifiers={[padding(12, 0, 12, 0)]}>
+          <Row style={{ paddingHorizontal: 12, paddingVertical: 0 }}>
             <DateField
               value={begin}
               onChange={setBegin}
               label="开始日期"
               helperText="请选择开始日期"
             />
-          </Box>
-          <Box modifiers={[padding(12, 0, 12, 0)]}>
+          </Row>
+          <Row style={{ paddingHorizontal: 12, paddingVertical: 0 }}>
             <DateField
               value={end}
               onChange={setEnd}
               label="结束日期"
               helperText="请选择结束日期"
             />
-          </Box>
+          </Row>
         </Column>
       </Surface>
     </Host>

@@ -1,14 +1,19 @@
 import { fetchJijiangshangying } from "@/api/qqlykm_cn";
 import { AppHeader } from "@/components/app-header";
 import { useStorageStore } from "@/hooks/useStorageStore";
-import { Column, Host, List, RNHostView, Row, Text } from "@expo/ui";
+import { Column, Host, List, RNHostView, Row, Spacer, Text } from "@expo/ui";
 import {
   Card,
   CircularProgressIndicator,
   HorizontalDivider,
   Surface,
 } from "@expo/ui/jetpack-compose";
-import { fillMaxWidth, paddingAll } from "@expo/ui/jetpack-compose/modifiers";
+import {
+  fillMaxWidth,
+  paddingAll,
+  weight,
+  wrapContentHeight,
+} from "@expo/ui/jetpack-compose/modifiers";
 import { useQuery } from "@tanstack/react-query";
 import { Image } from "expo-image";
 import React from "react";
@@ -56,15 +61,24 @@ export default function Page() {
         {list.map((item) => {
           return (
             <React.Fragment key={item.title}>
-              <Row spacing={12} style={{ padding: 10 }}>
+              <Row
+                spacing={12}
+                style={{ padding: 10 }}
+                modifiers={[wrapContentHeight()]}
+              >
                 <RNHostView matchContents>
                   <Image
                     source={{ uri: item.picUrl }}
                     style={{ width: 80, height: 120 }}
                   />
                 </RNHostView>
-                <Column spacing={2}>
+                <Column
+                  spacing={2}
+                  style={{ height: 120 }}
+                  modifiers={[weight(1)]}
+                >
                   <Text textStyle={{ fontSize: 18 }}>{item.title}</Text>
+                  <Spacer flexible />
                   <Text textStyle={{ fontSize: 16 }}>{item.director}</Text>
                   <Text textStyle={{ fontSize: 14 }}>{item.type}</Text>
                   <Text textStyle={{ fontSize: 12 }}>{item.actors}</Text>

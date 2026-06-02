@@ -1,10 +1,14 @@
-import { Button, Column, Host, Icon, RNHostView, Spacer, Text } from "@expo/ui";
 import {
-  Box,
-  Card,
-  FloatingActionButton,
-  Surface,
-} from "@expo/ui/jetpack-compose";
+  Button,
+  Column,
+  Host,
+  Icon,
+  RNHostView,
+  Row,
+  Spacer,
+  Text,
+} from "@expo/ui";
+import { Card, FloatingActionButton, Surface } from "@expo/ui/jetpack-compose";
 import {
   align,
   fillMaxWidth,
@@ -45,7 +49,7 @@ export default function Qrcode() {
     return (
       <Host style={{ flex: 1 }}>
         <Surface>
-          <Box contentAlignment="center" modifiers={[paddingAll(16)]}>
+          <Row alignment="center" modifiers={[paddingAll(16)]}>
             <Card modifiers={[align("center")]}>
               <Column modifiers={[paddingAll(16)]}>
                 <Text textStyle={{ fontSize: 24 }}>Need Permission</Text>
@@ -59,7 +63,7 @@ export default function Qrcode() {
                 />
               </Column>
             </Card>
-          </Box>
+          </Row>
         </Surface>
       </Host>
     );
@@ -69,7 +73,7 @@ export default function Qrcode() {
     return (
       <Host style={{ flex: 1 }}>
         <Surface>
-          <Box contentAlignment="center" modifiers={[paddingAll(16)]}>
+          <Row alignment="center" style={{ padding: 16 }}>
             <Card>
               <Column modifiers={[paddingAll(16)]} spacing={8}>
                 <Text textStyle={{ fontSize: 24 }}>QR Code</Text>
@@ -101,7 +105,7 @@ export default function Qrcode() {
                 />
               </Column>
             </Card>
-          </Box>
+          </Row>
         </Surface>
       </Host>
     );

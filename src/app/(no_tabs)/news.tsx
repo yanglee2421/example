@@ -1,7 +1,7 @@
 import { fetchNews } from "@/api/qqlykm_cn";
 import { AppHeader } from "@/components/app-header";
 import { useStorageStore } from "@/hooks/useStorageStore";
-import { Column, Host, List, ListItem, Text } from "@expo/ui";
+import { Column, Host, List, ListItem, Spacer, Text } from "@expo/ui";
 import {
   Card,
   CircularProgressIndicator,
@@ -47,6 +47,7 @@ export default function News() {
             <Text textStyle={{ fontSize: 20 }}>
               {query.data?.data.data.date}
             </Text>
+            <Spacer size={2} />
             <Text textStyle={{ fontSize: 14 }}>
               {query.data?.data.data.weiyu}
             </Text>

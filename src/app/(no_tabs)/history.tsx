@@ -91,12 +91,12 @@ export default function Page() {
                 })}
               />
             </ListItem.TrailingContent>
-            <ListItem.HeadlineContent>
+            <ListItem.OverlineContent>
               <Text>{i.year}</Text>
-            </ListItem.HeadlineContent>
-            <ListItem.SupportingContent>
+            </ListItem.OverlineContent>
+            <ListItem.HeadlineContent>
               <Text>{i.title}</Text>
-            </ListItem.SupportingContent>
+            </ListItem.HeadlineContent>
           </ListItem>
         </React.Fragment>
       );

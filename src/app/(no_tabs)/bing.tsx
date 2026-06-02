@@ -4,7 +4,7 @@ import { useLocaleDate } from "@/hooks/useLocaleDate";
 import { useLocaleTime } from "@/hooks/useLocaleTime";
 import { downloadFile } from "@/lib/expo";
 import { nativeConfirm } from "@/lib/react-native";
-import { Column, Host, List, RNHostView, Spacer, Text } from "@expo/ui";
+import { Column, Host, List, RNHostView, Row, Spacer, Text } from "@expo/ui";
 import {
   Card,
   CircularProgressIndicator,
@@ -95,8 +95,7 @@ export default function Bing() {
                   }}
                 >
                   <Host style={{ flex: 1 }}>
-                    <Column
-                      spacing={8}
+                    <Row
                       onPress={async () => {
                         const [ok] = await t(async () => {
                           await openBrowserAsync(item.copyrightlink, {
@@ -110,11 +109,14 @@ export default function Bing() {
 
                         Linking.openURL(item.copyrightlink);
                       }}
-                      style={{ padding: 16 }}
                     >
-                      <Text textStyle={{ fontSize: 20 }}>{item.title}</Text>
-                      <Text textStyle={{ fontSize: 16 }}>{item.copyright}</Text>
-                    </Column>
+                      <Column spacing={8} style={{ padding: 16 }}>
+                        <Text textStyle={{ fontSize: 20 }}>{item.title}</Text>
+                        <Text textStyle={{ fontSize: 16 }}>
+                          {item.copyright}
+                        </Text>
+                      </Column>
+                    </Row>
                   </Host>
                 </ImageBackground>
               </View>

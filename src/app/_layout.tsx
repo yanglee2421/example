@@ -4,7 +4,6 @@ import { useStorageHasHydrated } from "@/hooks/useStorageStore";
 import { Column, Host, Text } from "@expo/ui";
 import { Surface } from "@expo/ui/jetpack-compose";
 import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
-import { useFonts } from "expo-font";
 import * as QuickActions from "expo-quick-actions";
 import { RouterAction, useQuickActionRouting } from "expo-quick-actions/router";
 import { Stack } from "expo-router";
@@ -23,16 +22,15 @@ SplashScreen.setOptions({
   duration: 1000 * 0.2,
 });
 
-const calculateLoadingProgress = (
+const calcLoadingStatus = (
   migrations: {
     success: boolean;
     error?: Error;
   },
-  [fontLoaded, fontError]: [boolean, Error | null],
   hasHydrated: boolean,
 ) => {
-  const error = migrations.error || fontError;
-  const isSuccess = migrations.success && fontLoaded;
+  const error = migrations.error;
+  const isSuccess = migrations.success;
 
   if (error) {
     return { isError: true, error };
@@ -51,12 +49,7 @@ const RootLayout = (props: React.PropsWithChildren) => {
   React.useEffect(() => {
     QuickActions.setItems<RouterAction>([
       {
-        title: "New Chat",
-        id: "0",
-        params: { href: "/compose" },
-      },
-      {
-        title: "Search",
+        title: "QRCode Scanner",
         id: "1",
         params: { href: "/qrcode" },
       },
@@ -82,15 +75,7 @@ export default function App() {
   const color = useColorScheme();
   const hasHydrated = useStorageHasHydrated();
   const migrationState = useMigrations(db, migrations);
-  const fontsState = useFonts({
-    SpaceMono: require("@/assets/fonts/SpaceMono-Regular.ttf"),
-  });
-
-  const loadingProgress = calculateLoadingProgress(
-    migrationState,
-    fontsState,
-    hasHydrated,
-  );
+  const loadingProgress = calcLoadingStatus(migrationState, hasHydrated);
 
   React.useEffect(() => {
     if (loadingProgress.isPending) return;
@@ -115,10 +100,10 @@ export default function App() {
   }
 
   return (
-    <QueryProvider key={color}>
-      <StatusBar />
+    <QueryProvider>
+      <StatusBar animated hidden={false} />
       <RootLayout>
-        <Stack screenOptions={{ headerShown: false }} />
+        <Stack screenOptions={{ headerShown: false }} key={color} />
       </RootLayout>
     </QueryProvider>
   );
