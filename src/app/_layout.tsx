@@ -47,7 +47,6 @@ const calculateLoadingProgress = (
 
 const RootLayout = (props: React.PropsWithChildren) => {
   useQuickActionRouting();
-  const color = useColorScheme();
 
   React.useEffect(() => {
     QuickActions.setItems<RouterAction>([
@@ -71,7 +70,7 @@ const RootLayout = (props: React.PropsWithChildren) => {
   }, []);
 
   return (
-    <SafeAreaView style={{ flex: 1 }} key={color}>
+    <SafeAreaView style={{ flex: 1 }}>
       <GestureHandlerRootView style={{ flex: 1 }}>
         {props.children}
       </GestureHandlerRootView>
@@ -80,6 +79,7 @@ const RootLayout = (props: React.PropsWithChildren) => {
 };
 
 export default function App() {
+  const color = useColorScheme();
   const hasHydrated = useStorageHasHydrated();
   const migrationState = useMigrations(db, migrations);
   const fontsState = useFonts({
@@ -115,7 +115,7 @@ export default function App() {
   }
 
   return (
-    <QueryProvider>
+    <QueryProvider key={color}>
       <StatusBar />
       <RootLayout>
         <Stack screenOptions={{ headerShown: false }} />
