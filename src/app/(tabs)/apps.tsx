@@ -141,6 +141,18 @@ export default function Account() {
         />
       ),
     },
+    {
+      label: "Gallery",
+      href: "/gallery" as const,
+      icon: (
+        <Icon
+          name={Icon.select({
+            ios: "0.circle",
+            android: import("@expo/material-symbols/gallery_thumbnail.xml"),
+          })}
+        />
+      ),
+    },
   ].sort((c, n) => c.label.localeCompare(n.label));
 
   return (

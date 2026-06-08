@@ -1,13 +1,18 @@
 import { AppHeader } from "@/components/app-header";
-import { Column, Host, Text } from "@expo/ui";
-import { Card, Surface } from "@expo/ui/jetpack-compose";
-import { clickable, fillMaxWidth } from "@expo/ui/jetpack-compose/modifiers";
+import { Column, Host, Row, Text } from "@expo/ui";
+import type { SnackbarHostRef } from "@expo/ui/jetpack-compose";
+import { Card, SnackbarHost, Surface } from "@expo/ui/jetpack-compose";
+import {
+  clickable,
+  fillMaxSize,
+  fillMaxWidth,
+  weight,
+} from "@expo/ui/jetpack-compose/modifiers";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { setStringAsync } from "expo-clipboard";
 import { ActivityAction, startActivityAsync } from "expo-intent-launcher";
 import * as ExpoNet from "expo-network";
 import React from "react";
-import { ToastAndroid } from "react-native";
 
 const netSelector = <TError, TWarning, TSuccess>(
   isConnected: boolean,
@@ -28,6 +33,8 @@ const netSelector = <TError, TWarning, TSuccess>(
 };
 
 export default function Network() {
+  const snackbarRef = React.useRef<SnackbarHostRef>(null);
+
   const ip = useQuery({
     queryKey: ["getIpAddressAsync"],
     queryFn: () => ExpoNet.getIpAddressAsync(),
@@ -63,9 +70,9 @@ export default function Network() {
   return (
     <Host style={{ flex: 1 }}>
       <Surface>
-        <Column>
+        <Column modifiers={[fillMaxSize()]}>
           <AppHeader pageName="Network" />
-          <Column spacing={12} style={{ padding: 12 }}>
+          <Column spacing={12} style={{ padding: 12 }} modifiers={[weight(1)]}>
             <Card
               modifiers={[
                 fillMaxWidth(),
@@ -90,21 +97,21 @@ export default function Network() {
             {ip.isSuccess && (
               <Card
                 modifiers={[
-                  fillMaxWidth(),
                   clickable(() => {
                     copy.mutate(ip.data, {
                       onError(error) {
-                        ToastAndroid.show(error.message, 1000 * 2);
+                        snackbarRef.current?.showSnackbar({
+                          message: error.message,
+                        });
                       },
                       onSuccess() {
-                        ToastAndroid.showWithGravity(
-                          "Copied",
-                          1000 * 2,
-                          ToastAndroid.BOTTOM,
-                        );
+                        snackbarRef.current?.showSnackbar({
+                          message: "Copied",
+                        });
                       },
                     });
                   }),
+                  fillMaxWidth(),
                 ]}
               >
                 <Column style={{ padding: 14 }}>
@@ -114,6 +121,9 @@ export default function Network() {
               </Card>
             )}
           </Column>
+          <Row modifiers={[fillMaxWidth()]}>
+            <SnackbarHost ref={snackbarRef} />
+          </Row>
         </Column>
       </Surface>
     </Host>

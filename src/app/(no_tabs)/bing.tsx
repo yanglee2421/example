@@ -19,7 +19,7 @@ import { useQuery } from "@tanstack/react-query";
 import { ImageBackground } from "expo-image";
 import { openBrowserAsync } from "expo-web-browser";
 import React from "react";
-import { Linking, ToastAndroid, View } from "react-native";
+import { Linking, View } from "react-native";
 import { t } from "try";
 
 export default function Bing() {
@@ -28,18 +28,10 @@ export default function Bing() {
   const time = useLocaleTime();
 
   const hanldeImagePress = async (url: string) => {
-    const [ok, error] = await t(async () => {
+    const [] = await t(async () => {
       await downloadFile(url);
       await nativeConfirm("Download ?", "Download image");
     });
-    if (ok) {
-      ToastAndroid.show("Cancel", 1000 * 2);
-    } else {
-      const message = error instanceof Error ? error.message : String(error);
-
-      ToastAndroid.show(message, 1000 * 2);
-      console.error(error);
-    }
   };
 
   const renderBingImage = () => {

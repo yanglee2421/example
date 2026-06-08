@@ -5,35 +5,41 @@ import { downloadFile } from "@/lib/expo";
 import { nativeConfirm } from "@/lib/react-native";
 import { Button, Column, Host, List, RNHostView, Spacer, Text } from "@expo/ui";
 import {
+  Box,
   Card,
   CircularProgressIndicator,
+  SnackbarHost,
+  SnackbarHostRef,
   Surface,
 } from "@expo/ui/jetpack-compose";
-import { fillMaxWidth, paddingAll } from "@expo/ui/jetpack-compose/modifiers";
+import {
+  fillMaxWidth,
+  paddingAll,
+  weight,
+} from "@expo/ui/jetpack-compose/modifiers";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { ImageBackground } from "expo-image";
-import { ToastAndroid, View } from "react-native";
+import React from "react";
+import { View } from "react-native";
 import { t } from "try";
 
 const fetcher = fetchFengjing();
 
 export default function Page() {
+  const snackbarRef = React.useRef<SnackbarHostRef>(null);
+
   const apikey = useStorageStore((s) => s.qqlykmKey);
   const query = useInfiniteQuery({ ...fetcher, enabled: !!apikey });
   const queryClient = useQueryClient();
 
   const hanldeImagePress = async (url: string) => {
-    const [ok, error] = await t(async () => {
+    const [ok] = await t(async () => {
       await downloadFile(url);
       await nativeConfirm("Download ?", "Download image");
     });
-    if (ok) {
-      ToastAndroid.show("Cancel", 1000 * 2);
-    } else {
-      const message = error instanceof Error ? error.message : String(error);
 
-      ToastAndroid.show(message, 1000 * 2);
-      console.error(error);
+    if (!ok) {
+      snackbarRef.current?.showSnackbar({ message: "Cancel" });
     }
   };
 
@@ -109,22 +115,27 @@ export default function Page() {
       <Surface>
         <Column>
           <AppHeader pageName="Landscape" />
-          <List
-            onRefresh={async () => {
-              queryClient.removeQueries({ queryKey: fetcher.queryKey });
-              await query.refetch();
-            }}
-          >
-            {renderQuery()}
-            <Column style={{ paddingHorizontal: 12, paddingVertical: 8 }}>
-              <Button
-                onPress={() => query.fetchNextPage()}
-                disabled={query.isFetchingNextPage}
-                label="Load more"
-                modifiers={[fillMaxWidth()]}
-              />
-            </Column>
-          </List>
+          <Box modifiers={[weight(1)]}>
+            <List
+              onRefresh={async () => {
+                queryClient.removeQueries({ queryKey: fetcher.queryKey });
+                await query.refetch();
+              }}
+            >
+              {renderQuery()}
+              <Column style={{ paddingHorizontal: 12, paddingVertical: 8 }}>
+                <Button
+                  onPress={() => query.fetchNextPage()}
+                  disabled={query.isFetchingNextPage}
+                  label="Load more"
+                  modifiers={[fillMaxWidth()]}
+                />
+              </Column>
+            </List>
+          </Box>
+          <Box modifiers={[fillMaxWidth()]}>
+            <SnackbarHost ref={snackbarRef} />
+          </Box>
         </Column>
       </Surface>
     </Host>
