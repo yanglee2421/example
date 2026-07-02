@@ -1,5 +1,5 @@
 import { AppHeader } from "@/components/app-header";
-import { Button, Column, Host, Text } from "@expo/ui";
+import { Button, Column, Host, List, RNHostView, Text } from "@expo/ui";
 import {
   Box,
   Card,
@@ -9,19 +9,89 @@ import {
 import {
   align,
   fillMaxWidth,
+  onSizeChanged,
   paddingAll,
   weight,
 } from "@expo/ui/jetpack-compose/modifiers";
 import { useQuery } from "@tanstack/react-query";
-import { Query, usePermissions } from "expo-media-library";
+import { Image } from "expo-image";
+import { Album, usePermissions } from "expo-media-library";
+import React from "react";
+
+interface AlbumItemProps {
+  album: Album;
+}
+
+const AlbumItem = (props: AlbumItemProps) => {
+  const [width, setWidth] = React.useState(0);
+
+  const query = useQuery({
+    queryKey: ["gallery", "album", props.album.id],
+    queryFn: async () => {
+      const title = await props.album.getTitle();
+      const assets = await props.album.getAssets();
+      const images = await Promise.all(assets.map((item) => item.getUri()));
+
+      return { title, assets: images };
+    },
+  });
+
+  if (query.isPending) {
+    return <></>;
+  }
+
+  if (query.isError) {
+    return <></>;
+  }
+
+  return (
+    <Box
+      modifiers={[
+        onSizeChanged((s) => {
+          setWidth(s.width);
+        }),
+        fillMaxWidth(),
+      ]}
+    >
+      <Column>
+        <Text>{query.data.title}</Text>
+        {query.data.assets.map((i) => (
+          <RNHostView matchContents key={i}>
+            <Image
+              source={i}
+              style={{
+                width,
+                height: 400,
+              }}
+            />
+          </RNHostView>
+        ))}
+      </Column>
+    </Box>
+  );
+};
 
 const GalleryContent = () => {
   const query = useQuery({
     queryKey: ["gallery"],
     queryFn: async () => {
-      const result = await new Query();
+      const result = await Album.getAll();
+
+      return result;
     },
   });
+
+  return (
+    <List
+      onRefresh={async () => {
+        await query.refetch();
+      }}
+    >
+      {query.data?.map((item) => {
+        return <AlbumItem key={item.id} album={item} />;
+      })}
+    </List>
+  );
 };
 
 export default function GalleryPage() {
@@ -42,11 +112,16 @@ export default function GalleryPage() {
       return (
         <Box modifiers={[weight(1)]}>
           <Card modifiers={[fillMaxWidth(), paddingAll(12), align("center")]}>
-            <Column spacing={4} style={{ padding: 16 }}>
-              <Text>message</Text>
-              <Text>message</Text>
+            <Column spacing={6} style={{ padding: 16 }}>
+              <Text textStyle={{ fontSize: 18 }}>
+                Access to Photos Required
+              </Text>
+              <Text>
+                This app needs access to your photos to display the gallery.
+                Please grant access to continue.
+              </Text>
               <Button
-                label="dxxx"
+                label="Allow Photo Access"
                 modifiers={[fillMaxWidth()]}
                 onPress={requestPermission}
               />
@@ -56,7 +131,7 @@ export default function GalleryPage() {
       );
     }
 
-    return <Text>4399</Text>;
+    return <GalleryContent />;
   };
 
   return (
